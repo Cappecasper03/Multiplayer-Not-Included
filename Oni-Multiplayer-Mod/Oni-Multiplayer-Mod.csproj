@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <ImplicitUsings>false</ImplicitUsings>
+        <ManagedPath>(Path to SteamLibrary)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</ManagedPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Assembly-CSharp" HintPath="$(ManagedPath)\Assembly-CSharp.dll" Private="false"/>
+        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(ManagedPath)\Assembly-CSharp-firstpass.dll" Private="false"/>
+        <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedPath)\UnityEngine.CoreModule.dll" Private="false"/>
+        <Reference Include="0Harmony" HintPath="$(ManagedPath)\0Harmony.dll" Private="false"/>
+        <Reference Include="UnityEngine" HintPath="$(ManagedPath)\UnityEngine.dll" Private="false"/>
+        <Reference Include="UserMod2" HintPath="$(ManagedPath)\UserMod2.dll" Private="false"/>
+    </ItemGroup>
+</Project>
