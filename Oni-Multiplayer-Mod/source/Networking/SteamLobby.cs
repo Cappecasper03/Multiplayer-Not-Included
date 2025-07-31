@@ -5,9 +5,9 @@ namespace OniMultiplayerMod.Networking
 {
     public static class SteamLobby
     {
-        private static Callback< LobbyCreated_t >           _OnCreated;
-        private static Callback< GameLobbyJoinRequested_t > _OnJoinRequested;
-        private static Callback< LobbyEnter_t >             _OnEntered;
+        private static Callback< LobbyCreated_t >           _onCreated;
+        private static Callback< GameLobbyJoinRequested_t > _onJoinRequested;
+        private static Callback< LobbyEnter_t >             _onEntered;
 
         private static CSteamID CurrentLobbyID { get; set; } = CSteamID.Nil;
         private static bool     InLobby        => CurrentLobbyID.IsValid();
@@ -18,27 +18,26 @@ namespace OniMultiplayerMod.Networking
         {
             if( !SteamManager.Initialized )
             {
-                Debug.LogError( "[SteamLobby] Steam is not initialized" );
+                Debug.LogError( "[SteamLobby] Steam Manager is not initialized" );
                 return;
             }
 
-            _OnCreated       = Callback< LobbyCreated_t >.Create( OnCreated );
-            _OnJoinRequested = Callback< GameLobbyJoinRequested_t >.Create( OnJoinRequested );
-            _OnEntered       = Callback< LobbyEnter_t >.Create( OnEntered );
+            _onCreated       = Callback< LobbyCreated_t >.Create( OnCreated );
+            _onJoinRequested = Callback< GameLobbyJoinRequested_t >.Create( OnJoinRequested );
+            _onEntered       = Callback< LobbyEnter_t >.Create( OnEntered );
 
             Debug.Log( "[SteamLobby] Callbacks registered" );
         }
 
-        private static void Create( ELobbyType lobbyType = ELobbyType.k_ELobbyTypePublic )
+        public static void Create( ELobbyType lobbyType = ELobbyType.k_ELobbyTypePublic )
         {
             if( !SteamManager.Initialized )
                 return;
 
             SteamMatchmaking.CreateLobby( lobbyType, MaxLobbySize );
-            Debug.Log( $"[SteamLobby] Created lobby: {CurrentLobbyID}" );
         }
 
-        private static void Join()
+        public static void Join( CSteamID lobbyId )
         {
             if( !SteamManager.Initialized )
                 return;
@@ -49,11 +48,10 @@ namespace OniMultiplayerMod.Networking
                 Leave();
             }
 
-            SteamMatchmaking.JoinLobby( CurrentLobbyID );
-            Debug.Log( $"[SteamLobby] Joined lobby: {CurrentLobbyID}" );
+            SteamMatchmaking.JoinLobby( lobbyId );
         }
 
-        private static void Leave()
+        public static void Leave()
         {
             if( !SteamManager.Initialized )
                 return;
@@ -62,8 +60,8 @@ namespace OniMultiplayerMod.Networking
                 return;
 
             SteamMatchmaking.LeaveLobby( CurrentLobbyID );
-            CurrentLobbyID = CSteamID.Nil;
             Debug.Log( $"[SteamLobby] Left lobby: {CurrentLobbyID}" );
+            CurrentLobbyID = CSteamID.Nil;
         }
 
         private static List< CSteamID > GetMembers()
@@ -80,29 +78,29 @@ namespace OniMultiplayerMod.Networking
             return members;
         }
 
-        private static void OnCreated( LobbyCreated_t callback )
+        private static void OnCreated( LobbyCreated_t data )
         {
-            if( callback.m_eResult != EResult.k_EResultOK )
+            if( data.m_eResult != EResult.k_EResultOK )
             {
                 Debug.LogError( "[SteamLobby] Failed to create lobby" );
                 return;
             }
 
-            CurrentLobbyID = new CSteamID( callback.m_ulSteamIDLobby );
-            Debug.Log( "[SteamLobby] Lobby created" );
+            CurrentLobbyID = new CSteamID( data.m_ulSteamIDLobby );
+            Debug.Log( $"[SteamLobby] Lobby created: {CurrentLobbyID}" );
 
             SteamMatchmaking.SetLobbyData( CurrentLobbyID, "name", $"{SteamFriends.GetPersonaName()}'s Lobby" );
             SteamMatchmaking.SetLobbyData( CurrentLobbyID, "host", SteamUser.GetSteamID().ToString() );
         }
 
-        private static void OnJoinRequested( GameLobbyJoinRequested_t callback )
+        private static void OnJoinRequested( GameLobbyJoinRequested_t data )
         {
-            Debug.Log( $"[SteamLobby] Joining lobby invited by {callback.m_steamIDFriend}" );
+            Debug.Log( $"[SteamLobby] Joining lobby invited by {data.m_steamIDFriend}" );
         }
 
-        private static void OnEntered( LobbyEnter_t callback )
+        private static void OnEntered( LobbyEnter_t data )
         {
-            CurrentLobbyID = new CSteamID( callback.m_ulSteamIDLobby );
+            CurrentLobbyID = new CSteamID( data.m_ulSteamIDLobby );
             Debug.Log( $"[SteamLobby] Entered lobby: {CurrentLobbyID}" );
         }
     }

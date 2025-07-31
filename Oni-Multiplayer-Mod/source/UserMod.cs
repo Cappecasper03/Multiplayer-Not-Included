@@ -1,5 +1,6 @@
 using HarmonyLib;
 using KMod;
+using OniMultiplayerMod.DebugTools;
 using OniMultiplayerMod.Networking;
 
 namespace OniMultiplayerMod
@@ -10,6 +11,7 @@ namespace OniMultiplayerMod
         {
             base.OnLoad( harmony );
 
+            DebugMenu.Initialize();
             SteamLobby.Initialize();
 
             Debug.Log( "[UserMod] Oni multiplayer mod loaded" );
