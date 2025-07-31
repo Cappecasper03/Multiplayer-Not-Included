@@ -23,7 +23,7 @@ namespace OniMultiplayerMod.DebugTools
             DontDestroyOnLoad( gameObject );
             _instance = gameObject.AddComponent< DebugMenu >();
 
-            Debug.Log( "[DebugMenu] Initialized" );
+            Debug.Log( "[DebugMenu.Initialize] Initialized" );
         }
 
         private void Update()

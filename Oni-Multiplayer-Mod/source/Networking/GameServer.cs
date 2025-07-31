@@ -5,7 +5,7 @@ namespace OniMultiplayerMod.Networking
 {
     public static class GameServer
     {
-        public enum ServerState
+        private enum ServerState
         {
             Error = -1,
             Stopped,
@@ -27,7 +27,7 @@ namespace OniMultiplayerMod.Networking
             if( !SteamManager.Initialized )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer] Steam Manager not initialized! Cannot start server" );
+                Debug.LogError( "[GameServer.Start] Steam Manager not initialized" );
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace OniMultiplayerMod.Networking
             if( Socket.m_HSteamListenSocket == 0 )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer] Failed to create listen socket" );
+                Debug.LogError( "[GameServer.Start] Failed to create listen socket" );
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace OniMultiplayerMod.Networking
             if( PollGroup.m_HSteamNetPollGroup == 0 )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer] Failed to create PollGroup" );
+                Debug.LogError( "[GameServer.Start] Failed to create PollGroup" );
                 SteamNetworkingSockets.CloseListenSocket( Socket );
                 return;
             }
@@ -53,7 +53,7 @@ namespace OniMultiplayerMod.Networking
             _connectionStatusChangedCallback =
                 Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
-            Debug.Log( "[GameServer] Server started" );
+            Debug.Log( "[GameServer.Start] Server started" );
             State = ServerState.Started;
         }
 
@@ -67,7 +67,7 @@ namespace OniMultiplayerMod.Networking
             if( Socket.m_HSteamListenSocket != 0 )
                 SteamNetworkingSockets.CloseListenSocket( Socket );
 
-            Debug.Log( "[GameServer] Server stopped" );
+            Debug.Log( "[GameServer.Stop] Server stopped" );
         }
 
         private static void TryAcceptConnection( HSteamNetConnection connection, CSteamID clientId )
@@ -76,7 +76,7 @@ namespace OniMultiplayerMod.Networking
             if( result == EResult.k_EResultOK )
             {
                 SteamNetworkingSockets.SetConnectionPollGroup( connection, PollGroup );
-                Debug.Log( $"[GameServer] Accepted connection from {clientId}" );
+                Debug.Log( $"[GameServer.TryAcceptConnection] Accepted connection from {clientId}" );
             }
             else
                 RejectConnection( connection, clientId, $"Accept failed ({result})" );
@@ -84,20 +84,20 @@ namespace OniMultiplayerMod.Networking
 
         private static void RejectConnection( HSteamNetConnection connection, CSteamID clientId, string reason )
         {
-            Debug.LogError( $"[GameServer] Rejecting connection from {clientId}: {reason}" );
+            Debug.LogError( $"[GameServer.RejectConnection] Rejecting connection from {clientId}: {reason}" );
             SteamNetworkingSockets.CloseConnection( connection, 0, reason, false );
         }
 
         private static void OnClientConnected( HSteamNetConnection connection, CSteamID clientId )
         {
-            Debug.Log( $"[GameServer] Connected to {clientId}" );
+            Debug.Log( $"[GameServer.OnClientConnected] Connected to {clientId}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection connection, CSteamID clientId )
         {
             SteamNetworkingSockets.CloseConnection( connection, 0, null, false );
 
-            Debug.Log( $"[GameServer] Disconnected from {clientId}" );
+            Debug.Log( $"[GameServer.OnClientDisconnected] Disconnected from {clientId}" );
         }
 
         private static void OnConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t data )
@@ -106,7 +106,7 @@ namespace OniMultiplayerMod.Networking
             CSteamID                        clientId   = data.m_info.m_identityRemote.GetSteamID();
             ESteamNetworkingConnectionState state      = data.m_info.m_eState;
 
-            Debug.Log( $"[GameServer] {clientId} connection status changed: {state}" );
+            Debug.Log( $"[GameServer.OnConnectionStatusChanged] {clientId} connection status changed: {state}" );
 
             switch( state )
             {
@@ -121,7 +121,7 @@ namespace OniMultiplayerMod.Networking
                     OnClientDisconnected( connection, clientId );
                     break;
                 default:
-                    Debug.LogWarning( $"[GameServer] Connection state not managed: {state}" );
+                    Debug.LogWarning( $"[GameServer.OnConnectionStatusChanged] Connection state not managed: {state}" );
                     break;
             }
         }
