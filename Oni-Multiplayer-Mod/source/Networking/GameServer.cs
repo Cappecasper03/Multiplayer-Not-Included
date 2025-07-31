@@ -22,6 +22,9 @@ namespace OniMultiplayerMod.Networking
 
         public static void Start()
         {
+            if( State > 0 )
+                return;
+
             State = ServerState.Preparing;
 
             if( !SteamManager.Initialized )
@@ -59,6 +62,9 @@ namespace OniMultiplayerMod.Networking
 
         public static void Stop()
         {
+            if( State <= 0 )
+                return;
+
             State = ServerState.Stopped;
 
             if( PollGroup.m_HSteamNetPollGroup != 0 )

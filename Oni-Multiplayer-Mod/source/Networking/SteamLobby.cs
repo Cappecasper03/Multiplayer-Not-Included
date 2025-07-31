@@ -34,6 +34,12 @@ namespace OniMultiplayerMod.Networking
             if( !SteamManager.Initialized )
                 return;
 
+            if( InLobby )
+            {
+                Debug.Log( "[SteamLobby.Join] Already in lobby, leaving current lobby" );
+                Leave();
+            }
+
             SteamMatchmaking.CreateLobby( lobbyType, MaxLobbySize );
         }
 
