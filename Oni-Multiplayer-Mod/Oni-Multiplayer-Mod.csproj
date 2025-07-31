@@ -12,5 +12,6 @@
         <Reference Include="0Harmony" HintPath="$(ManagedPath)\0Harmony.dll" Private="false"/>
         <Reference Include="UnityEngine" HintPath="$(ManagedPath)\UnityEngine.dll" Private="false"/>
         <Reference Include="UserMod2" HintPath="$(ManagedPath)\UserMod2.dll" Private="false"/>
+        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(ManagedPath)\com.rlabrecque.steamworks.net.dll" Private="false"/>
     </ItemGroup>
 </Project>
