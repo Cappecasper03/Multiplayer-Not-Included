@@ -13,7 +13,7 @@ namespace OniMultiplayerMod.Networking
         }
 
         private static Callback< SteamNetConnectionStatusChangedCallback_t > _onConnectionStatusChanged;
-        private static HSteamNetConnection?                                  Connection { get; set; }
+        private static HSteamNetConnection?                                  Connection { get; set; } = null;
         private static ClientState                                           State      { get; set; } = ClientState.Disconnected;
 
         public static void Initialize()
@@ -27,7 +27,7 @@ namespace OniMultiplayerMod.Networking
 
         public static void Connect( CSteamID steamId )
         {
-            var identity = new SteamNetworkingIdentity();
+            SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
             identity.SetSteamID64( steamId.m_SteamID );
 
             Connection = SteamNetworkingSockets.ConnectP2P( ref identity, 0, 0, null );
@@ -70,6 +70,15 @@ namespace OniMultiplayerMod.Networking
         private static void OnConnected()
         {
             State = ClientState.Connected;
+
+            CSteamID hostId = MultiplayerSession.HostSteamID;
+            if( !MultiplayerSession.ConnectedPlayers.ContainsKey( hostId ) )
+            {
+                MultiplayerPlayer player = new MultiplayerPlayer( hostId );
+                MultiplayerSession.ConnectedPlayers[ hostId ] = player;
+            }
+
+            MultiplayerSession.ConnectedPlayers[ hostId ].Connection = Connection;
 
             Debug.Log( "[GameClient.OnConnected] Connected to host" );
         }

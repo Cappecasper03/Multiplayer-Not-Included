@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using OniMultiplayerMod.Networking;
 using Steamworks;
 using UnityEngine;
 
@@ -17,14 +18,18 @@ namespace OniMultiplayerMod.Patches
             Type              buttonInfoType = __instance.GetType().GetNestedType( "ButtonInfo", BindingFlags.NonPublic );
             MethodInfo        makeButton     = __instance.GetType().GetMethod( "MakeButton", BindingFlags.NonPublic | BindingFlags.Instance );
 
-            var hostInfo = Activator.CreateInstance( buttonInfoType );
+            object hostInfo = Activator.CreateInstance( buttonInfoType );
             buttonInfoType.GetField( "text" ).SetValue( hostInfo, new LocString( "Host Game" ) );
-            buttonInfoType.GetField( "action" ).SetValue( hostInfo, new System.Action( () => { __instance.Button_ResumeGame.SignalClick( KKeyCode.Mouse0 ); } ) );
+            buttonInfoType.GetField( "action" ).SetValue( hostInfo, new System.Action( () =>
+            {
+                MultiplayerSession.ShouldHostAfterLoad = true;
+                __instance.Button_ResumeGame.SignalClick( KKeyCode.Mouse0 );
+            } ) );
             buttonInfoType.GetField( "fontSize" ).SetValue( hostInfo, fontSize );
             buttonInfoType.GetField( "style" ).SetValue( hostInfo, style );
             makeButton.Invoke( __instance, new object[] { hostInfo } );
 
-            var joinInfo = Activator.CreateInstance( buttonInfoType );
+            object joinInfo = Activator.CreateInstance( buttonInfoType );
             buttonInfoType.GetField( "text" ).SetValue( joinInfo, new LocString( "Join Game" ) );
             buttonInfoType.GetField( "action" ).SetValue( joinInfo, new System.Action( () => { SteamFriends.ActivateGameOverlay( "friends" ); } ) );
             buttonInfoType.GetField( "fontSize" ).SetValue( joinInfo, fontSize );
@@ -36,16 +41,16 @@ namespace OniMultiplayerMod.Patches
 
         private static void UpdatePlacements( MainMenu __instance )
         {
-            var buttonParent = Traverse.Create( __instance ).Field( "buttonParent" ).GetValue< GameObject >();
+            GameObject buttonParent = Traverse.Create( __instance ).Field( "buttonParent" ).GetValue< GameObject >();
             if( !buttonParent )
                 return;
 
-            var children = buttonParent.GetComponentsInChildren< KButton >();
+            KButton[] children = buttonParent.GetComponentsInChildren< KButton >();
 
-            var loadGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "load game" ) );
+            KButton loadGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "load game" ) );
 
-            var hostGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "host game" ) );
-            var joinGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "join game" ) );
+            KButton hostGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "host game" ) );
+            KButton joinGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "join game" ) );
 
             if( !loadGameButton || !hostGameButton || !joinGameButton )
                 return;

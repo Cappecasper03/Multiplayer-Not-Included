@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Steamworks;
 
 namespace OniMultiplayerMod.Networking
@@ -67,6 +68,13 @@ namespace OniMultiplayerMod.Networking
 
             State = ServerState.Stopped;
 
+            foreach( MultiplayerPlayer player in MultiplayerSession.ConnectedPlayers.Values.Where( player => player.Connection.HasValue ) )
+            {
+                if( player.Connection.HasValue )
+                    SteamNetworkingSockets.CloseConnection( player.Connection.Value, 0, "Server Stopping", false );
+                player.Connection = null;
+            }
+
             if( PollGroup.m_HSteamNetPollGroup != 0 )
                 SteamNetworkingSockets.DestroyPollGroup( PollGroup );
 
@@ -78,7 +86,7 @@ namespace OniMultiplayerMod.Networking
 
         private static void TryAcceptConnection( HSteamNetConnection connection, CSteamID clientId )
         {
-            var result = SteamNetworkingSockets.AcceptConnection( connection );
+            EResult result = SteamNetworkingSockets.AcceptConnection( connection );
             if( result == EResult.k_EResultOK )
             {
                 SteamNetworkingSockets.SetConnectionPollGroup( connection, PollGroup );
@@ -96,12 +104,23 @@ namespace OniMultiplayerMod.Networking
 
         private static void OnClientConnected( HSteamNetConnection connection, CSteamID clientId )
         {
+            MultiplayerPlayer player;
+            if( !MultiplayerSession.ConnectedPlayers.TryGetValue( clientId, out player ) )
+            {
+                player                                          = new MultiplayerPlayer( clientId );
+                MultiplayerSession.ConnectedPlayers[ clientId ] = player;
+            }
+
             Debug.Log( $"[GameServer.OnClientConnected] Connected to {clientId}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection connection, CSteamID clientId )
         {
             SteamNetworkingSockets.CloseConnection( connection, 0, null, false );
+
+            MultiplayerPlayer player;
+            if( MultiplayerSession.ConnectedPlayers.TryGetValue( clientId, out player ) )
+                player.Connection = null;
 
             Debug.Log( $"[GameServer.OnClientDisconnected] Disconnected from {clientId}" );
         }
