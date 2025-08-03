@@ -1,7 +1,7 @@
 ﻿using Steamworks;
 using UnityEngine;
 
-namespace OniMultiplayerMod.Networking
+namespace MultiplayerNotIncluded.Networking
 {
     public class PlayerCursor : KMonoBehaviour
     {

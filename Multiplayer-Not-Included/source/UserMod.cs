@@ -1,9 +1,9 @@
 using HarmonyLib;
 using KMod;
-using OniMultiplayerMod.DebugTools;
-using OniMultiplayerMod.Networking;
+using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.Networking;
 
-namespace OniMultiplayerMod
+namespace MultiplayerNotIncluded
 {
     public class UserMod : UserMod2
     {

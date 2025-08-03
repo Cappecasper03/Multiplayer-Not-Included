@@ -2,7 +2,7 @@
 using System.Linq;
 using Steamworks;
 
-namespace OniMultiplayerMod.Networking
+namespace MultiplayerNotIncluded.Networking
 {
     public static class GameServer
     {

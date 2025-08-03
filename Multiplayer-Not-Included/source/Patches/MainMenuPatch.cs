@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using OniMultiplayerMod.Networking;
+using MultiplayerNotIncluded.Networking;
 using Steamworks;
 using UnityEngine;
 
-namespace OniMultiplayerMod.Patches
+namespace MultiplayerNotIncluded.Patches
 {
     [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
     internal static class MainMenuPatch

@@ -1,8 +1,8 @@
 ﻿using System;
-using OniMultiplayerMod.Networking;
+using MultiplayerNotIncluded.Networking;
 using UnityEngine;
 
-namespace OniMultiplayerMod.DebugTools
+namespace MultiplayerNotIncluded.DebugTools
 {
     public class DebugMenu : MonoBehaviour
     {

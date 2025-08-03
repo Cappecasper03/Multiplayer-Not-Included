@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Steamworks;
 
-namespace OniMultiplayerMod.Networking
+namespace MultiplayerNotIncluded.Networking
 {
     public static class SteamLobby
     {

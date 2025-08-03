@@ -1,6 +1,6 @@
 ﻿using Steamworks;
 
-namespace OniMultiplayerMod.Networking
+namespace MultiplayerNotIncluded.Networking
 {
     public class GameClient
     {

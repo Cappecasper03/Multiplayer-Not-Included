@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36327.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oni-Multiplayer-Mod", "Oni-Multiplayer-Mod\Oni-Multiplayer-Mod.csproj", "{F0ADC1BA-EE24-4267-9E0F-F51C3DFCE5CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiplayer-Not-Included", "Multiplayer-Not-Included\Multiplayer-Not-Included.csproj", "{F0ADC1BA-EE24-4267-9E0F-F51C3DFCE5CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

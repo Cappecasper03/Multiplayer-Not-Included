@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <ImplicitUsings>false</ImplicitUsings>
+        <SteamLibraryPath></SteamLibraryPath>
+        <GameDataPath>$(SteamLibraryPath)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="UnityEngine" HintPath="$(GameDataPath)\UnityEngine.dll" Private="false"/>
+        <Reference Include="UnityEngine.CoreModule" HintPath="$(GameDataPath)\UnityEngine.CoreModule.dll" Private="false"/>
+        <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(GameDataPath)\UnityEngine.InputLegacyModule.dll" Private="false" />
+        <Reference Include="UnityEngine.IMGUIModule" HintPath="$(GameDataPath)\UnityEngine.IMGUIModule.dll" Private="false" />
+        <Reference Include="Assembly-CSharp" HintPath="$(GameDataPath)\Assembly-CSharp.dll" Private="false"/>
+        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameDataPath)\Assembly-CSharp-firstpass.dll" Private="false"/>
+        <Reference Include="0Harmony" HintPath="$(GameDataPath)\0Harmony.dll" Private="false"/>
+        <Reference Include="UserMod2" HintPath="$(GameDataPath)\UserMod2.dll" Private="false"/>
+        <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(GameDataPath)\com.rlabrecque.steamworks.net.dll" Private="false"/>
+    </ItemGroup>
+</Project>
