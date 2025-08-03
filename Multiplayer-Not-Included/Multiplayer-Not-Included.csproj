@@ -14,7 +14,6 @@
         <Reference Include="Assembly-CSharp" HintPath="$(GameDataPath)\Assembly-CSharp.dll" Private="false"/>
         <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameDataPath)\Assembly-CSharp-firstpass.dll" Private="false"/>
         <Reference Include="0Harmony" HintPath="$(GameDataPath)\0Harmony.dll" Private="false"/>
-        <Reference Include="UserMod2" HintPath="$(GameDataPath)\UserMod2.dll" Private="false"/>
         <Reference Include="com.rlabrecque.steamworks.net" HintPath="$(GameDataPath)\com.rlabrecque.steamworks.net.dll" Private="false"/>
     </ItemGroup>
 </Project>
