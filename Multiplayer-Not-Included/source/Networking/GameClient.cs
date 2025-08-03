@@ -22,7 +22,7 @@ namespace MultiplayerNotIncluded.Networking
                 return;
 
             _onConnectionStatusChanged = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
-            Debug.Log( "[GameClient.Initialize] Callback registered" );
+            DebugTools.Logger.LogInfo( "Callback registered" );
         }
 
         public static void Connect( CSteamID steamId )
@@ -31,7 +31,7 @@ namespace MultiplayerNotIncluded.Networking
             identity.SetSteamID64( steamId.m_SteamID );
 
             Connection = SteamNetworkingSockets.ConnectP2P( ref identity, 0, 0, null );
-            Debug.Log( $"[SteamNetworkingSockets.Connect] Connect P2P: {Connection.Value.m_HSteamNetConnection}" );
+            DebugTools.Logger.LogInfo( $"Connect P2P: {Connection.Value.m_HSteamNetConnection}" );
         }
 
         public static void Disconnect()
@@ -42,7 +42,7 @@ namespace MultiplayerNotIncluded.Networking
             bool result = SteamNetworkingSockets.CloseConnection( Connection.Value, 0, "Client Disconnecting", false );
             Connection = null;
             State      = ClientState.Disconnected;
-            Debug.Log( $"[GameClient.Disconnect] Close connection: {result}" );
+            DebugTools.Logger.LogInfo( $"Close connection: {result}" );
         }
 
         private static void OnConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t data )
@@ -50,7 +50,7 @@ namespace MultiplayerNotIncluded.Networking
             ESteamNetworkingConnectionState state   = data.m_info.m_eState;
             CSteamID                        steamID = data.m_info.m_identityRemote.GetSteamID();
 
-            Debug.Log( $"[GameClient.OnConnectionStatusChanged] {steamID} connection status changed: {state}" );
+            DebugTools.Logger.LogInfo( $"{steamID} connection status changed: {state}" );
 
             switch( state )
             {
@@ -62,7 +62,7 @@ namespace MultiplayerNotIncluded.Networking
                     OnDisconnected( "Closed by peer or problem detected locally", steamID );
                     break;
                 default:
-                    Debug.LogWarning( $"[GameClient.OnConnectionStatusChanged] Connection state not managed: {state}" );
+                    DebugTools.Logger.LogWarning( $"Connection state not managed: {state}" );
                     break;
             }
         }
@@ -80,13 +80,13 @@ namespace MultiplayerNotIncluded.Networking
 
             MultiplayerSession.ConnectedPlayers[ hostId ].Connection = Connection;
 
-            Debug.Log( "[GameClient.OnConnected] Connected to host" );
+            DebugTools.Logger.LogInfo( "Connected to host" );
         }
 
         private static void OnDisconnected( string reason, CSteamID steamId )
         {
             State = ClientState.Disconnected;
-            Debug.Log( $"[GameServer.OnClientDisconnected] Disconnected from {steamId}: {reason}" );
+            DebugTools.Logger.LogInfo( $"Disconnected from {steamId}: {reason}" );
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MultiplayerNotIncluded.DebugTools
             DontDestroyOnLoad( gameObject );
             _instance = gameObject.AddComponent< DebugMenu >();
 
-            Debug.Log( "[DebugMenu.Initialize] Initialized" );
+            Logger.LogInfo( "Initialized" );
         }
 
         private void Update()

@@ -14,7 +14,7 @@ namespace MultiplayerNotIncluded
             DebugMenu.Initialize();
             SteamLobby.Initialize();
 
-            Debug.Log( "[UserMod] Oni multiplayer mod loaded" );
+            DebugTools.Logger.LogInfo( "Mod successfully loaded" );
         }
     }
 }

@@ -15,13 +15,13 @@ namespace MultiplayerNotIncluded.Networking
         {
             ConnectedPlayers.Clear();
             HostSteamID = CSteamID.Nil;
-            Debug.Log( "[DebugMenu.Clear] Session cleared" );
+            DebugTools.Logger.LogInfo( "Session cleared" );
         }
 
         public static void SetHost( CSteamID steamID )
         {
             HostSteamID = steamID;
-            Debug.Log( $"[DebugMenu.SetHost] Host ID: {HostSteamID}" );
+            DebugTools.Logger.LogInfo( $"Host ID: {HostSteamID}" );
         }
     }
 }

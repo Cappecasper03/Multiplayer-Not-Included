@@ -31,7 +31,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !SteamManager.Initialized )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer.Start] Steam Manager not initialized" );
+                DebugTools.Logger.LogError( "Steam Manager not initialized" );
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace MultiplayerNotIncluded.Networking
             if( Socket.m_HSteamListenSocket == 0 )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer.Start] Failed to create listen socket" );
+                DebugTools.Logger.LogError( "Failed to create listen socket" );
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace MultiplayerNotIncluded.Networking
             if( PollGroup.m_HSteamNetPollGroup == 0 )
             {
                 State = ServerState.Error;
-                Debug.LogError( "[GameServer.Start] Failed to create PollGroup" );
+                DebugTools.Logger.LogError( "Failed to create PollGroup" );
                 SteamNetworkingSockets.CloseListenSocket( Socket );
                 return;
             }
@@ -57,7 +57,7 @@ namespace MultiplayerNotIncluded.Networking
             _connectionStatusChangedCallback =
                 Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
-            Debug.Log( "[GameServer.Start] Server started" );
+            DebugTools.Logger.LogInfo( "Server started" );
             State = ServerState.Started;
         }
 
@@ -81,7 +81,7 @@ namespace MultiplayerNotIncluded.Networking
             if( Socket.m_HSteamListenSocket != 0 )
                 SteamNetworkingSockets.CloseListenSocket( Socket );
 
-            Debug.Log( "[GameServer.Stop] Server stopped" );
+            DebugTools.Logger.LogInfo( "Server stopped" );
         }
 
         private static void TryAcceptConnection( HSteamNetConnection connection, CSteamID clientId )
@@ -90,7 +90,7 @@ namespace MultiplayerNotIncluded.Networking
             if( result == EResult.k_EResultOK )
             {
                 SteamNetworkingSockets.SetConnectionPollGroup( connection, PollGroup );
-                Debug.Log( $"[GameServer.TryAcceptConnection] Accepted connection from {clientId}" );
+                DebugTools.Logger.LogInfo( $"Accepted connection from {clientId}" );
             }
             else
                 RejectConnection( connection, clientId, $"Accept failed ({result})" );
@@ -98,7 +98,7 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void RejectConnection( HSteamNetConnection connection, CSteamID clientId, string reason )
         {
-            Debug.LogError( $"[GameServer.RejectConnection] Rejecting connection from {clientId}: {reason}" );
+            DebugTools.Logger.LogError( $"Rejecting connection from {clientId}: {reason}" );
             SteamNetworkingSockets.CloseConnection( connection, 0, reason, false );
         }
 
@@ -111,7 +111,7 @@ namespace MultiplayerNotIncluded.Networking
                 MultiplayerSession.ConnectedPlayers[ clientId ] = player;
             }
 
-            Debug.Log( $"[GameServer.OnClientConnected] Connected to {clientId}" );
+            DebugTools.Logger.LogInfo( $"Connected to {clientId}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection connection, CSteamID clientId )
@@ -122,7 +122,7 @@ namespace MultiplayerNotIncluded.Networking
             if( MultiplayerSession.ConnectedPlayers.TryGetValue( clientId, out player ) )
                 player.Connection = null;
 
-            Debug.Log( $"[GameServer.OnClientDisconnected] Disconnected from {clientId}" );
+            DebugTools.Logger.LogInfo( $"Disconnected from {clientId}" );
         }
 
         private static void OnConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t data )
@@ -131,7 +131,7 @@ namespace MultiplayerNotIncluded.Networking
             CSteamID                        clientId   = data.m_info.m_identityRemote.GetSteamID();
             ESteamNetworkingConnectionState state      = data.m_info.m_eState;
 
-            Debug.Log( $"[GameServer.OnConnectionStatusChanged] {clientId} connection status changed: {state}" );
+            DebugTools.Logger.LogInfo( $"{clientId} connection status changed: {state}" );
 
             switch( state )
             {
@@ -146,7 +146,7 @@ namespace MultiplayerNotIncluded.Networking
                     OnClientDisconnected( connection, clientId );
                     break;
                 default:
-                    Debug.LogWarning( $"[GameServer.OnConnectionStatusChanged] Connection state not managed: {state}" );
+                    DebugTools.Logger.LogWarning( $"Connection state not managed: {state}" );
                     break;
             }
         }

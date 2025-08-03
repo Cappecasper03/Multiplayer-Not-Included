@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Networking
         {
             if( !SteamManager.Initialized )
             {
-                Debug.LogError( "[SteamLobby.Initialize] Steam Manager is not initialized" );
+                DebugTools.Logger.LogError( "Steam Manager is not initialized" );
                 return;
             }
 
@@ -26,7 +26,7 @@ namespace MultiplayerNotIncluded.Networking
             _onJoinRequested = Callback< GameLobbyJoinRequested_t >.Create( OnJoinRequested );
             _onEntered       = Callback< LobbyEnter_t >.Create( OnEntered );
 
-            Debug.Log( "[SteamLobby.Initialize] Callbacks registered" );
+            DebugTools.Logger.LogInfo( "Callbacks registered" );
         }
 
         public static void Create( ELobbyType lobbyType = ELobbyType.k_ELobbyTypePublic )
@@ -36,7 +36,7 @@ namespace MultiplayerNotIncluded.Networking
 
             if( InLobby )
             {
-                Debug.Log( "[SteamLobby.Join] Already in lobby, leaving current lobby" );
+                DebugTools.Logger.LogInfo( "Already in lobby, leaving current lobby" );
                 Leave();
             }
 
@@ -50,7 +50,7 @@ namespace MultiplayerNotIncluded.Networking
 
             if( InLobby )
             {
-                Debug.Log( "[SteamLobby.Join] Already in lobby, leaving current lobby" );
+                DebugTools.Logger.LogInfo( "Already in lobby, leaving current lobby" );
                 Leave();
             }
 
@@ -68,7 +68,7 @@ namespace MultiplayerNotIncluded.Networking
             GameServer.Stop();
 
             SteamMatchmaking.LeaveLobby( CurrentLobbyID );
-            Debug.Log( $"[SteamLobby.Leave] Left lobby: {CurrentLobbyID}" );
+            DebugTools.Logger.LogInfo( $"Left lobby: {CurrentLobbyID}" );
             CurrentLobbyID = CSteamID.Nil;
 
             SteamRichPresence.SetStatus( "In Main Menu" );
@@ -92,12 +92,12 @@ namespace MultiplayerNotIncluded.Networking
         {
             if( data.m_eResult != EResult.k_EResultOK )
             {
-                Debug.LogError( "[SteamLobby.OnCreated] Failed to create lobby" );
+                DebugTools.Logger.LogError( "Failed to create lobby" );
                 return;
             }
 
             CurrentLobbyID = new CSteamID( data.m_ulSteamIDLobby );
-            Debug.Log( $"[SteamLobby.OnCreated] Lobby created: {CurrentLobbyID}" );
+            DebugTools.Logger.LogInfo( $"Lobby created: {CurrentLobbyID}" );
 
             SteamMatchmaking.SetLobbyData( CurrentLobbyID, "name", $"{SteamFriends.GetPersonaName()}'s Lobby" );
             SteamMatchmaking.SetLobbyData( CurrentLobbyID, "host", SteamUser.GetSteamID().ToString() );
@@ -109,7 +109,7 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnJoinRequested( GameLobbyJoinRequested_t data )
         {
-            Debug.Log( $"[SteamLobby.OnJoinRequested] Joining lobby invited by {data.m_steamIDFriend}" );
+            DebugTools.Logger.LogInfo( $"Joining lobby invited by {data.m_steamIDFriend}" );
         }
 
         private static void OnEntered( LobbyEnter_t data )
@@ -118,7 +118,7 @@ namespace MultiplayerNotIncluded.Networking
 
             SteamRichPresence.SetStatus( "Multiplayer - In Lobby" );
 
-            Debug.Log( $"[SteamLobby.OnEntered] Entered lobby: {CurrentLobbyID}" );
+            DebugTools.Logger.LogInfo( $"Entered lobby: {CurrentLobbyID}" );
         }
     }
 }
