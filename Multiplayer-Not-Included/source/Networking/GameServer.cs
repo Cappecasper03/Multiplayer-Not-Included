@@ -6,7 +6,7 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class GameServer
     {
-        private enum ServerState
+        public enum ServerState
         {
             Error = -1,
             Stopped,
@@ -19,7 +19,7 @@ namespace MultiplayerNotIncluded.Networking
         private static HSteamNetPollGroup                                    PollGroup { get; set; }
         private static Callback< SteamNetConnectionStatusChangedCallback_t > _connectionStatusChangedCallback;
 
-        private static ServerState State { get; set; } = ServerState.Stopped;
+        public static ServerState State { get; private set; } = ServerState.Stopped;
 
         public static void Start()
         {
@@ -57,8 +57,9 @@ namespace MultiplayerNotIncluded.Networking
             _connectionStatusChangedCallback =
                 Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
+            State                        = ServerState.Started;
+            MultiplayerSession.InSession = true;
             DebugTools.Logger.LogInfo( "Server started" );
-            State = ServerState.Started;
         }
 
         public static void Stop()
@@ -66,9 +67,7 @@ namespace MultiplayerNotIncluded.Networking
             if( State <= 0 )
                 return;
 
-            State = ServerState.Stopped;
-
-            foreach( MultiplayerPlayer player in MultiplayerSession.ConnectedPlayers.Values.Where( player => player.Connection.HasValue ) )
+            foreach( MultiplayerPlayer player in MultiplayerSession.ConnectedPlayers.Values )
             {
                 if( player.Connection.HasValue )
                     SteamNetworkingSockets.CloseConnection( player.Connection.Value, 0, "Server Stopping", false );
@@ -81,6 +80,8 @@ namespace MultiplayerNotIncluded.Networking
             if( Socket.m_HSteamListenSocket != 0 )
                 SteamNetworkingSockets.CloseListenSocket( Socket );
 
+            State                        = ServerState.Stopped;
+            MultiplayerSession.InSession = false;
             DebugTools.Logger.LogInfo( "Server stopped" );
         }
 

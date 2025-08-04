@@ -63,7 +63,8 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnConnected()
         {
-            State = ClientState.Connected;
+            State                        = ClientState.Connected;
+            MultiplayerSession.InSession = true;
 
             CSteamID hostId = MultiplayerSession.HostSteamID;
             if( !MultiplayerSession.ConnectedPlayers.ContainsKey( hostId ) )
@@ -79,7 +80,8 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnDisconnected( string reason, CSteamID steamId )
         {
-            State = ClientState.Disconnected;
+            State                        = ClientState.Disconnected;
+            MultiplayerSession.InSession = false;
             DebugTools.Logger.LogInfo( $"Disconnected from {steamId}: {reason}" );
         }
     }

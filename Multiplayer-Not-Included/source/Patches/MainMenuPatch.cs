@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using MultiplayerNotIncluded.Networking;
 using Steamworks;
 using UnityEngine;
 
@@ -17,13 +16,6 @@ namespace MultiplayerNotIncluded.Patches
             ColorStyleSetting style          = Traverse.Create( __instance ).Field( "normalButtonStyle" ).GetValue< ColorStyleSetting >();
             Type              buttonInfoType = __instance.GetType().GetNestedType( "ButtonInfo", BindingFlags.NonPublic );
             MethodInfo        makeButton     = __instance.GetType().GetMethod( "MakeButton", BindingFlags.NonPublic | BindingFlags.Instance );
-
-            object hostInfo = Activator.CreateInstance( buttonInfoType );
-            buttonInfoType.GetField( "text" ).SetValue( hostInfo, new LocString( "Host Game" ) );
-            buttonInfoType.GetField( "action" ).SetValue( hostInfo, new System.Action( () => { __instance.Button_ResumeGame.SignalClick( KKeyCode.Mouse0 ); } ) );
-            buttonInfoType.GetField( "fontSize" ).SetValue( hostInfo, fontSize );
-            buttonInfoType.GetField( "style" ).SetValue( hostInfo, style );
-            makeButton.Invoke( __instance, new object[] { hostInfo } );
 
             object joinInfo = Activator.CreateInstance( buttonInfoType );
             buttonInfoType.GetField( "text" ).SetValue( joinInfo, new LocString( "Join Game" ) );
@@ -45,16 +37,14 @@ namespace MultiplayerNotIncluded.Patches
 
             KButton loadGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "load game" ) );
 
-            KButton hostGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "host game" ) );
             KButton joinGameButton = children.FirstOrDefault( b => b.GetComponentInChildren< LocText >().text.ToLower().Contains( "join game" ) );
 
-            if( !loadGameButton || !hostGameButton || !joinGameButton )
+            if( !loadGameButton || !joinGameButton )
                 return;
 
             int loadIndex = loadGameButton.transform.GetSiblingIndex();
 
-            hostGameButton.transform.SetSiblingIndex( loadIndex + 1 );
-            joinGameButton.transform.SetSiblingIndex( loadIndex + 2 );
+            joinGameButton.transform.SetSiblingIndex( loadIndex + 1 );
         }
     }
 }

@@ -67,6 +67,7 @@ namespace MultiplayerNotIncluded.Networking
                 return;
 
             GameServer.Stop();
+            MultiplayerSession.Clear();
 
             SteamMatchmaking.LeaveLobby( CurrentLobbyID );
             DebugTools.Logger.LogInfo( $"Left lobby: {CurrentLobbyID}" );

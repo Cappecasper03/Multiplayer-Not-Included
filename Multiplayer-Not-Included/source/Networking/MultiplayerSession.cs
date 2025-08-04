@@ -10,7 +10,9 @@ namespace MultiplayerNotIncluded.Networking
         public static  CSteamID HostSteamID  { get; private set; } = CSteamID.Nil;
         private static CSteamID LocalSteamID => SteamUser.GetSteamID();
 
-        public static bool IsHost => HostSteamID == LocalSteamID;
+        public static bool InSession = false;
+        public static bool IsHost   => HostSteamID == LocalSteamID;
+        public static bool IsClient => InSession && !IsHost;
 
         public static readonly Dictionary< CSteamID, PlayerCursor > PlayerCursors = new Dictionary< CSteamID, PlayerCursor >();
 
