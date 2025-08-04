@@ -28,8 +28,17 @@ namespace MultiplayerNotIncluded.Patches
             KButtonMenu.ButtonInfo button = null;
             button = new KButtonMenu.ButtonInfo( GameServer.State <= 0 ? "Start Server" : "Stop Server", () =>
             {
-                SteamLobby.Create();
-                button.text = GameServer.State <= 0 ? "Start Server" : "Stop Server";
+                if( button.text == "Start Server" )
+                {
+                    SteamLobby.Create();
+                    button.text = "Stop Server";
+                }
+                else
+                {
+                    SteamLobby.Leave();
+                    button.text = "Start Server";
+                }
+
                 refreshButtons.Invoke( __instance, new object[] { } );
             } );
 

@@ -73,7 +73,7 @@ namespace MultiplayerNotIncluded.Networking
             DebugTools.Logger.LogInfo( $"Left lobby: {CurrentLobbyID}" );
             CurrentLobbyID = CSteamID.Nil;
 
-            SteamRichPresence.SetStatus( "In Main Menu" );
+            SteamRichPresence.SetStatus( "Singleplayer" );
         }
 
         private static List< CSteamID > GetMembers()

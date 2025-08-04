@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using MultiplayerNotIncluded.Menus;
+using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
 {
@@ -20,6 +21,8 @@ namespace MultiplayerNotIncluded.Networking
         {
             _onConnectionStatusChanged = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
             State                      = ClientState.Connecting;
+
+            MultiplayerLoadingOverlay.Show( $"Connecting to {SteamFriends.GetFriendPersonaName( steamId )}" );
 
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
             identity.SetSteamID64( steamId.m_SteamID );

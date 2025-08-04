@@ -121,7 +121,10 @@ namespace MultiplayerNotIncluded.Networking
 
             MultiplayerPlayer player;
             if( MultiplayerSession.ConnectedPlayers.TryGetValue( clientId, out player ) )
+            {
                 player.Connection = null;
+                MultiplayerSession.ConnectedPlayers.Remove( clientId );
+            }
 
             DebugTools.Logger.LogInfo( $"Disconnected from {clientId}" );
         }
