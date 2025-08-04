@@ -5,9 +5,12 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class MultiplayerSession
     {
-        public static          bool                                      ShouldHostAfterLoad = false;
-        public static readonly Dictionary< CSteamID, MultiplayerPlayer > ConnectedPlayers    = new Dictionary< CSteamID, MultiplayerPlayer >();
-        public static          CSteamID                                  HostSteamID { get; private set; } = CSteamID.Nil;
+        public static readonly Dictionary< CSteamID, MultiplayerPlayer > ConnectedPlayers = new Dictionary< CSteamID, MultiplayerPlayer >();
+
+        public static  CSteamID HostSteamID  { get; private set; } = CSteamID.Nil;
+        private static CSteamID LocalSteamID => SteamUser.GetSteamID();
+
+        public static bool IsHost => HostSteamID == LocalSteamID;
 
         public static readonly Dictionary< CSteamID, PlayerCursor > PlayerCursors = new Dictionary< CSteamID, PlayerCursor >();
 
@@ -21,7 +24,7 @@ namespace MultiplayerNotIncluded.Networking
         public static void SetHost( CSteamID steamID )
         {
             HostSteamID = steamID;
-            DebugTools.Logger.LogInfo( $"Host ID: {HostSteamID}" );
+            DebugTools.Logger.LogInfo( $"Host ID: {HostSteamID}, IsHost: {IsHost}" );
         }
     }
 }

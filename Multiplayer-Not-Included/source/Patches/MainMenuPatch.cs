@@ -20,11 +20,7 @@ namespace MultiplayerNotIncluded.Patches
 
             object hostInfo = Activator.CreateInstance( buttonInfoType );
             buttonInfoType.GetField( "text" ).SetValue( hostInfo, new LocString( "Host Game" ) );
-            buttonInfoType.GetField( "action" ).SetValue( hostInfo, new System.Action( () =>
-            {
-                MultiplayerSession.ShouldHostAfterLoad = true;
-                __instance.Button_ResumeGame.SignalClick( KKeyCode.Mouse0 );
-            } ) );
+            buttonInfoType.GetField( "action" ).SetValue( hostInfo, new System.Action( () => { __instance.Button_ResumeGame.SignalClick( KKeyCode.Mouse0 ); } ) );
             buttonInfoType.GetField( "fontSize" ).SetValue( hostInfo, fontSize );
             buttonInfoType.GetField( "style" ).SetValue( hostInfo, style );
             makeButton.Invoke( __instance, new object[] { hostInfo } );

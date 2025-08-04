@@ -16,22 +16,16 @@ namespace MultiplayerNotIncluded.Networking
         private static HSteamNetConnection?                                  Connection { get; set; } = null;
         private static ClientState                                           State      { get; set; } = ClientState.Disconnected;
 
-        public static void Initialize()
-        {
-            if( _onConnectionStatusChanged != null )
-                return;
-
-            _onConnectionStatusChanged = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
-            DebugTools.Logger.LogInfo( "Callback registered" );
-        }
-
         public static void Connect( CSteamID steamId )
         {
+            _onConnectionStatusChanged = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
+            State                      = ClientState.Connecting;
+
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
             identity.SetSteamID64( steamId.m_SteamID );
 
             Connection = SteamNetworkingSockets.ConnectP2P( ref identity, 0, 0, null );
-            DebugTools.Logger.LogInfo( $"Connect P2P: {Connection.Value.m_HSteamNetConnection}" );
+            DebugTools.Logger.LogInfo( $"P2P Connection: {Connection.Value.m_HSteamNetConnection}" );
         }
 
         public static void Disconnect()

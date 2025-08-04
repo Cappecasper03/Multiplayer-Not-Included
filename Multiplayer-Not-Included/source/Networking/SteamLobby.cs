@@ -117,7 +117,17 @@ namespace MultiplayerNotIncluded.Networking
         {
             CurrentLobbyID = new CSteamID( data.m_ulSteamIDLobby );
 
-            SteamRichPresence.SetStatus( "Multiplayer - In Lobby" );
+            MultiplayerSession.Clear();
+
+            string hostStr = SteamMatchmaking.GetLobbyData( CurrentLobbyID, "host" );
+            if( ulong.TryParse( hostStr, out ulong hostId ) )
+                MultiplayerSession.SetHost( new CSteamID( hostId ) );
+
+            if( !MultiplayerSession.IsHost && MultiplayerSession.HostSteamID.IsValid() )
+                GameClient.Connect( MultiplayerSession.HostSteamID );
+
+            if( !MultiplayerSession.IsHost )
+                SteamRichPresence.SetStatus( "Multiplayer - In Lobby" );
 
             DebugTools.Logger.LogInfo( $"Entered lobby: {CurrentLobbyID}" );
         }
