@@ -17,7 +17,6 @@ namespace MultiplayerNotIncluded.Networking
             SteamFriends.SetRichPresence( "status", status );
             if( SteamLobby.InLobby )
             {
-                DebugTools.Logger.LogInfo( "Updating lobby status" );
                 SteamFriends.SetRichPresence( "steam_display",           "Lobby" );
                 SteamFriends.SetRichPresence( "steam_player_group",      SteamLobby.CurrentLobbyID.ToString() );
                 SteamFriends.SetRichPresence( "steam_player_group_size", $"{SteamMatchmaking.GetNumLobbyMembers( SteamLobby.CurrentLobbyID )}" );

@@ -29,14 +29,14 @@ namespace MultiplayerNotIncluded.Networking
             DebugTools.Logger.LogInfo( "Callbacks registered" );
         }
 
-        public static void Create( ELobbyType lobbyType = ELobbyType.k_ELobbyTypePublic )
+        public static void Create( ELobbyType lobbyType = ELobbyType.k_ELobbyTypeFriendsOnly )
         {
             if( !SteamManager.Initialized )
                 return;
 
             if( InLobby )
             {
-                DebugTools.Logger.LogInfo( "Already in lobby, leaving current lobby" );
+                DebugTools.Logger.LogInfo( "Already in another lobby, leaving current lobby" );
                 Leave();
             }
 
@@ -50,10 +50,11 @@ namespace MultiplayerNotIncluded.Networking
 
             if( InLobby )
             {
-                DebugTools.Logger.LogInfo( "Already in lobby, leaving current lobby" );
+                DebugTools.Logger.LogInfo( "Already in another lobby, leaving current lobby" );
                 Leave();
             }
 
+            DebugTools.Logger.LogInfo( $"Joining lobby: {lobbyId}" );
             SteamMatchmaking.JoinLobby( lobbyId );
         }
 
@@ -109,7 +110,7 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnJoinRequested( GameLobbyJoinRequested_t data )
         {
-            DebugTools.Logger.LogInfo( $"Joining lobby invited by {data.m_steamIDFriend}" );
+            Join( data.m_steamIDLobby );
         }
 
         private static void OnEntered( LobbyEnter_t data )
