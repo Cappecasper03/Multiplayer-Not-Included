@@ -7,8 +7,8 @@ namespace MultiplayerNotIncluded.Networking
     {
         public static readonly Dictionary< CSteamID, MultiplayerPlayer > ConnectedPlayers = new Dictionary< CSteamID, MultiplayerPlayer >();
 
-        public static  CSteamID HostSteamID  { get; private set; } = CSteamID.Nil;
-        private static CSteamID LocalSteamID => SteamUser.GetSteamID();
+        public static CSteamID HostSteamID  { get; private set; } = CSteamID.Nil;
+        public static CSteamID LocalSteamID => SteamUser.GetSteamID();
 
         public static bool InSession = false;
         public static bool IsHost   => HostSteamID == LocalSteamID;

@@ -2,6 +2,9 @@ using HarmonyLib;
 using KMod;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Networking;
+using MultiplayerNotIncluded.Networking.Packets;
+using MultiplayerNotIncluded.source.Networking.Components;
+using UnityEngine;
 
 namespace MultiplayerNotIncluded
 {
@@ -13,6 +16,11 @@ namespace MultiplayerNotIncluded
 
             DebugMenu.Initialize();
             SteamLobby.Initialize();
+            PacketConstructorRegistry.Initialize();
+
+            GameObject gameObject = new GameObject( "MNI_Components" );
+            Object.DontDestroyOnLoad( gameObject );
+            gameObject.AddComponent< NetworkingComponent >();
 
             DebugTools.Logger.LogInfo( "Mod successfully loaded" );
         }

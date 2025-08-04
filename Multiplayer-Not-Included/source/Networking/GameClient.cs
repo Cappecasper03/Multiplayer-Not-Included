@@ -1,9 +1,13 @@
-﻿using MultiplayerNotIncluded.Menus;
+﻿using System;
+using System.Runtime.InteropServices;
+using MultiplayerNotIncluded.Menus;
+using MultiplayerNotIncluded.Networking.Packets;
+using MultiplayerNotIncluded.Networking.Packets.World;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
 {
-    public class GameClient
+    public static class GameClient
     {
         private enum ClientState
         {
@@ -42,6 +46,28 @@ namespace MultiplayerNotIncluded.Networking
             DebugTools.Logger.LogInfo( $"Close connection: {result}" );
         }
 
+        public static void Update()
+        {
+            if( State != ClientState.Connected || !Connection.HasValue )
+                return;
+
+            SteamNetworkingSockets.RunCallbacks();
+
+            const int maxMessages = 64;
+            IntPtr[]  messages    = new IntPtr[maxMessages];
+            int       count       = SteamNetworkingSockets.ReceiveMessagesOnConnection( Connection.Value, messages, maxMessages );
+
+            for( int i = 0; i < count; i++ )
+            {
+                SteamNetworkingMessage_t message = Marshal.PtrToStructure< SteamNetworkingMessage_t >( messages[ i ] );
+                byte[]                   data    = new byte[message.m_cbSize];
+                Marshal.Copy( message.m_pData, data, 0, message.m_cbSize );
+
+                PacketHandler.HandleIncoming( data );
+                SteamNetworkingMessage_t.Release( messages[ i ] );
+            }
+        }
+
         private static void OnConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t data )
         {
             ESteamNetworkingConnectionState state   = data.m_info.m_eState;
@@ -77,8 +103,13 @@ namespace MultiplayerNotIncluded.Networking
             }
 
             MultiplayerSession.ConnectedPlayers[ hostId ].Connection = Connection;
-
             DebugTools.Logger.LogInfo( "Connected to host" );
+
+            var packet = new SaveFileRequestPacket
+            {
+                Requester = MultiplayerSession.LocalSteamID,
+            };
+            PacketSender.SendToHost( packet );
         }
 
         private static void OnDisconnected( string reason, CSteamID steamId )

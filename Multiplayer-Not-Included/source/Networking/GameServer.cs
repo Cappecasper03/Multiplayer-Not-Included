@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
+using MultiplayerNotIncluded.Networking.Packets;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
@@ -85,6 +87,29 @@ namespace MultiplayerNotIncluded.Networking
             DebugTools.Logger.LogInfo( "Server stopped" );
         }
 
+        public static void Update()
+        {
+            if( State != ServerState.Started )
+                return;
+
+            SteamAPI.RunCallbacks();
+            SteamNetworkingSockets.RunCallbacks();
+
+            const int maxMessages = 128;
+            IntPtr[]  messages    = new IntPtr[maxMessages];
+            int       count       = SteamNetworkingSockets.ReceiveMessagesOnPollGroup( PollGroup, messages, maxMessages );
+
+            for( int i = 0; i < count; i++ )
+            {
+                SteamNetworkingMessage_t message = Marshal.PtrToStructure< SteamNetworkingMessage_t >( messages[ i ] );
+                byte[]                   data    = new byte[message.m_cbSize];
+                Marshal.Copy( message.m_pData, data, 0, message.m_cbSize );
+
+                PacketHandler.HandleIncoming( data );
+                SteamNetworkingMessage_t.Release( messages[ i ] );
+            }
+        }
+
         private static void TryAcceptConnection( HSteamNetConnection connection, CSteamID clientId )
         {
             EResult result = SteamNetworkingSockets.AcceptConnection( connection );
@@ -112,7 +137,8 @@ namespace MultiplayerNotIncluded.Networking
                 MultiplayerSession.ConnectedPlayers[ clientId ] = player;
             }
 
-            DebugTools.Logger.LogInfo( $"Connected to {clientId}" );
+            player.Connection = connection;
+            DebugTools.Logger.LogInfo( $"Connected to {clientId} on {connection}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection connection, CSteamID clientId )
