@@ -14,7 +14,7 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( SaveLoader ), "OnSpawn" )]
-        public static void OnSpawn()
+        private static void OnSpawn()
         {
             if( !cSteamLobby.inLobby() )
                 return;

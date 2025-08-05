@@ -52,6 +52,9 @@ namespace MultiplayerNotIncluded.DebugTools
             if( GUILayout.Button( "Leave Lobby" ) )
                 cSteamLobby.leave();
 
+            if( GUILayout.Button( "Show Overlay" ) )
+                cMultiplayerLoadingOverlay.show( "Debug Overlay" );
+
             if( GUILayout.Button( "Hide Overlay" ) )
                 cMultiplayerLoadingOverlay.hide();
 

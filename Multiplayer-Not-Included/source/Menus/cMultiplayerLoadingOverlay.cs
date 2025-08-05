@@ -23,6 +23,9 @@ namespace MultiplayerNotIncluded.Menus
         private static   cMultiplayerLoadingOverlay s_overlay;
         private readonly LocText                    m_text_component;
 
+        private static bool s_main_menu_active    = false;
+        private static bool s_pause_screen_active = false;
+
         private cMultiplayerLoadingOverlay()
         {
             Func< float > get_scale;
@@ -64,12 +67,34 @@ namespace MultiplayerNotIncluded.Menus
         {
             s_overlay = new cMultiplayerLoadingOverlay();
             m_text    = _text;
+
+            if( MainMenu.Instance.isActiveAndEnabled )
+            {
+                s_main_menu_active = true;
+                MainMenu.Instance.Show( false );
+            }
+            else if( PauseScreen.Instance.isActiveAndEnabled )
+            {
+                s_pause_screen_active = true;
+                PauseScreen.Instance.Show( false );
+            }
         }
 
         public static void hide()
         {
             s_overlay?.clear();
             s_overlay = null;
+
+            if( s_main_menu_active )
+            {
+                s_main_menu_active = false;
+                MainMenu.Instance.Show();
+            }
+            else if( s_pause_screen_active )
+            {
+                s_pause_screen_active = false;
+                PauseScreen.Instance.Show();
+            }
         }
     }
 }
