@@ -1,7 +1,7 @@
 ﻿using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.Player;
+using MultiplayerNotIncluded.Networking.Packets.Players;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -74,7 +74,7 @@ namespace MultiplayerNotIncluded.source.Networking.Components
 
             m_last_send_time = time;
 
-            cPlayerCursorPacket packet = new cPlayerCursorPacket( cSession.m_local_steam_id, getCursorPosition() );
+            cPlayerCursorPacket packet = new cPlayerCursorPacket( getCursorPosition() );
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet, eSteamNetworkingSend.kUnreliable );
             else

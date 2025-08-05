@@ -3,17 +3,13 @@ using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
 using Steamworks;
 
-namespace MultiplayerNotIncluded.Networking.Packets.Player
+namespace MultiplayerNotIncluded.Networking.Packets.Players
 {
     public class cPlayerReadyPacket : iIPacket
     {
-        private CSteamID m_steam_id;
+        private CSteamID m_steam_id = cSession.m_local_steam_id;
 
         public ePacketType m_type => ePacketType.kPlayerReady;
-
-        public cPlayerReadyPacket() {}
-
-        public cPlayerReadyPacket( CSteamID _steam_id ) => m_steam_id = _steam_id;
 
         public void serialize( BinaryWriter _writer ) => _writer.Write( m_steam_id.m_SteamID );
 
@@ -36,7 +32,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Player
                 if( !cSession.isAllReady() )
                     return;
 
-                cPacketSender.sendToAll( new cPlayerReadyPacket( cSession.m_local_steam_id ) );
+                cPacketSender.sendToAll( new cPlayerReadyPacket() );
                 cMultiplayerLoadingOverlay.hide();
             }
             else if( cSession.isClient() && m_steam_id == cSession.m_host_steam_id )

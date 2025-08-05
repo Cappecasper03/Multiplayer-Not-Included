@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.Player;
+using MultiplayerNotIncluded.Networking.Packets.Players;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Patches
@@ -22,7 +22,7 @@ namespace MultiplayerNotIncluded.Patches
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
             SpeedControlScreen.Instance.Pause( false );
 
-            cPacketSender.sendToHost( new cPlayerReadyPacket( cSession.m_local_steam_id ) );
+            cPacketSender.sendToHost( new cPlayerReadyPacket() );
         }
     }
 }

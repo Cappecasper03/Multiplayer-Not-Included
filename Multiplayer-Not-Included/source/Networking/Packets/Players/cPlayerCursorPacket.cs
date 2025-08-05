@@ -4,22 +4,18 @@ using MultiplayerNotIncluded.source.Networking.Components;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.Player
+namespace MultiplayerNotIncluded.Networking.Packets.Players
 {
     public class cPlayerCursorPacket : iIPacket
     {
-        public CSteamID m_steam_id;
-        public Vector3  m_position;
+        private CSteamID m_steam_id = cSession.m_local_steam_id;
+        private Vector3  m_position;
 
         public ePacketType m_type => ePacketType.kPlayerCursor;
 
         public cPlayerCursorPacket() {}
 
-        public cPlayerCursorPacket( CSteamID _steam_id, Vector3 _position )
-        {
-            m_steam_id = _steam_id;
-            m_position = _position;
-        }
+        public cPlayerCursorPacket( Vector3 _position ) => m_position = _position;
 
         public void serialize( BinaryWriter _writer )
         {

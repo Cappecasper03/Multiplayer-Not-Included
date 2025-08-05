@@ -108,8 +108,7 @@ namespace MultiplayerNotIncluded.Networking
             cLogger.logInfo( "Connected to host" );
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            var packet = new cSaveFileRequestPacket( cSession.m_local_steam_id );
-            cPacketSender.sendToHost( packet );
+            cPacketSender.sendToHost( new cSaveFileRequestPacket() );
         }
 
         private static void onDisconnected( string _reason, CSteamID _steam_id )

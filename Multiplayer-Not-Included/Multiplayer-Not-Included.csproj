@@ -11,6 +11,7 @@
         <Reference Include="UnityEngine.CoreModule" HintPath="$(GameDataPath)\UnityEngine.CoreModule.dll" Private="false"/>
         <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(GameDataPath)\UnityEngine.InputLegacyModule.dll" Private="false"/>
         <Reference Include="UnityEngine.UI" HintPath="$(GameDataPath)\UnityEngine.UI.dll" Private="false"/>
+        <Reference Include="UnityEngine.UIModule" HintPath="$(GameDataPath)\UnityEngine.UIModule.dll" Private="false"/>
         <Reference Include="UnityEngine.IMGUIModule" HintPath="$(GameDataPath)\UnityEngine.IMGUIModule.dll" Private="false"/>
         <Reference Include="Unity.TextMeshPro" HintPath="$(GameDataPath)\Unity.TextMeshPro.dll" Private="false"/>
         <Reference Include="Assembly-CSharp" HintPath="$(GameDataPath)\Assembly-CSharp.dll" Private="false"/>

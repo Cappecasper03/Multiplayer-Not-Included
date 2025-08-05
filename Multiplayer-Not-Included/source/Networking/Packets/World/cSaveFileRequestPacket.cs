@@ -10,17 +10,13 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 {
     public class cSaveFileRequestPacket : iIPacket
     {
-        public CSteamID m_requester;
+        private CSteamID m_steam_id = cSession.m_local_steam_id;
 
         public ePacketType m_type => ePacketType.kSaveFileRequest;
 
-        public cSaveFileRequestPacket() {}
+        public void serialize( BinaryWriter _writer ) => _writer.Write( m_steam_id.m_SteamID );
 
-        public cSaveFileRequestPacket( CSteamID _requester ) => m_requester = _requester;
-
-        public void serialize( BinaryWriter _writer ) => _writer.Write( m_requester.m_SteamID );
-
-        public void deserialize( BinaryReader _reader ) => m_requester = new CSteamID( _reader.ReadUInt64() );
+        public void deserialize( BinaryReader _reader ) => m_steam_id = new CSteamID( _reader.ReadUInt64() );
 
         public void onDispatched()
         {
@@ -46,7 +42,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
                 packets.Enqueue( packet );
             }
 
-            CoroutineRunner.RunOne( sendChunks( packets, m_requester ) );
+            CoroutineRunner.RunOne( sendChunks( packets, m_steam_id ) );
         }
 
         private static IEnumerator sendChunks( Queue< cSaveFileChunkPacket > _packets, CSteamID _steam_id )
