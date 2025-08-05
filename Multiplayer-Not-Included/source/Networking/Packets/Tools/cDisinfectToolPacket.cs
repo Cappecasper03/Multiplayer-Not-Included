@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
-using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
@@ -30,16 +31,10 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
-            for( int i = 0; i < 45; ++i )
-            {
-                GameObject game_object = Grid.Objects[ m_cell, i ];
-                if( game_object == null )
-                    continue;
-
-                Disinfectable component = game_object.GetComponent< Disinfectable >();
-                if( component != null && component.GetComponent< PrimaryElement >().DiseaseCount > 0 )
-                    component.MarkForDisinfect();
-            }
+            cDisinfectToolPatch.s_skip_sending = true;
+            MethodInfo on_drag_tool = DisinfectTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
+            on_drag_tool?.Invoke( DisinfectTool.Instance, new object[] { m_cell, 0 } );
+            cDisinfectToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;

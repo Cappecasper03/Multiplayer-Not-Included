@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 using UnityEngine;
 
@@ -39,15 +40,10 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
-            MethodInfo run_on_region           = DisconnectTool.Instance.GetType().GetMethod( "RunOnRegion",           BindingFlags.NonPublic | BindingFlags.Instance );
-            MethodInfo clear_visualizers       = DisconnectTool.Instance.GetType().GetMethod( "ClearVisualizers",      BindingFlags.NonPublic | BindingFlags.Instance );
-            MethodInfo disconnect_cells_action = DisconnectTool.Instance.GetType().GetMethod( "DisconnectCellsAction", BindingFlags.NonPublic | BindingFlags.Instance );
-
-            var action = ( Action< int, GameObject, IHaveUtilityNetworkMgr, UtilityConnections > )
-                disconnect_cells_action?.CreateDelegate( typeof( Action< int, GameObject, IHaveUtilityNetworkMgr, UtilityConnections > ), DisconnectTool.Instance );
-
-            run_on_region?.Invoke( DisconnectTool.Instance, new object[] { m_down_pos, m_up_pos, action } );
-            clear_visualizers?.Invoke( DisconnectTool.Instance, new object[] {} );
+            cDisconnectToolPatch.s_skip_sending = true;
+            MethodInfo on_drag_tool = DisconnectTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
+            on_drag_tool?.Invoke( DisconnectTool.Instance, new object[] { m_down_pos, m_up_pos } );
+            cDisconnectToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;

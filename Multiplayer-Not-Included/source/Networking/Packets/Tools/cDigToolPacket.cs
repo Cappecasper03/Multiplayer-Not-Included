@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 using UnityEngine;
 
@@ -37,17 +39,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
-            if( !Grid.IsValidCell( m_cell ) )
-                return;
-
-            Vector3 position = Grid.CellToPosCBC( m_cell, DigTool.Instance.visualizerLayer );
-            position.z -= .15f;
-
-            GameObject dig_placer = Util.KInstantiate( Assets.GetPrefab( new Tag( "DigPlacer" ) ) );
-            dig_placer.SetActive( true );
-
-            dig_placer.transform.SetPosition( position );
-            dig_placer.GetComponentInChildren< EasingAnimations >().PlayAnimation( "ScaleUp", Mathf.Max( 0, m_animation_delay * .02f ) );
+            cDigToolPatch.s_skip_sending = true;
+            DigTool.PlaceDig( m_cell, m_animation_delay );
+            cDigToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;

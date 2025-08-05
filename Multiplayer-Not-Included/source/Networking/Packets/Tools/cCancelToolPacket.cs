@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 using UnityEngine;
 
@@ -10,8 +12,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         private CSteamID m_steam_id = cSession.m_local_steam_id;
         private bool     m_is_cell;
         private int      m_cell;
-        private Vector2  m_min;
-        private Vector2  m_max;
+        private Vector3  m_down_pos;
+        private Vector3  m_up_pos;
 
         public ePacketType m_type => ePacketType.kCancelTool;
 
@@ -23,11 +25,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_cell    = _cell;
         }
 
-        public cCancelToolPacket( Vector2 _min, Vector2 _max )
+        public cCancelToolPacket( Vector3 _down_pos, Vector3 _up_pos )
         {
-            m_is_cell = false;
-            m_min     = _min;
-            m_max     = _max;
+            m_is_cell  = false;
+            m_down_pos = _down_pos;
+            m_up_pos   = _up_pos;
         }
 
         public void serialize( BinaryWriter _writer )
@@ -39,8 +41,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 _writer.Write( m_cell );
             else
             {
-                _writer.Write( m_min );
-                _writer.Write( m_max );
+                _writer.Write( m_down_pos );
+                _writer.Write( m_up_pos );
             }
         }
 
@@ -53,36 +55,26 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 m_cell = _reader.ReadInt32();
             else
             {
-                m_min = _reader.ReadVector2();
-                m_max = _reader.ReadVector2();
+                m_down_pos = _reader.ReadVector3();
+                m_up_pos   = _reader.ReadVector3();
             }
         }
 
         public void onDispatched()
         {
-            if( !Grid.IsValidCell( m_cell ) )
-                return;
-
+            cCancelToolPatch.s_skip_sending = true;
             if( m_is_cell )
             {
-                for( int i = 0; i < 45; ++i )
-                {
-                    GameObject game_object = Grid.Objects[ m_cell, i ];
-                    if( game_object == null )
-                        continue;
-
-                    string filter = CancelTool.Instance?.GetFilterLayerFromGameObject( game_object );
-                    if( filter == null || !CancelTool.Instance.IsActiveLayer( filter ) )
-                        continue;
-
-                    game_object.Trigger( ( int )GameHashes.Cancel );
-                }
+                MethodInfo on_drag_tool = CancelTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
+                on_drag_tool?.Invoke( CancelTool.Instance, new object[] { m_cell, 0 } );
             }
             else
             {
-                AttackTool.MarkForAttack( m_min, m_max, false );
-                CaptureTool.MarkForCapture( m_min, m_max, false );
+                MethodInfo on_drag_complete = CancelTool.Instance.GetType().GetMethod( "OnDragComplete", BindingFlags.NonPublic | BindingFlags.Instance );
+                on_drag_complete?.Invoke( CancelTool.Instance, new object[] { m_down_pos, m_up_pos } );
             }
+
+            cCancelToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;

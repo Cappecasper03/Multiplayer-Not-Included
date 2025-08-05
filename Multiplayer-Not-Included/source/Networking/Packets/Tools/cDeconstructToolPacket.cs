@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
-using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
@@ -30,21 +31,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
-            for( int i = 0; i < 45; ++i )
-            {
-                GameObject game_object = Grid.Objects[ m_cell, i ];
-                if( game_object == null )
-                    continue;
-
-                string filter = DeconstructTool.Instance?.GetFilterLayerFromGameObject( game_object );
-                if( filter == null || !DeconstructTool.Instance.IsActiveLayer( filter ) )
-                    continue;
-
-                game_object.Trigger( ( int )GameHashes.MarkForDeconstruct );
-                Prioritizable component = game_object.GetComponent< Prioritizable >();
-                if( component != null )
-                    component.SetMasterPriority( ToolMenu.Instance.PriorityScreen.GetLastSelectedPriority() );
-            }
+            cDeconstructToolPatch.s_skip_sending = true;
+            DeconstructTool.Instance.DeconstructCell( m_cell );
+            cDeconstructToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;

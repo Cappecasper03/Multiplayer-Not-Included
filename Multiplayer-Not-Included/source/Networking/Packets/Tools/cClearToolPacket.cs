@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
-using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
@@ -30,23 +31,10 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
-            GameObject cell_object = Grid.Objects[ m_cell, 3 ];
-            if( cell_object == null )
-                return;
-
-            ObjectLayerListItem object_layer_list_item = cell_object.GetComponent< Pickupable >().objectLayerListItem;
-            while( object_layer_list_item != null )
-            {
-                GameObject game_object = object_layer_list_item.gameObject;
-                object_layer_list_item = object_layer_list_item.nextItem;
-                if( game_object == null || game_object.GetComponent< MinionIdentity >() != null || !game_object.GetComponent< Clearable >().isClearable )
-                    continue;
-
-                game_object.GetComponent< Clearable >().MarkForClear();
-                Prioritizable component = game_object.GetComponent< Prioritizable >();
-                if( component != null )
-                    component.SetMasterPriority( ToolMenu.Instance.PriorityScreen.GetLastSelectedPriority() );
-            }
+            cClearToolPatch.s_skip_sending = true;
+            MethodInfo on_drag_tool = ClearTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
+            on_drag_tool?.Invoke( ClearTool.Instance, new object[] { m_cell, 0 } );
+            cClearToolPatch.s_skip_sending = false;
 
             if( !cSession.isHost() )
                 return;
