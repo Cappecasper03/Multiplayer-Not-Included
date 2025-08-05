@@ -8,11 +8,11 @@ using UnityEngine;
 namespace MultiplayerNotIncluded.Patches.Tool
 {
     [HarmonyPatch]
-    public static class cAttackToolPatch
+    public static class cCaptureToolPatch
     {
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( AttackTool ), "OnDragComplete" )]
+        [HarmonyPatch( typeof( CaptureTool ), "OnDragComplete" )]
         [HarmonyPatch( new[] { typeof( Vector3 ), typeof( Vector3 ) } )]
         private static void onDragComplete( Vector3 downPos, Vector3 upPos )
         {
@@ -22,7 +22,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
             Vector2 min = cUtils.getRegularizedPos( Vector2.Min( downPos, upPos ), true );
             Vector2 max = cUtils.getRegularizedPos( Vector2.Max( downPos, upPos ), false );
 
-            cAttackToolPacket packet = new cAttackToolPacket( min, max );
+            cCaptureToolPacket packet = new cCaptureToolPacket( min, max );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

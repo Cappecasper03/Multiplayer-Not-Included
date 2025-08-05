@@ -13,6 +13,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kDigTool,
         kCancelTool,
         kAttackTool,
+        kCaptureTool,
+        kClearTool,
     }
 
     public interface iIPacket
