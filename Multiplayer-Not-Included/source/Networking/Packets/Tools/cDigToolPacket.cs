@@ -37,6 +37,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onDispatched()
         {
+            if( !Grid.IsValidCell( m_cell ) )
+                return;
+
             Vector3 position = Grid.CellToPosCBC( m_cell, DigTool.Instance.visualizerLayer );
             position.z -= .15f;
 

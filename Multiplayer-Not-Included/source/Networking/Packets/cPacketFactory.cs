@@ -23,7 +23,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kPlayerReady ]  = () => new cPlayerReadyPacket();
             s_constructors[ ePacketType.kPlayerCursor ] = () => new cPlayerCursorPacket();
 
-            s_constructors[ ePacketType.kDigTool ] = () => new cDigToolPacket();
+            s_constructors[ ePacketType.kDigTool ]    = () => new cDigToolPacket();
+            s_constructors[ ePacketType.kCancelTool ] = () => new cCancelToolPacket();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kPlayerCursor,
 
         kDigTool,
+        kCancelTool,
     }
 
     public interface iIPacket
