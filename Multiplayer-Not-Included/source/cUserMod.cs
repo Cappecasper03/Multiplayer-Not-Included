@@ -21,6 +21,7 @@ namespace MultiplayerNotIncluded
             GameObject game_object = new GameObject( "MNI_Components" );
             Object.DontDestroyOnLoad( game_object );
             game_object.AddComponent< cNetworkingComponent >();
+            game_object.AddComponent< cPlayerCursorComponent >().initialize( cSession.m_local_steam_id );
 
             cLogger.logInfo( "Mod successfully loaded" );
         }

@@ -26,6 +26,13 @@ namespace MultiplayerNotIncluded.Networking
 
         public static void connect( CSteamID _steam_id )
         {
+            if( !SteamManager.Initialized )
+            {
+                m_state = eClientState.kError;
+                cLogger.logError( "Steam Manager not initialized" );
+                return;
+            }
+
             s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
             m_state                        = eClientState.kConnecting;
 
@@ -96,18 +103,12 @@ namespace MultiplayerNotIncluded.Networking
         private static void onConnected()
         {
             m_state = eClientState.kConnected;
-
-            CSteamID host_id = cSession.m_host_steam_id;
-            if( !cSession.s_connected_players.ContainsKey( host_id ) )
-            {
-                cPlayer player = new cPlayer( host_id, m_connection );
-                cSession.s_connected_players[ host_id ] = player;
-            }
+            cSession.updateOrCreatePlayer( cSession.m_host_steam_id, m_connection );
 
             cLogger.logInfo( "Connected to host" );
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            var packet = new cSaveFileRequestPacket( cSession.getLocalSteamID() );
+            var packet = new cSaveFileRequestPacket( cSession.m_local_steam_id );
             cPacketSender.sendToHost( packet );
         }
 
@@ -115,6 +116,16 @@ namespace MultiplayerNotIncluded.Networking
         {
             m_state = eClientState.kDisconnected;
             cLogger.logInfo( $"Disconnected from {_steam_id}: {_reason}" );
+
+            cSteamLobby.leave();
+            if( PauseScreen.Instance != null )
+            {
+                LoadingOverlay.Load( () =>
+                {
+                    PauseScreen.Instance.Deactivate();
+                    PauseScreen.TriggerQuitGame();
+                } );
+            }
         }
     }
 }

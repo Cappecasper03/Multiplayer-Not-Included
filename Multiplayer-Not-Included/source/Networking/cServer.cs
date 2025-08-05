@@ -113,20 +113,21 @@ namespace MultiplayerNotIncluded.Networking
         public static void setWaitingForPlayers()
         {
             SpeedControlScreen.Instance.Pause( false );
-            int    unready_count = 0;
-            string waiting_for   = "";
+
+            int    ready_count = 0;
+            string waiting_for = "";
             foreach( cPlayer player in cSession.s_connected_players.Values )
             {
                 if( player.m_ready )
-                    waiting_for += $"{player.m_steam_name}: Ready\n";
-                else
                 {
-                    waiting_for = waiting_for.Insert( 0, $"{player.m_steam_name}: Not Ready\n" );
-                    unready_count++;
+                    waiting_for += $"{player.m_steam_name}: Ready\n";
+                    ready_count++;
                 }
+                else
+                    waiting_for = waiting_for.Insert( 0, $"{player.m_steam_name}: Not Ready\n" );
             }
 
-            waiting_for = $"Waiting for players...({unready_count}/{cSession.s_connected_players.Count})\n{waiting_for}";
+            waiting_for = $"Waiting for players...({ready_count}/{cSession.s_connected_players.Count})\n{waiting_for}";
             cMultiplayerLoadingOverlay.show( waiting_for );
         }
 
@@ -150,27 +151,14 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnClientConnected( HSteamNetConnection _connection, CSteamID _client_id )
         {
-            cPlayer player;
-            if( !cSession.s_connected_players.TryGetValue( _client_id, out player ) )
-            {
-                player                                     = new cPlayer( _client_id, _connection );
-                cSession.s_connected_players[ _client_id ] = player;
-            }
-
+            cSession.updateOrCreatePlayer( _client_id, _connection );
             cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection _connection, CSteamID _client_id )
         {
             SteamNetworkingSockets.CloseConnection( _connection, 0, null, false );
-
-            cPlayer player;
-            if( cSession.s_connected_players.TryGetValue( _client_id, out player ) )
-            {
-                player.m_connection = HSteamNetConnection.Invalid;
-                cSession.s_connected_players.Remove( _client_id );
-            }
-
+            cSession.removePlayer( _client_id );
             cLogger.logInfo( $"Disconnected from {_client_id}" );
         }
 

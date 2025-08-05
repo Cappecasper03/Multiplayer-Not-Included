@@ -19,6 +19,6 @@ namespace MultiplayerNotIncluded.source.Networking.Components
                 cClient.update();
         }
 
-        private void OnApplicationQuit() { cSteamLobby.leave(); }
+        private void OnApplicationQuit() => cSteamLobby.leave();
     }
 }

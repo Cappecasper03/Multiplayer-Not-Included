@@ -19,6 +19,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSaveFileRequest ] = () => new cSaveFileRequestPacket();
             s_constructors[ ePacketType.kSaveFileChunk ]   = () => new cSaveFileChunkPacket();
             s_constructors[ ePacketType.kPlayerReady ]     = () => new cPlayerReadyPacket();
+            s_constructors[ ePacketType.kPlayerCursor ]    = () => new cPlayerCursorPacket();
         }
     }
 }

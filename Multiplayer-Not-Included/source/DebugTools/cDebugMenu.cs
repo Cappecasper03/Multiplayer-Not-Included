@@ -8,7 +8,7 @@ namespace MultiplayerNotIncluded.DebugTools
     {
         private static cDebugMenu s_instance;
 
-        private bool m_show_menu   = false;
+        private bool m_show_menu;
         private Rect m_window_rect = new Rect( 10, 10, 250, 300 );
 
         private Vector2 m_scroll_position = Vector2.zero;

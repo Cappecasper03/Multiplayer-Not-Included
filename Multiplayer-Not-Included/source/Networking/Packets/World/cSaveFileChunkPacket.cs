@@ -36,10 +36,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
             m_file_name  = _reader.ReadString();
             m_offset     = _reader.ReadInt32();
             m_total_size = _reader.ReadInt32();
+
             int length = _reader.ReadInt32();
             m_data = _reader.ReadBytes( length );
         }
 
-        public void onDispatched() { cSaveChunkAssembler.receiveChunk( this ); }
+        public void onDispatched() => cSaveChunkAssembler.receiveChunk( this );
     }
 }

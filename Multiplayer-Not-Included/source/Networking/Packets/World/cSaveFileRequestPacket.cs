@@ -16,11 +16,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public cSaveFileRequestPacket() {}
 
-        public cSaveFileRequestPacket( CSteamID _requester ) { m_requester = _requester; }
+        public cSaveFileRequestPacket( CSteamID _requester ) => m_requester = _requester;
 
-        public void serialize( BinaryWriter _writer ) { _writer.Write( m_requester.m_SteamID ); }
+        public void serialize( BinaryWriter _writer ) => _writer.Write( m_requester.m_SteamID );
 
-        public void deserialize( BinaryReader _reader ) { m_requester = new CSteamID( _reader.ReadUInt64() ); }
+        public void deserialize( BinaryReader _reader ) => m_requester = new CSteamID( _reader.ReadUInt64() );
 
         public void onDispatched()
         {

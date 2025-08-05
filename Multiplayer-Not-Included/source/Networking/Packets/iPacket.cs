@@ -7,6 +7,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSaveFileRequest,
         kSaveFileChunk,
         kPlayerReady,
+        kPlayerCursor,
     }
 
     public interface iIPacket

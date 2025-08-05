@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets
@@ -17,7 +19,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             return memory.ToArray();
         }
 
-        public static EResult sendToConnection( HSteamNetConnection _connection, iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
+        private static EResult sendToConnection( HSteamNetConnection _connection, iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
         {
             byte[] data = serializePacket( _packet );
 
@@ -33,7 +35,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         public static EResult sendToPlayer( CSteamID _steam_id, iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
         {
             cPlayer player;
-            if( cSession.s_connected_players.TryGetValue( _steam_id, out player ) )
+            if( cSession.tryGetPlayer( _steam_id, out player ) )
                 return sendToConnection( player.m_connection, _packet, _send_type );
 
             return EResult.k_EResultFail;
@@ -55,6 +57,24 @@ namespace MultiplayerNotIncluded.Networking.Packets
             {
                 if( !player.isConnected() || player.isLocal() )
                     continue;
+
+                if( sendToConnection( player.m_connection, _packet, _send_type ) != EResult.k_EResultOK )
+                    result = EResult.k_EResultFail;
+            }
+
+            return result;
+        }
+
+        public static EResult sendToAllExcluding( iIPacket _packet, List< CSteamID > _excluded, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
+        {
+            EResult result = EResult.k_EResultOK;
+
+            foreach( cPlayer player in cSession.s_connected_players.Values )
+            {
+                if( !player.isConnected() || player.isLocal() || _excluded.Contains( player.m_steam_id ) )
+                    continue;
+
+                cLogger.logInfo( $"{player.m_steam_name}" );
 
                 if( sendToConnection( player.m_connection, _packet, _send_type ) != EResult.k_EResultOK )
                     result = EResult.k_EResultFail;

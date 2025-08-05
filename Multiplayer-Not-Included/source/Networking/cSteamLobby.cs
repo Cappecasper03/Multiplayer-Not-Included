@@ -90,7 +90,7 @@ namespace MultiplayerNotIncluded.Networking
             cServer.start();
         }
 
-        private static void onJoinRequested( GameLobbyJoinRequested_t _data ) { join( _data.m_steamIDLobby ); }
+        private static void onJoinRequested( GameLobbyJoinRequested_t _data ) => join( _data.m_steamIDLobby );
 
         private static void onEntered( LobbyEnter_t _data )
         {
