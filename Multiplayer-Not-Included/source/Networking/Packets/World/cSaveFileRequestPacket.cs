@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Saves;
 using Steamworks;
 
@@ -58,6 +59,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
         {
             string file_name    = _packets.Peek().m_file_name;
             int    packet_count = _packets.Count;
+            int    total_size   = _packets.Peek().m_total_size;
+            int    sent_bytes   = 0;
 
             while( _packets.Count > 0 )
             {
@@ -66,13 +69,14 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
                 if( cPacketSender.sendToPlayer( _steam_id, packet ) == EResult.k_EResultOK )
                 {
                     _packets.Dequeue();
-                    DebugTools.cLogger.logInfo( $"Sent {packet.m_data.Length} bytes from '{packet.m_file_name}'" );
+                    sent_bytes += packet.m_data.Length;
+                    cLogger.logInfo( $"Sent {packet.m_data.Length} bytes from '{packet.m_file_name}' ({sent_bytes}/{total_size})" );
                 }
 
                 yield return null;
             }
 
-            DebugTools.cLogger.logInfo( $"Completed sending of '{file_name}' in {packet_count} chunks to {_steam_id}" );
+            cLogger.logInfo( $"Completed sending of '{file_name}' in {packet_count} chunks to {_steam_id}" );
         }
     }
 }

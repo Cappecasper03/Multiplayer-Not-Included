@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World;
@@ -36,7 +37,7 @@ namespace MultiplayerNotIncluded.Networking
             identity.SetSteamID64( _steam_id.m_SteamID );
 
             m_connection = SteamNetworkingSockets.ConnectP2P( ref identity, 0, 0, null );
-            DebugTools.cLogger.logInfo( $"P2P Connection: {m_connection.m_HSteamNetConnection}" );
+            cLogger.logInfo( $"P2P Connection: {m_connection.m_HSteamNetConnection}" );
         }
 
         public static void disconnect()
@@ -47,7 +48,7 @@ namespace MultiplayerNotIncluded.Networking
             bool result = SteamNetworkingSockets.CloseConnection( m_connection, 0, "Client Disconnecting", false );
             m_connection = HSteamNetConnection.Invalid;
             m_state      = eClientState.kDisconnected;
-            DebugTools.cLogger.logInfo( $"Close connection: {result}" );
+            cLogger.logInfo( $"Close connection: {result}" );
         }
 
         public static void update()
@@ -77,7 +78,7 @@ namespace MultiplayerNotIncluded.Networking
             ESteamNetworkingConnectionState state    = _data.m_info.m_eState;
             CSteamID                        steam_id = _data.m_info.m_identityRemote.GetSteamID();
 
-            DebugTools.cLogger.logInfo( $"{steam_id} connection status changed: {state}" );
+            cLogger.logInfo( $"{steam_id} connection status changed: {state}" );
 
             switch( state )
             {
@@ -89,7 +90,7 @@ namespace MultiplayerNotIncluded.Networking
                     onDisconnected( "Closed by peer or problem detected locally", steam_id );
                     break;
                 default:
-                    DebugTools.cLogger.logWarning( $"Connection state not managed: {state}" );
+                    cLogger.logWarning( $"Connection state not managed: {state}" );
                     break;
             }
         }
@@ -106,7 +107,7 @@ namespace MultiplayerNotIncluded.Networking
             }
 
             cSession.s_connected_players[ host_id ].m_connection = m_connection;
-            DebugTools.cLogger.logInfo( "Connected to host" );
+            cLogger.logInfo( "Connected to host" );
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
             var packet = new cSaveFileRequestPacket
@@ -119,7 +120,7 @@ namespace MultiplayerNotIncluded.Networking
         private static void onDisconnected( string _reason, CSteamID _steam_id )
         {
             m_state = eClientState.kDisconnected;
-            DebugTools.cLogger.logInfo( $"Disconnected from {_steam_id}: {_reason}" );
+            cLogger.logInfo( $"Disconnected from {_steam_id}: {_reason}" );
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
@@ -17,13 +18,13 @@ namespace MultiplayerNotIncluded.Networking
         {
             s_connected_players.Clear();
             m_host_steam_id = CSteamID.Nil;
-            DebugTools.cLogger.logInfo( "Session cleared" );
+            cLogger.logInfo( "Session cleared" );
         }
 
         public static void setHost( CSteamID _steam_id )
         {
             m_host_steam_id = _steam_id;
-            DebugTools.cLogger.logInfo( $"Host ID: {m_host_steam_id}, Host: {isHost}" );
+            cLogger.logInfo( $"Host ID: {m_host_steam_id}, Host: {isHost}" );
         }
     }
 }

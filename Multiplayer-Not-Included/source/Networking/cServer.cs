@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Networking.Packets;
 using Steamworks;
 
@@ -33,7 +34,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !SteamManager.Initialized )
             {
                 m_state = eServerState.kError;
-                DebugTools.cLogger.logError( "Steam Manager not initialized" );
+                cLogger.logError( "Steam Manager not initialized" );
                 return;
             }
 
@@ -43,7 +44,7 @@ namespace MultiplayerNotIncluded.Networking
             if( m_socket.m_HSteamListenSocket == 0 )
             {
                 m_state = eServerState.kError;
-                DebugTools.cLogger.logError( "Failed to create listen socket" );
+                cLogger.logError( "Failed to create listen socket" );
                 return;
             }
 
@@ -51,7 +52,7 @@ namespace MultiplayerNotIncluded.Networking
             if( m_poll_group.m_HSteamNetPollGroup == 0 )
             {
                 m_state = eServerState.kError;
-                DebugTools.cLogger.logError( "Failed to create PollGroup" );
+                cLogger.logError( "Failed to create PollGroup" );
                 SteamNetworkingSockets.CloseListenSocket( m_socket );
                 return;
             }
@@ -60,7 +61,7 @@ namespace MultiplayerNotIncluded.Networking
                 Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
             m_state = eServerState.kStarted;
-            DebugTools.cLogger.logInfo( "Server started" );
+            cLogger.logInfo( "Server started" );
         }
 
         public static void stop()
@@ -82,7 +83,7 @@ namespace MultiplayerNotIncluded.Networking
                 SteamNetworkingSockets.CloseListenSocket( m_socket );
 
             m_state = eServerState.kStopped;
-            DebugTools.cLogger.logInfo( "Server stopped" );
+            cLogger.logInfo( "Server stopped" );
         }
 
         public static void update()
@@ -114,7 +115,7 @@ namespace MultiplayerNotIncluded.Networking
             if( result == EResult.k_EResultOK )
             {
                 SteamNetworkingSockets.SetConnectionPollGroup( _connection, m_poll_group );
-                DebugTools.cLogger.logInfo( $"Accepted connection from {_client_id}" );
+                cLogger.logInfo( $"Accepted connection from {_client_id}" );
             }
             else
                 rejectConnection( _connection, _client_id, $"Accept failed ({result})" );
@@ -122,7 +123,7 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void rejectConnection( HSteamNetConnection _connection, CSteamID _client_id, string _reason )
         {
-            DebugTools.cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
+            cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
             SteamNetworkingSockets.CloseConnection( _connection, 0, _reason, false );
         }
 
@@ -136,7 +137,7 @@ namespace MultiplayerNotIncluded.Networking
             }
 
             player.m_connection = _connection;
-            DebugTools.cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
+            cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
         }
 
         private static void OnClientDisconnected( HSteamNetConnection _connection, CSteamID _client_id )
@@ -150,7 +151,7 @@ namespace MultiplayerNotIncluded.Networking
                 cSession.s_connected_players.Remove( _client_id );
             }
 
-            DebugTools.cLogger.logInfo( $"Disconnected from {_client_id}" );
+            cLogger.logInfo( $"Disconnected from {_client_id}" );
         }
 
         private static void OnConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t _data )
@@ -159,7 +160,7 @@ namespace MultiplayerNotIncluded.Networking
             CSteamID                        client_id  = _data.m_info.m_identityRemote.GetSteamID();
             ESteamNetworkingConnectionState state      = _data.m_info.m_eState;
 
-            DebugTools.cLogger.logInfo( $"{client_id} connection status changed: {state}" );
+            cLogger.logInfo( $"{client_id} connection status changed: {state}" );
 
             switch( state )
             {
@@ -174,7 +175,7 @@ namespace MultiplayerNotIncluded.Networking
                     OnClientDisconnected( connection, client_id );
                     break;
                 default:
-                    DebugTools.cLogger.logWarning( $"Connection state not managed: {state}" );
+                    cLogger.logWarning( $"Connection state not managed: {state}" );
                     break;
             }
         }

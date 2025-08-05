@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using MultiplayerNotIncluded.DebugTools;
 using TMPro;
 using UnityEngine;
 
@@ -30,14 +31,14 @@ namespace MultiplayerNotIncluded.Menus
 
             if( instance == null )
             {
-                DebugTools.cLogger.logWarning( "LoadingOverlay instance is null" );
+                cLogger.logWarning( "LoadingOverlay instance is null" );
                 return;
             }
 
             m_text_component = instance.GetComponentInChildren< LocText >();
             if( m_text_component == null )
             {
-                DebugTools.cLogger.logWarning( "Couldn't find LocText in LoadingOverlay " );
+                cLogger.logWarning( "Couldn't find LocText in LoadingOverlay " );
                 return;
             }
 
@@ -49,7 +50,7 @@ namespace MultiplayerNotIncluded.Menus
             if( scaler == null )
             {
                 get_scale = () => 1;
-                DebugTools.cLogger.logWarning( "KCanvasScaler missing." );
+                cLogger.logWarning( "KCanvasScaler missing." );
             }
             else
                 get_scale = scaler.GetCanvasScale;

@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using MultiplayerNotIncluded.DebugTools;
+using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
 {
@@ -17,7 +18,7 @@ namespace MultiplayerNotIncluded.Networking
         {
             if( !SteamManager.Initialized )
             {
-                DebugTools.cLogger.logError( "Steam Manager is not initialized" );
+                cLogger.logError( "Steam Manager is not initialized" );
                 return;
             }
 
@@ -25,7 +26,7 @@ namespace MultiplayerNotIncluded.Networking
             s_on_join_requested = Callback< GameLobbyJoinRequested_t >.Create( onJoinRequested );
             s_on_entered        = Callback< LobbyEnter_t >.Create( onEntered );
 
-            DebugTools.cLogger.logInfo( "Callbacks registered" );
+            cLogger.logInfo( "Callbacks registered" );
         }
 
         public static void create( ELobbyType _lobby_type = ELobbyType.k_ELobbyTypeFriendsOnly )
@@ -35,7 +36,7 @@ namespace MultiplayerNotIncluded.Networking
 
             if( inLobby )
             {
-                DebugTools.cLogger.logInfo( "Already in another lobby, leaving current lobby" );
+                cLogger.logInfo( "Already in another lobby, leaving current lobby" );
                 leave();
             }
 
@@ -49,11 +50,11 @@ namespace MultiplayerNotIncluded.Networking
 
             if( inLobby )
             {
-                DebugTools.cLogger.logInfo( "Already in another lobby, leaving current lobby" );
+                cLogger.logInfo( "Already in another lobby, leaving current lobby" );
                 leave();
             }
 
-            DebugTools.cLogger.logInfo( $"Joining lobby: {_lobby_id}" );
+            cLogger.logInfo( $"Joining lobby: {_lobby_id}" );
             SteamMatchmaking.JoinLobby( _lobby_id );
         }
 
@@ -69,7 +70,7 @@ namespace MultiplayerNotIncluded.Networking
             cSession.clear();
 
             SteamMatchmaking.LeaveLobby( m_lobby_id );
-            DebugTools.cLogger.logInfo( $"Left lobby: {m_lobby_id}" );
+            cLogger.logInfo( $"Left lobby: {m_lobby_id}" );
             m_lobby_id = CSteamID.Nil;
         }
 
@@ -77,12 +78,12 @@ namespace MultiplayerNotIncluded.Networking
         {
             if( _data.m_eResult != EResult.k_EResultOK )
             {
-                DebugTools.cLogger.logError( "Failed to create lobby" );
+                cLogger.logError( "Failed to create lobby" );
                 return;
             }
 
             m_lobby_id = new CSteamID( _data.m_ulSteamIDLobby );
-            DebugTools.cLogger.logInfo( $"Lobby created: {m_lobby_id}" );
+            cLogger.logInfo( $"Lobby created: {m_lobby_id}" );
 
             SteamMatchmaking.SetLobbyData( m_lobby_id, "host", SteamUser.GetSteamID().ToString() );
 
@@ -109,7 +110,7 @@ namespace MultiplayerNotIncluded.Networking
                     cClient.connect( cSession.m_host_steam_id );
             }
 
-            DebugTools.cLogger.logInfo( $"Entered lobby: {m_lobby_id}" );
+            cLogger.logInfo( $"Entered lobby: {m_lobby_id}" );
         }
     }
 }
