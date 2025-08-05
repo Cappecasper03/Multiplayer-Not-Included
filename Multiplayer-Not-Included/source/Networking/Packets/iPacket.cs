@@ -1,0 +1,14 @@
+﻿using System.IO;
+
+namespace MultiplayerNotIncluded.Networking.Packets
+{
+    public interface iIPacket
+    {
+        ePacketType m_type { get; }
+
+        void serialize( BinaryWriter   _writer );
+        void deserialize( BinaryReader _reader );
+
+        void onDispatched();
+    }
+}
