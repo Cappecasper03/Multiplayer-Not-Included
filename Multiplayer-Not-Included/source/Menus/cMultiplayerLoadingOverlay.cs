@@ -58,10 +58,7 @@ namespace MultiplayerNotIncluded.Menus
             m_text_component.rectTransform.sizeDelta = new Vector2( Screen.width / get_scale(), 0 );
         }
 
-        private void clear()
-        {
-            LoadingOverlay.Clear();
-        }
+        private void clear() { LoadingOverlay.Clear(); }
 
         public static void show( string _text )
         {

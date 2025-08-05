@@ -11,9 +11,9 @@ namespace MultiplayerNotIncluded.Patches
     [HarmonyPatch]
     public static class cMainMenuPatch
     {
-        [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
         [HarmonyPostfix]
         [UsedImplicitly]
+        [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
         private static void onPrefabInit( MainMenu __instance )
         {
             const int         font_size        = 22;

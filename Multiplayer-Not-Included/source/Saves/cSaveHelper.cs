@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using MultiplayerNotIncluded.Menus;
-using MultiplayerNotIncluded.Networking;
 
 namespace MultiplayerNotIncluded.Saves
 {
@@ -28,9 +27,7 @@ namespace MultiplayerNotIncluded.Saves
             writer.Flush();
             writer.Close();
 
-            cClient.m_state = cClient.eClientState.kLoadingWorld;
             cMultiplayerLoadingOverlay.show( "Loading..." );
-
             LoadScreen.DoLoad( save_path );
         }
     }

@@ -10,9 +10,9 @@ namespace MultiplayerNotIncluded.Patches
     [HarmonyPatch]
     public static class cPauseScreenPatch
     {
-        [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
         [HarmonyPostfix]
         [UsedImplicitly]
+        [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
         private static void configureButtonInfos( PauseScreen __instance )
         {
             if( cSession.isClient )
@@ -50,9 +50,9 @@ namespace MultiplayerNotIncluded.Patches
             buttons_field.SetValue( __instance, button_infos.ToArray() );
         }
 
-        [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
         [HarmonyPrefix]
         [UsedImplicitly]
+        [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
         public static void onQuitConfirm( bool saveFirst )
         {
             if( !cSteamLobby.inLobby )

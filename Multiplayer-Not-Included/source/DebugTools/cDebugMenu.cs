@@ -1,4 +1,5 @@
-﻿using MultiplayerNotIncluded.Networking;
+﻿using MultiplayerNotIncluded.Menus;
+using MultiplayerNotIncluded.Networking;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.DebugTools
@@ -50,6 +51,9 @@ namespace MultiplayerNotIncluded.DebugTools
 
             if( GUILayout.Button( "Leave Lobby" ) )
                 cSteamLobby.leave();
+
+            if( GUILayout.Button( "Hide Overlay" ) )
+                cMultiplayerLoadingOverlay.hide();
 
             GUILayout.EndScrollView();
 

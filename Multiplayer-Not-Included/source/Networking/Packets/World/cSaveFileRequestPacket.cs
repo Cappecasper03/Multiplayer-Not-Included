@@ -14,20 +14,20 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public ePacketType m_type => ePacketType.kSaveFileRequest;
 
-        public void serialize( BinaryWriter _writer )
-        {
-            _writer.Write( m_requester.m_SteamID );
-        }
+        public cSaveFileRequestPacket() {}
 
-        public void deserialize( BinaryReader _reader )
-        {
-            m_requester = new CSteamID( _reader.ReadUInt64() );
-        }
+        public cSaveFileRequestPacket( CSteamID _requester ) { m_requester = _requester; }
+
+        public void serialize( BinaryWriter _writer ) { _writer.Write( m_requester.m_SteamID ); }
+
+        public void deserialize( BinaryReader _reader ) { m_requester = new CSteamID( _reader.ReadUInt64() ); }
 
         public void onDispatched()
         {
             if( !cSession.isHost )
                 return;
+
+            cServer.setWaitingForPlayers();
 
             string file_name = cSaveHelper.worldName + ".sav";
             byte[] data      = cSaveHelper.getWorldSave();
@@ -41,13 +41,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
                 byte[] chunk = new byte[ size ];
                 Buffer.BlockCopy( data, offset, chunk, 0, size );
 
-                cSaveFileChunkPacket packet = new cSaveFileChunkPacket
-                {
-                    m_file_name  = file_name,
-                    m_offset     = offset,
-                    m_total_size = data.Length,
-                    m_data       = chunk
-                };
+                cSaveFileChunkPacket packet = new cSaveFileChunkPacket( file_name, offset, data.Length, chunk );
 
                 packets.Enqueue( packet );
             }

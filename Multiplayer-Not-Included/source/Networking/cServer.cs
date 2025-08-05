@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking.Packets;
 using Steamworks;
 
@@ -109,6 +110,26 @@ namespace MultiplayerNotIncluded.Networking
             }
         }
 
+        public static void setWaitingForPlayers()
+        {
+            SpeedControlScreen.Instance.Pause( false );
+            int    unready_count = 0;
+            string waiting_for   = "";
+            foreach( cPlayer player in cSession.s_connected_players.Values )
+            {
+                if( player.m_ready )
+                    waiting_for += $"{player.m_steam_name}: Ready\n";
+                else
+                {
+                    waiting_for = waiting_for.Insert( 0, $"{player.m_steam_name}: Not Ready\n" );
+                    unready_count++;
+                }
+            }
+
+            waiting_for = $"Waiting for players...({unready_count}/{cSession.s_connected_players.Count})\n{waiting_for}";
+            cMultiplayerLoadingOverlay.show( waiting_for );
+        }
+
         private static void tryAcceptConnection( HSteamNetConnection _connection, CSteamID _client_id )
         {
             EResult result = SteamNetworkingSockets.AcceptConnection( _connection );
@@ -132,11 +153,10 @@ namespace MultiplayerNotIncluded.Networking
             cPlayer player;
             if( !cSession.s_connected_players.TryGetValue( _client_id, out player ) )
             {
-                player                                     = new cPlayer( _client_id );
+                player                                     = new cPlayer( _client_id, _connection );
                 cSession.s_connected_players[ _client_id ] = player;
             }
 
-            player.m_connection = _connection;
             cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
         }
 

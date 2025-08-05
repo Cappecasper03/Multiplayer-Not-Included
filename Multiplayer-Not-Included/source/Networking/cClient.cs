@@ -10,17 +10,15 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class cClient
     {
-        public enum eClientState
+        private enum eClientState
         {
             kError = -1,
             kDisconnected,
             kConnecting,
             kConnected,
-            kLoadingWorld,
-            kInGame,
         }
 
-        public static eClientState m_state { get; set; } = eClientState.kDisconnected;
+        private static eClientState m_state { get; set; } = eClientState.kDisconnected;
 
         private static HSteamNetConnection m_connection { get; set; } = HSteamNetConnection.Invalid;
 
@@ -102,18 +100,14 @@ namespace MultiplayerNotIncluded.Networking
             CSteamID host_id = cSession.m_host_steam_id;
             if( !cSession.s_connected_players.ContainsKey( host_id ) )
             {
-                cPlayer player = new cPlayer( host_id );
+                cPlayer player = new cPlayer( host_id, m_connection );
                 cSession.s_connected_players[ host_id ] = player;
             }
 
-            cSession.s_connected_players[ host_id ].m_connection = m_connection;
             cLogger.logInfo( "Connected to host" );
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            var packet = new cSaveFileRequestPacket
-            {
-                m_requester = cSession.localSteamID,
-            };
+            var packet = new cSaveFileRequestPacket( cSession.localSteamID );
             cPacketSender.sendToHost( packet );
         }
 

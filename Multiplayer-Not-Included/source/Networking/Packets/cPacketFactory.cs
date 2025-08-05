@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MultiplayerNotIncluded.Networking.Packets.Player;
 using MultiplayerNotIncluded.Networking.Packets.World;
 
 namespace MultiplayerNotIncluded.Networking.Packets
@@ -17,6 +18,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         {
             s_constructors[ ePacketType.kSaveFileRequest ] = () => new cSaveFileRequestPacket();
             s_constructors[ ePacketType.kSaveFileChunk ]   = () => new cSaveFileChunkPacket();
+            s_constructors[ ePacketType.kPlayerReady ]     = () => new cPlayerReadyPacket();
         }
     }
 }

@@ -12,6 +12,16 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public ePacketType m_type => ePacketType.kSaveFileChunk;
 
+        public cSaveFileChunkPacket() {}
+
+        public cSaveFileChunkPacket( string _file_name, int _offset, int _total_size, byte[] _data )
+        {
+            m_file_name  = _file_name;
+            m_offset     = _offset;
+            m_total_size = _total_size;
+            m_data       = _data;
+        }
+
         public void serialize( BinaryWriter _writer )
         {
             _writer.Write( m_file_name );
@@ -30,9 +40,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
             m_data = _reader.ReadBytes( length );
         }
 
-        public void onDispatched()
-        {
-            cSaveChunkAssembler.receiveChunk( this );
-        }
+        public void onDispatched() { cSaveChunkAssembler.receiveChunk( this ); }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 
@@ -9,6 +10,7 @@ namespace MultiplayerNotIncluded.Networking
         public static CSteamID localSteamID => SteamUser.GetSteamID();
         public static bool     isHost       => cSteamLobby.inLobby && m_host_steam_id == localSteamID;
         public static bool     isClient     => cSteamLobby.inLobby && !isHost;
+        public static bool     isAllReady   => s_connected_players.All( _player => _player.Value.m_ready );
 
         public static CSteamID m_host_steam_id { get; private set; } = CSteamID.Nil;
 
