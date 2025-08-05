@@ -72,8 +72,6 @@ namespace MultiplayerNotIncluded.Networking
             SteamMatchmaking.LeaveLobby( m_current_lobby_id );
             DebugTools.cLogger.logInfo( $"Left lobby: {m_current_lobby_id}" );
             m_current_lobby_id = CSteamID.Nil;
-
-            cSteamRichPresence.setStatus( "Singleplayer" );
         }
 
         private static void onCreated( LobbyCreated_t _data )
@@ -89,8 +87,6 @@ namespace MultiplayerNotIncluded.Networking
 
             SteamMatchmaking.SetLobbyData( m_current_lobby_id, "name", $"{SteamFriends.GetPersonaName()}'s Lobby" );
             SteamMatchmaking.SetLobbyData( m_current_lobby_id, "host", SteamUser.GetSteamID().ToString() );
-
-            cSteamRichPresence.setStatus( "Multiplayer - Hosting Lobby" );
 
             cGameServer.start();
         }
@@ -112,9 +108,6 @@ namespace MultiplayerNotIncluded.Networking
 
             if( !cMultiplayerSession.isHost && cMultiplayerSession.m_host_steam_id.IsValid() )
                 cGameClient.connect( cMultiplayerSession.m_host_steam_id );
-
-            if( !cMultiplayerSession.isHost )
-                cSteamRichPresence.setStatus( "Multiplayer - In Lobby" );
 
             DebugTools.cLogger.logInfo( $"Entered lobby: {m_current_lobby_id}" );
         }
