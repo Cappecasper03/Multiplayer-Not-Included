@@ -16,13 +16,13 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPatch( typeof( SaveLoader ), "OnSpawn" )]
         public static void OnSpawn()
         {
-            if( !cSteamLobby.inLobby )
+            if( !cSteamLobby.inLobby() )
                 return;
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
             SpeedControlScreen.Instance.Pause( false );
 
-            cPacketSender.sendToHost( new cPlayerReadyPacket( cSession.localSteamID ) );
+            cPacketSender.sendToHost( new cPlayerReadyPacket( cSession.getLocalSteamID() ) );
         }
     }
 }

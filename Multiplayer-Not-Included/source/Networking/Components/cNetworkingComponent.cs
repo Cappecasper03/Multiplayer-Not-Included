@@ -10,12 +10,12 @@ namespace MultiplayerNotIncluded.source.Networking.Components
             if( !SteamManager.Initialized )
                 return;
 
-            if( !cSteamLobby.inLobby )
+            if( !cSteamLobby.inLobby() )
                 return;
 
-            if( cSession.isHost )
+            if( cSession.isHost() )
                 cServer.update();
-            else if( cSession.isClient && cSession.m_host_steam_id.IsValid() )
+            else if( cSession.isClient() && cSession.m_host_steam_id.IsValid() )
                 cClient.update();
         }
 

@@ -7,10 +7,10 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class cSession
     {
-        public static CSteamID localSteamID => SteamUser.GetSteamID();
-        public static bool     isHost       => cSteamLobby.inLobby && m_host_steam_id == localSteamID;
-        public static bool     isClient     => cSteamLobby.inLobby && !isHost;
-        public static bool     isAllReady   => s_connected_players.All( _player => _player.Value.m_ready );
+        public static CSteamID getLocalSteamID() => SteamUser.GetSteamID();
+        public static bool     isHost()       => cSteamLobby.inLobby() && m_host_steam_id == getLocalSteamID();
+        public static bool     isClient()     => cSteamLobby.inLobby() && !isHost();
+        public static bool     isAllReady()   => s_connected_players.All( _player => _player.Value.m_ready );
 
         public static CSteamID m_host_steam_id { get; private set; } = CSteamID.Nil;
 
@@ -26,7 +26,7 @@ namespace MultiplayerNotIncluded.Networking
         public static void setHost( CSteamID _steam_id )
         {
             m_host_steam_id = _steam_id;
-            cLogger.logInfo( $"Host ID: {m_host_steam_id}, Host: {isHost}" );
+            cLogger.logInfo( $"Host ID: {m_host_steam_id}, Host: {isHost()}" );
         }
     }
 }

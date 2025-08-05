@@ -53,7 +53,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             foreach( cPlayer player in cSession.s_connected_players.Values )
             {
-                if( !player.isConnected || player.isLocal )
+                if( !player.isConnected() || player.isLocal() )
                     continue;
 
                 if( sendToConnection( player.m_connection, _packet, _send_type ) != EResult.k_EResultOK )

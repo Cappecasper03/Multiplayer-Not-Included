@@ -107,7 +107,7 @@ namespace MultiplayerNotIncluded.Networking
             cLogger.logInfo( "Connected to host" );
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            var packet = new cSaveFileRequestPacket( cSession.localSteamID );
+            var packet = new cSaveFileRequestPacket( cSession.getLocalSteamID() );
             cPacketSender.sendToHost( packet );
         }
 

@@ -4,8 +4,8 @@ namespace MultiplayerNotIncluded.Networking
 {
     public class cPlayer
     {
-        public bool isLocal     => m_steam_id   == SteamUser.GetSteamID();
-        public bool isConnected => m_connection != HSteamNetConnection.Invalid;
+        public bool isLocal()     => m_steam_id   == SteamUser.GetSteamID();
+        public bool isConnected() => m_connection != HSteamNetConnection.Invalid;
 
         public HSteamNetConnection m_connection { get; set; }
         public string              m_steam_name { get; private set; }

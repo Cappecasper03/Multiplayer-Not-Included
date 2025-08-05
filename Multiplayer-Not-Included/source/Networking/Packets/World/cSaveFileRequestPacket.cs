@@ -24,7 +24,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public void onDispatched()
         {
-            if( !cSession.isHost )
+            if( !cSession.isHost() )
                 return;
 
             cServer.setWaitingForPlayers();

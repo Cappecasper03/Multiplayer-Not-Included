@@ -5,7 +5,7 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class cSteamLobby
     {
-        public static bool inLobby => m_lobby_id != CSteamID.Nil;
+        public static bool inLobby() => m_lobby_id != CSteamID.Nil;
 
         private static CSteamID m_lobby_id       { get; set; } = CSteamID.Nil;
         private static int      m_max_lobby_size { get; set; } = 4;
@@ -34,7 +34,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !SteamManager.Initialized )
                 return;
 
-            if( inLobby )
+            if( inLobby() )
             {
                 cLogger.logInfo( "Already in another lobby, leaving current lobby" );
                 leave();
@@ -48,7 +48,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !SteamManager.Initialized )
                 return;
 
-            if( inLobby )
+            if( inLobby() )
             {
                 cLogger.logInfo( "Already in another lobby, leaving current lobby" );
                 leave();
@@ -63,7 +63,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !SteamManager.Initialized )
                 return;
 
-            if( !inLobby )
+            if( !inLobby() )
                 return;
 
             cServer.stop();
@@ -103,7 +103,7 @@ namespace MultiplayerNotIncluded.Networking
             {
                 cSession.setHost( new CSteamID( host_id ) );
 
-                if( !cSession.isHost )
+                if( !cSession.isHost() )
                     cClient.connect( cSession.m_host_steam_id );
             }
 

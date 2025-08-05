@@ -15,7 +15,7 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
         private static void configureButtonInfos( PauseScreen __instance )
         {
-            if( cSession.isClient )
+            if( cSession.isClient() )
                 return;
 
             var        buttons_field   = AccessTools.Field( typeof( KModalButtonMenu ), "buttons" );
@@ -55,7 +55,7 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
         public static void onQuitConfirm( bool saveFirst )
         {
-            if( !cSteamLobby.inLobby )
+            if( !cSteamLobby.inLobby() )
                 return;
 
             cSteamLobby.leave();

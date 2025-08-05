@@ -21,7 +21,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Player
 
         public void onDispatched()
         {
-            if( cSession.isHost )
+            if( cSession.isHost() )
             {
                 cPlayer player;
                 if( !cSession.s_connected_players.TryGetValue( m_steam_id, out player ) )
@@ -31,16 +31,16 @@ namespace MultiplayerNotIncluded.Networking.Packets.Player
                 }
 
                 player.m_ready = true;
-                if( cSession.isAllReady )
+                if( cSession.isAllReady() )
                 {
                     cServer.setWaitingForPlayers();
-                    cPacketSender.sendToAll( new cPlayerReadyPacket( cSession.localSteamID ) );
+                    cPacketSender.sendToAll( new cPlayerReadyPacket( cSession.getLocalSteamID() ) );
                     cMultiplayerLoadingOverlay.hide();
                 }
                 else
                     cServer.setWaitingForPlayers();
             }
-            else if( cSession.isClient && m_steam_id == cSession.m_host_steam_id )
+            else if( cSession.isClient() && m_steam_id == cSession.m_host_steam_id )
                 cMultiplayerLoadingOverlay.hide();
         }
     }
