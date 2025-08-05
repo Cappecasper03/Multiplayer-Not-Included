@@ -25,6 +25,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             s_constructors[ ePacketType.kDigTool ]    = () => new cDigToolPacket();
             s_constructors[ ePacketType.kCancelTool ] = () => new cCancelToolPacket();
+            s_constructors[ ePacketType.kAttackTool ] = () => new cAttackToolPacket();
         }
     }
 }
