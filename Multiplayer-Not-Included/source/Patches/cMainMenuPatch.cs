@@ -2,15 +2,19 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using JetBrains.Annotations;
 using Steamworks;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.Patches
 {
-    [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
-    internal static class cMainMenuPatch
+    [HarmonyPatch]
+    public static class cMainMenuPatch
     {
-        private static void postfix( MainMenu __instance )
+        [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        private static void onPrefabInit( MainMenu __instance )
         {
             const int         font_size        = 22;
             ColorStyleSetting style            = Traverse.Create( __instance ).Field( "normalButtonStyle" ).GetValue< ColorStyleSetting >();

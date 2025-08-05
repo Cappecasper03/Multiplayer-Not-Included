@@ -5,7 +5,7 @@ using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
 {
-    public static class cGameServer
+    public static class cServer
     {
         public enum eServerState
         {
@@ -16,11 +16,12 @@ namespace MultiplayerNotIncluded.Networking
             kStarted,
         }
 
-        private static HSteamListenSocket                                    m_socket     { get; set; }
-        private static HSteamNetPollGroup                                    m_poll_group { get; set; }
-        private static Callback< SteamNetConnectionStatusChangedCallback_t > s_connection_status_changed_callback;
-
         public static eServerState m_state { get; private set; } = eServerState.kStopped;
+
+        private static HSteamListenSocket m_socket     { get; set; }
+        private static HSteamNetPollGroup m_poll_group { get; set; }
+
+        private static Callback< SteamNetConnectionStatusChangedCallback_t > s_connection_status_changed_callback;
 
         public static void start()
         {
@@ -58,8 +59,7 @@ namespace MultiplayerNotIncluded.Networking
             s_connection_status_changed_callback =
                 Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
-            m_state                      = eServerState.kStarted;
-            cMultiplayerSession.s_in_session = true;
+            m_state = eServerState.kStarted;
             DebugTools.cLogger.logInfo( "Server started" );
         }
 
@@ -68,7 +68,7 @@ namespace MultiplayerNotIncluded.Networking
             if( m_state <= 0 )
                 return;
 
-            foreach( cMultiplayerPlayer player in cMultiplayerSession.s_connected_players.Values )
+            foreach( cPlayer player in cSession.s_connected_players.Values )
             {
                 if( player.m_connection != HSteamNetConnection.Invalid )
                     SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
@@ -81,8 +81,7 @@ namespace MultiplayerNotIncluded.Networking
             if( m_socket.m_HSteamListenSocket != 0 )
                 SteamNetworkingSockets.CloseListenSocket( m_socket );
 
-            m_state                      = eServerState.kStopped;
-            cMultiplayerSession.s_in_session = false;
+            m_state = eServerState.kStopped;
             DebugTools.cLogger.logInfo( "Server stopped" );
         }
 
@@ -95,13 +94,13 @@ namespace MultiplayerNotIncluded.Networking
             SteamNetworkingSockets.RunCallbacks();
 
             const int max_messages = 128;
-            IntPtr[]  messages     = new IntPtr[max_messages];
+            IntPtr[]  messages     = new IntPtr[ max_messages ];
             int       count        = SteamNetworkingSockets.ReceiveMessagesOnPollGroup( m_poll_group, messages, max_messages );
 
             for( int i = 0; i < count; i++ )
             {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure< SteamNetworkingMessage_t >( messages[ i ] );
-                byte[]                   data    = new byte[message.m_cbSize];
+                byte[]                   data    = new byte[ message.m_cbSize ];
                 Marshal.Copy( message.m_pData, data, 0, message.m_cbSize );
 
                 cPacketHandler.handleIncoming( data );
@@ -129,11 +128,11 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnClientConnected( HSteamNetConnection _connection, CSteamID _client_id )
         {
-            cMultiplayerPlayer player;
-            if( !cMultiplayerSession.s_connected_players.TryGetValue( _client_id, out player ) )
+            cPlayer player;
+            if( !cSession.s_connected_players.TryGetValue( _client_id, out player ) )
             {
-                player                                            = new cMultiplayerPlayer( _client_id );
-                cMultiplayerSession.s_connected_players[ _client_id ] = player;
+                player                                     = new cPlayer( _client_id );
+                cSession.s_connected_players[ _client_id ] = player;
             }
 
             player.m_connection = _connection;
@@ -144,11 +143,11 @@ namespace MultiplayerNotIncluded.Networking
         {
             SteamNetworkingSockets.CloseConnection( _connection, 0, null, false );
 
-            cMultiplayerPlayer player;
-            if( cMultiplayerSession.s_connected_players.TryGetValue( _client_id, out player ) )
+            cPlayer player;
+            if( cSession.s_connected_players.TryGetValue( _client_id, out player ) )
             {
                 player.m_connection = HSteamNetConnection.Invalid;
-                cMultiplayerSession.s_connected_players.Remove( _client_id );
+                cSession.s_connected_players.Remove( _client_id );
             }
 
             DebugTools.cLogger.logInfo( $"Disconnected from {_client_id}" );

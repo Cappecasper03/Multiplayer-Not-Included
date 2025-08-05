@@ -2,16 +2,20 @@
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 
 namespace MultiplayerNotIncluded.Patches
 {
-    [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
-    internal static class cPauseScreenPatch
+    [HarmonyPatch]
+    public static class cPauseScreenPatch
     {
-        private static void postfix( PauseScreen __instance )
+        [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        private static void configureButtonInfos( PauseScreen __instance )
         {
-            if( cMultiplayerSession.isClient )
+            if( cSession.isClient )
                 return;
 
             var        buttons_field   = AccessTools.Field( typeof( KModalButtonMenu ), "buttons" );
@@ -26,7 +30,7 @@ namespace MultiplayerNotIncluded.Patches
                 index = 1;
 
             KButtonMenu.ButtonInfo button = null;
-            button = new KButtonMenu.ButtonInfo( cGameServer.m_state <= 0 ? "Start Server" : "Stop Server", () =>
+            button = new KButtonMenu.ButtonInfo( cServer.m_state <= 0 ? "Start Server" : "Stop Server", () =>
             {
                 if( button.text == "Start Server" )
                 {
@@ -39,11 +43,22 @@ namespace MultiplayerNotIncluded.Patches
                     button.text = "Start Server";
                 }
 
-                refresh_buttons?.Invoke( __instance, new object[] { } );
+                refresh_buttons?.Invoke( __instance, new object[] {} );
             } );
 
             button_infos.Insert( index, button );
             buttons_field.SetValue( __instance, button_infos.ToArray() );
+        }
+
+        [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
+        [HarmonyPrefix]
+        [UsedImplicitly]
+        public static void onQuitConfirm( bool saveFirst )
+        {
+            if( !cSteamLobby.inLobby )
+                return;
+
+            cSteamLobby.leave();
         }
     }
 }

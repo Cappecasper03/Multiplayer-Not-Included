@@ -28,7 +28,7 @@ namespace MultiplayerNotIncluded.Saves
             writer.Flush();
             writer.Close();
 
-            cGameClient.m_state = cGameClient.eClientState.kLoadingWorld;
+            cClient.m_state = cClient.eClientState.kLoadingWorld;
             cMultiplayerLoadingOverlay.show( "Loading..." );
 
             LoadScreen.DoLoad( save_path );

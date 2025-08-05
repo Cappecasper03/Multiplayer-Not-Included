@@ -25,7 +25,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public void onDispatched()
         {
-            if( !cMultiplayerSession.isHost )
+            if( !cSession.isHost )
                 return;
 
             string file_name = cSaveHelper.worldName + ".sav";
@@ -37,7 +37,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
             for( int offset = 0; offset < data.Length; offset += chunk_size )
             {
                 int    size  = Math.Min( chunk_size, data.Length - offset );
-                byte[] chunk = new byte[size];
+                byte[] chunk = new byte[ size ];
                 Buffer.BlockCopy( data, offset, chunk, 0, size );
 
                 cSaveFileChunkPacket packet = new cSaveFileChunkPacket

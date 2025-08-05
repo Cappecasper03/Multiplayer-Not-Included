@@ -32,8 +32,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
         public static EResult sendToPlayer( CSteamID _steam_id, iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
         {
-            cMultiplayerPlayer player;
-            if( cMultiplayerSession.s_connected_players.TryGetValue( _steam_id, out player ) )
+            cPlayer player;
+            if( cSession.s_connected_players.TryGetValue( _steam_id, out player ) )
                 return sendToConnection( player.m_connection, _packet, _send_type );
 
             return EResult.k_EResultFail;
@@ -41,8 +41,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
         public static EResult sendToHost( iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
         {
-            if( cMultiplayerSession.m_host_steam_id.IsValid() )
-                return sendToPlayer( cMultiplayerSession.m_host_steam_id, _packet, _send_type );
+            if( cSession.m_host_steam_id.IsValid() )
+                return sendToPlayer( cSession.m_host_steam_id, _packet, _send_type );
 
             return EResult.k_EResultFail;
         }
@@ -51,9 +51,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
         {
             EResult result = EResult.k_EResultOK;
 
-            foreach( cMultiplayerPlayer player in cMultiplayerSession.s_connected_players.Values )
+            foreach( cPlayer player in cSession.s_connected_players.Values )
             {
-                if( !player.m_is_connected || player.isLocal )
+                if( !player.isConnected || player.isLocal )
                     continue;
 
                 if( sendToConnection( player.m_connection, _packet, _send_type ) != EResult.k_EResultOK )

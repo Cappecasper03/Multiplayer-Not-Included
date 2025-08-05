@@ -7,7 +7,7 @@ using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
 {
-    public static class cGameClient
+    public static class cClient
     {
         public enum eClientState
         {
@@ -19,16 +19,18 @@ namespace MultiplayerNotIncluded.Networking
             kInGame,
         }
 
+        public static eClientState m_state { get; set; } = eClientState.kDisconnected;
+
+        private static HSteamNetConnection m_connection { get; set; } = HSteamNetConnection.Invalid;
+
         private static Callback< SteamNetConnectionStatusChangedCallback_t > s_on_connection_status_changed;
-        private static HSteamNetConnection                                   m_connection { get; set; } = HSteamNetConnection.Invalid;
-        public static  eClientState                                          m_state      { get; set; } = eClientState.kDisconnected;
 
         public static void connect( CSteamID _steam_id )
         {
             s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
             m_state                        = eClientState.kConnecting;
 
-            cMultiplayerLoadingOverlay.show( $"Connecting to {SteamFriends.GetFriendPersonaName( _steam_id )}" );
+            cMultiplayerLoadingOverlay.show( $"Connecting to {SteamFriends.GetFriendPersonaName( _steam_id )}..." );
 
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
             identity.SetSteamID64( _steam_id.m_SteamID );
@@ -56,13 +58,13 @@ namespace MultiplayerNotIncluded.Networking
             SteamNetworkingSockets.RunCallbacks();
 
             const int max_messages = 64;
-            IntPtr[]  messages     = new IntPtr[max_messages];
+            IntPtr[]  messages     = new IntPtr[ max_messages ];
             int       count        = SteamNetworkingSockets.ReceiveMessagesOnConnection( m_connection, messages, max_messages );
 
             for( int i = 0; i < count; i++ )
             {
                 SteamNetworkingMessage_t message = Marshal.PtrToStructure< SteamNetworkingMessage_t >( messages[ i ] );
-                byte[]                   data    = new byte[message.m_cbSize];
+                byte[]                   data    = new byte[ message.m_cbSize ];
                 Marshal.Copy( message.m_pData, data, 0, message.m_cbSize );
 
                 cPacketHandler.handleIncoming( data );
@@ -94,31 +96,29 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void onConnected()
         {
-            m_state                      = eClientState.kConnected;
-            cMultiplayerSession.s_in_session = true;
+            m_state = eClientState.kConnected;
 
-            CSteamID host_id = cMultiplayerSession.m_host_steam_id;
-            if( !cMultiplayerSession.s_connected_players.ContainsKey( host_id ) )
+            CSteamID host_id = cSession.m_host_steam_id;
+            if( !cSession.s_connected_players.ContainsKey( host_id ) )
             {
-                cMultiplayerPlayer player = new cMultiplayerPlayer( host_id );
-                cMultiplayerSession.s_connected_players[ host_id ] = player;
+                cPlayer player = new cPlayer( host_id );
+                cSession.s_connected_players[ host_id ] = player;
             }
 
-            cMultiplayerSession.s_connected_players[ host_id ].m_connection = m_connection;
+            cSession.s_connected_players[ host_id ].m_connection = m_connection;
             DebugTools.cLogger.logInfo( "Connected to host" );
 
-            cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cMultiplayerSession.m_host_steam_id )}..." );
+            cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
             var packet = new cSaveFileRequestPacket
             {
-                m_requester = cMultiplayerSession.localSteamID,
+                m_requester = cSession.localSteamID,
             };
             cPacketSender.sendToHost( packet );
         }
 
         private static void onDisconnected( string _reason, CSteamID _steam_id )
         {
-            m_state                      = eClientState.kDisconnected;
-            cMultiplayerSession.s_in_session = false;
+            m_state = eClientState.kDisconnected;
             DebugTools.cLogger.logInfo( $"Disconnected from {_steam_id}: {_reason}" );
         }
     }

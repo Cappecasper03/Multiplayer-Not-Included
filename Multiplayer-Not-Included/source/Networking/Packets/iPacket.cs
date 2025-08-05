@@ -2,6 +2,12 @@
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {
+    public enum ePacketType
+    {
+        kSaveFileRequest,
+        kSaveFileChunk,
+    }
+
     public interface iIPacket
     {
         ePacketType m_type { get; }

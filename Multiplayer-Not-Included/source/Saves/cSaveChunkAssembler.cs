@@ -22,7 +22,7 @@ namespace MultiplayerNotIncluded.Saves
             {
                 save = new sInProgressSave
                 {
-                    m_data           = new byte[_chunk.m_total_size],
+                    m_data           = new byte[ _chunk.m_total_size ],
                     m_received_bytes = 0,
                 };
                 s_in_progress[ _chunk.m_file_name ] = save;
