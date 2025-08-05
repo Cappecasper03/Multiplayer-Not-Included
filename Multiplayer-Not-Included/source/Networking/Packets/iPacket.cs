@@ -16,6 +16,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kCaptureTool,
         kClearTool,
         kDeconstructTool,
+        kDisconnectTool,
     }
 
     public interface iIPacket

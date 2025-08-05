@@ -29,6 +29,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kCaptureTool ]     = () => new cCaptureToolPacket();
             s_constructors[ ePacketType.kClearTool ]       = () => new cClearToolPacket();
             s_constructors[ ePacketType.kDeconstructTool ] = () => new cDeconstructToolPacket();
+            s_constructors[ ePacketType.kDisconnectTool ]  = () => new cDisconnectToolPacket();
         }
     }
 }
