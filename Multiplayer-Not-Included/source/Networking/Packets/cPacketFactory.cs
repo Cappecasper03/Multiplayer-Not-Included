@@ -40,6 +40,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kBuildTool ]          = () => new cBuildToolPacket();
 
             s_constructors[ ePacketType.kSpeedChange ] = () => new cSpeedChangePacket();
+            s_constructors[ ePacketType.kRedAlert ]    = () => new cRedAlertPacket();
 
             s_constructors[ ePacketType.kDeconstruct ]     = () => new cDeconstructPacket();
             s_constructors[ ePacketType.kAutoRepair ]      = () => new cAutoRepairPacket();

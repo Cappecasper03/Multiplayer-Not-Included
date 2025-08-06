@@ -26,6 +26,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kBuildTool,
 
         kSpeedChange,
+        kRedAlert,
 
         kDeconstruct,
         kAutoRepair,
