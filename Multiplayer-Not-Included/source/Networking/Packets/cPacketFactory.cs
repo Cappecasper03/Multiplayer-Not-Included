@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MultiplayerNotIncluded.Networking.Packets.Minions;
 using MultiplayerNotIncluded.Networking.Packets.Players;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
 using MultiplayerNotIncluded.Networking.Packets.World;
@@ -46,6 +47,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kAutoRepair ]      = () => new cAutoRepairPacket();
             s_constructors[ ePacketType.kAutoDisinfect ]   = () => new cAutoDisinfectPacket();
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
+
+            s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
         }
     }
 }

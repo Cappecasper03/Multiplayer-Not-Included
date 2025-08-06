@@ -13,8 +13,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             iIPacket    packet = cPacketFactory.create( type );
 
             packet.deserialize( reader );
-            packet.onReceived();
             packet.log( $"Receive({_data.Length})" );
+            packet.onReceived();
         }
     }
 }

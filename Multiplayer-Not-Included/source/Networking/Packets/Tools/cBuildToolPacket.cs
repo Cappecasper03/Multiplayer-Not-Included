@@ -70,10 +70,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             GameObject visualizer = Util.KInstantiate( building_def.BuildingPreview, position );
             building_def.TryPlace( visualizer, position, m_orientation, selected_elements, !string.IsNullOrEmpty( m_facade_id ) ? m_facade_id : "DEFAULT_FACADE" );
 
-            if( !cSession.isHost() )
-                return;
-
-            cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
+            if( cSession.isHost() )
+                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id} ({m_prefab_id})" );

@@ -37,10 +37,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             on_drag_tool?.Invoke( MopTool.Instance, new object[] { m_cell, 0 } );
             cMopToolPatch.s_skip_sending = false;
 
-            if( !cSession.isHost() )
-                return;
-
-            cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
+            if( cSession.isHost() )
+                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );

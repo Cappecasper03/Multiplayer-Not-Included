@@ -55,10 +55,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 break;
             }
 
-            if( !cSession.isHost() )
-                return;
-
-            cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
+            if( cSession.isHost() )
+                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );

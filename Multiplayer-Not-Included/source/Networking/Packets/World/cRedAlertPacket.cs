@@ -32,10 +32,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
         {
             ClusterManager.Instance.activeWorld.AlertManager.ToggleRedAlert( m_active );
 
-            if( !cSession.isHost() )
-                return;
-
-            cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
+            if( cSession.isHost() )
+                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: Active: {m_active}" );
