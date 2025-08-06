@@ -1,0 +1,10 @@
+# Ignore all files by default, but scan all directories
+*
+!*/
+
+!./.gitignore
+
+!*.sln
+!*.csproj
+!*.yaml
+!*/source/**/*.cs
