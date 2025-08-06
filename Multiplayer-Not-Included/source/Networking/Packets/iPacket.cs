@@ -23,6 +23,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kMopTool,
         kMoveToLocationTool,
         kPrioritizeTool,
+        kBuildTool,
     }
 
     public interface iIPacket

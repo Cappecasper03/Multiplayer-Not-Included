@@ -36,6 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kMopTool ]            = () => new cMopToolPacket();
             s_constructors[ ePacketType.kMoveToLocationTool ] = () => new cMoveToLocationToolPacket();
             s_constructors[ ePacketType.kPrioritizeTool ]     = () => new cPrioritizeToolPacket();
+            s_constructors[ ePacketType.kBuildTool ]          = () => new cBuildToolPacket();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets
