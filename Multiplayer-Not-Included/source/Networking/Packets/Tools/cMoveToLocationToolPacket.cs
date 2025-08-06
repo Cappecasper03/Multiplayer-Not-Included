@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
@@ -47,9 +46,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
-                cLogger.logWarning( $"{prefab_id.InstanceID}" );
                 navigator.GetSMI< MoveToLocationMonitor.Instance >()?.MoveToLocation( m_cell );
-                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
                 found = true;
                 break;
             }
@@ -64,7 +61,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                         continue;
 
                     movable.MoveToLocation( m_cell );
-                    cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
                     break;
                 }
             }

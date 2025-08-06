@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using JetBrains.Annotations;
-using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
@@ -28,7 +27,6 @@ namespace MultiplayerNotIncluded.Patches.Tool
             if( prefab_id == null )
                 return;
 
-            cLogger.logWarning( $"{prefab_id.InstanceID}" );
             cMoveToLocationToolPacket packet = new cMoveToLocationToolPacket( target_cell, prefab_id.InstanceID );
 
             if( cSession.isHost() )

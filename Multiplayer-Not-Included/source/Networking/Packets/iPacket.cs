@@ -22,6 +22,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kHarvestTool,
         kMopTool,
         kMoveToLocationTool,
+        kPrioritizeTool,
     }
 
     public interface iIPacket
