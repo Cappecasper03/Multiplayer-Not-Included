@@ -13,8 +13,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
 
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( DeconstructTool ), "DeconstructCell" )]
-        [HarmonyPatch( new[] { typeof( int ) } )]
+        [HarmonyPatch( typeof( DeconstructTool ), nameof( DeconstructTool.DeconstructCell ) )]
         private static void deconstructCell( int cell )
         {
             if( !cSteamLobby.inLobby() || s_skip_sending )

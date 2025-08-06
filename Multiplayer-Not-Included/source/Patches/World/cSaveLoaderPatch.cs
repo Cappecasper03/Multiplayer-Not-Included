@@ -6,7 +6,7 @@ using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Players;
 using Steamworks;
 
-namespace MultiplayerNotIncluded.Patches
+namespace MultiplayerNotIncluded.Patches.World
 {
     [HarmonyPatch]
     public static class cSaveLoaderPatch

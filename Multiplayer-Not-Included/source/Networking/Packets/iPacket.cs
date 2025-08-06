@@ -21,6 +21,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kEmptyPipeTool,
         kHarvestTool,
         kMopTool,
+        kMoveToLocationTool,
     }
 
     public interface iIPacket

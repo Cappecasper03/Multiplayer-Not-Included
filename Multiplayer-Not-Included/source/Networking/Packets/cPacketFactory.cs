@@ -23,17 +23,18 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kPlayerReady ]  = () => new cPlayerReadyPacket();
             s_constructors[ ePacketType.kPlayerCursor ] = () => new cPlayerCursorPacket();
 
-            s_constructors[ ePacketType.kDigTool ]         = () => new cDigToolPacket();
-            s_constructors[ ePacketType.kCancelTool ]      = () => new cCancelToolPacket();
-            s_constructors[ ePacketType.kAttackTool ]      = () => new cAttackToolPacket();
-            s_constructors[ ePacketType.kCaptureTool ]     = () => new cCaptureToolPacket();
-            s_constructors[ ePacketType.kClearTool ]       = () => new cClearToolPacket();
-            s_constructors[ ePacketType.kDeconstructTool ] = () => new cDeconstructToolPacket();
-            s_constructors[ ePacketType.kDisconnectTool ]  = () => new cDisconnectToolPacket();
-            s_constructors[ ePacketType.kDisinfectTool ]   = () => new cDisinfectToolPacket();
-            s_constructors[ ePacketType.kEmptyPipeTool ]   = () => new cEmptyPipeToolPacket();
-            s_constructors[ ePacketType.kHarvestTool ]     = () => new cHarvestToolPacket();
-            s_constructors[ ePacketType.kMopTool ]         = () => new cMopToolPacket();
+            s_constructors[ ePacketType.kDigTool ]            = () => new cDigToolPacket();
+            s_constructors[ ePacketType.kCancelTool ]         = () => new cCancelToolPacket();
+            s_constructors[ ePacketType.kAttackTool ]         = () => new cAttackToolPacket();
+            s_constructors[ ePacketType.kCaptureTool ]        = () => new cCaptureToolPacket();
+            s_constructors[ ePacketType.kClearTool ]          = () => new cClearToolPacket();
+            s_constructors[ ePacketType.kDeconstructTool ]    = () => new cDeconstructToolPacket();
+            s_constructors[ ePacketType.kDisconnectTool ]     = () => new cDisconnectToolPacket();
+            s_constructors[ ePacketType.kDisinfectTool ]      = () => new cDisinfectToolPacket();
+            s_constructors[ ePacketType.kEmptyPipeTool ]      = () => new cEmptyPipeToolPacket();
+            s_constructors[ ePacketType.kHarvestTool ]        = () => new cHarvestToolPacket();
+            s_constructors[ ePacketType.kMopTool ]            = () => new cMopToolPacket();
+            s_constructors[ ePacketType.kMoveToLocationTool ] = () => new cMoveToLocationToolPacket();
         }
     }
 }
