@@ -54,5 +54,11 @@ namespace MultiplayerNotIncluded.Networking
             _cursor = null;
             return false;
         }
+
+        public void destroyCursor()
+        {
+            Object.Destroy( m_cursor.gameObject );
+            m_cursor = null;
+        }
     }
 }

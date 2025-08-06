@@ -17,7 +17,15 @@ namespace MultiplayerNotIncluded.Networking
         public static readonly Dictionary< CSteamID, cPlayer > s_connected_players = new Dictionary< CSteamID, cPlayer >();
 
         public static bool tryGetPlayer( CSteamID _steam_id, out cPlayer _player ) => s_connected_players.TryGetValue( _steam_id, out _player );
-        public static bool removePlayer( CSteamID _steam_id ) => s_connected_players.Remove( _steam_id );
+
+        public static void removePlayer( CSteamID _steam_id )
+        {
+            cPlayer player;
+            if( tryGetPlayer( _steam_id, out player ) )
+                player.destroyCursor();
+
+            s_connected_players.Remove( _steam_id );
+        }
 
         public static cPlayer updateOrCreatePlayer( CSteamID _steam_id, HSteamNetConnection _connection )
         {
@@ -35,6 +43,9 @@ namespace MultiplayerNotIncluded.Networking
 
         public static void clear()
         {
+            foreach( cPlayer player in s_connected_players.Values )
+                player.destroyCursor();
+
             s_connected_players.Clear();
             m_host_steam_id = CSteamID.Nil;
             cLogger.logInfo( "Session cleared" );

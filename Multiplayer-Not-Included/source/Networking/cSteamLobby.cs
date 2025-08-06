@@ -66,6 +66,7 @@ namespace MultiplayerNotIncluded.Networking
             if( !inLobby() )
                 return;
 
+            cClient.disconnect();
             cServer.stop();
             cSession.clear();
 

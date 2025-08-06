@@ -50,10 +50,10 @@ namespace MultiplayerNotIncluded.Networking
             if( m_connection == HSteamNetConnection.Invalid )
                 return;
 
-            bool result = SteamNetworkingSockets.CloseConnection( m_connection, 0, "Client Disconnecting", false );
+            SteamNetworkingSockets.CloseConnection( m_connection, 0, "Client Disconnecting", false );
             m_connection = HSteamNetConnection.Invalid;
             m_state      = eClientState.kDisconnected;
-            cLogger.logInfo( $"Close connection: {result}" );
+            cLogger.logInfo( "Disconnected from host" );
         }
 
         public static void update()
