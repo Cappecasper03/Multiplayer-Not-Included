@@ -29,7 +29,7 @@ namespace MultiplayerNotIncluded.Menus
         {
             Func< float > get_scale;
             LoadingOverlay.Load( () => {} );
-            LoadingOverlay instance = ( LoadingOverlay )typeof( LoadingOverlay ).GetField( "instance", BindingFlags.NonPublic | BindingFlags.Static )?.GetValue( null );
+            LoadingOverlay instance = typeof( LoadingOverlay ).GetField( "instance", BindingFlags.NonPublic | BindingFlags.Static )?.GetValue( null ) as LoadingOverlay;
 
             if( instance == null )
             {

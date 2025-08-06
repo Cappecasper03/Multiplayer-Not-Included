@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets
@@ -73,8 +72,6 @@ namespace MultiplayerNotIncluded.Networking.Packets
             {
                 if( !player.isConnected() || player.isLocal() || _excluded.Contains( player.m_steam_id ) )
                     continue;
-
-                cLogger.logInfo( $"{player.m_steam_name}" );
 
                 if( sendToConnection( player.m_connection, _packet, _send_type ) != EResult.k_EResultOK )
                     result = EResult.k_EResultFail;

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
-using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
