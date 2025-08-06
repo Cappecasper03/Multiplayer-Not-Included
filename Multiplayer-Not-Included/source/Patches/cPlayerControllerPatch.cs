@@ -10,13 +10,13 @@ using Steamworks;
 namespace MultiplayerNotIncluded.Patches.World
 {
     [HarmonyPatch]
-    public static class cSaveLoaderPatch
+    public static class cPlayerControllerPatch
     {
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( SaveLoader ), "OnSpawn" )]
+        [HarmonyPatch( typeof( PlayerController ), "OnSpawn" )]
         [HarmonyPatch( new Type[ 0 ] )]
-        private static void OnSpawn()
+        private static void onSpawn()
         {
             if( !cSteamLobby.inLobby() )
                 return;

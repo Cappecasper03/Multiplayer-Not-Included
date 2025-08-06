@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -13,6 +14,7 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
+        [HarmonyPatch( new Type[ 0 ] )]
         private static void configureButtonInfos( PauseScreen __instance )
         {
             if( cSession.isClient() )
