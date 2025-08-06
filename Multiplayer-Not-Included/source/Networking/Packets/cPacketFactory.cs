@@ -32,6 +32,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kDisconnectTool ]  = () => new cDisconnectToolPacket();
             s_constructors[ ePacketType.kDisinfectTool ]   = () => new cDisinfectToolPacket();
             s_constructors[ ePacketType.kEmptyPipeTool ]   = () => new cEmptyPipeToolPacket();
+            s_constructors[ ePacketType.kHarvestTool ]     = () => new cHarvestToolPacket();
+            s_constructors[ ePacketType.kMopTool ]         = () => new cMopToolPacket();
         }
     }
 }

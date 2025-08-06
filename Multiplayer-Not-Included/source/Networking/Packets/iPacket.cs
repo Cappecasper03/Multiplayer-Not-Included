@@ -19,6 +19,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kDisconnectTool,
         kDisinfectTool,
         kEmptyPipeTool,
+        kHarvestTool,
+        kMopTool,
     }
 
     public interface iIPacket
