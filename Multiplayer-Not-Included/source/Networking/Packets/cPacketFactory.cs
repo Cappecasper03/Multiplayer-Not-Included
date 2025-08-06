@@ -41,8 +41,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             s_constructors[ ePacketType.kSpeedChange ] = () => new cSpeedChangePacket();
 
-            s_constructors[ ePacketType.kDeconstruct ] = () => new cDeconstructPacket();
-            s_constructors[ ePacketType.kAutoRepair ]  = () => new cAutoRepairPacket();
+            s_constructors[ ePacketType.kDeconstruct ]   = () => new cDeconstructPacket();
+            s_constructors[ ePacketType.kAutoRepair ]    = () => new cAutoRepairPacket();
+            s_constructors[ ePacketType.kAutoDisinfect ] = () => new cAutoDisinfectPacket();
         }
     }
 }

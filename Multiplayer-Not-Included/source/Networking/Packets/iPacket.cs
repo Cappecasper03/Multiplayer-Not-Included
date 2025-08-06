@@ -29,6 +29,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
         kDeconstruct,
         kAutoRepair,
+        kAutoDisinfect,
     }
 
     public interface iIPacket
