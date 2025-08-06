@@ -15,6 +15,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( BuildTool ), "TryBuild" )]
+        [HarmonyPatch( new[] { typeof( int ) } )]
         private static void tryBuild( int cell, BuildTool __instance )
         {
             if( !cSteamLobby.inLobby() || s_skip_sending )

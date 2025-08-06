@@ -13,6 +13,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( MoveToLocationTool ), "SetMoveToLocation" )]
+        [HarmonyPatch( new[] { typeof( int ) } )]
         private static void setMoveToLocation( int target_cell, MoveToLocationTool __instance )
         {
             if( !cSteamLobby.inLobby() )

@@ -15,6 +15,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( PrioritizeTool ), "TryPrioritizeGameObject" )]
+        [HarmonyPatch( new[] { typeof( GameObject ), typeof( PrioritySetting ) } )]
         private static void tryPrioritizeGameObject( GameObject target, PrioritySetting priority )
         {
             if( !cSteamLobby.inLobby() || s_skip_sending )

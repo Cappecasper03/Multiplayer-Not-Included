@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking;
@@ -14,6 +15,7 @@ namespace MultiplayerNotIncluded.Patches.World
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( SaveLoader ), "OnSpawn" )]
+        [HarmonyPatch( new Type[ 0 ] )]
         private static void OnSpawn()
         {
             if( !cSteamLobby.inLobby() )
