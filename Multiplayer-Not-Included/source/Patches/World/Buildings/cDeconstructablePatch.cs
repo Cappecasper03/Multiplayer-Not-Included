@@ -3,9 +3,9 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.World;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
 
-namespace MultiplayerNotIncluded.Patches.World
+namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
     [HarmonyPatch]
     public static class cDeconstructablePatch

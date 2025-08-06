@@ -28,6 +28,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSpeedChange,
 
         kDeconstruct,
+        kAutoRepair,
     }
 
     public interface iIPacket

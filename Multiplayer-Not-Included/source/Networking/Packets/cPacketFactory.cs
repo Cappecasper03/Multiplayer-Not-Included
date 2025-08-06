@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MultiplayerNotIncluded.Networking.Packets.Players;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
 using MultiplayerNotIncluded.Networking.Packets.World;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {
@@ -41,6 +42,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSpeedChange ] = () => new cSpeedChangePacket();
 
             s_constructors[ ePacketType.kDeconstruct ] = () => new cDeconstructPacket();
+            s_constructors[ ePacketType.kAutoRepair ]  = () => new cAutoRepairPacket();
         }
     }
 }

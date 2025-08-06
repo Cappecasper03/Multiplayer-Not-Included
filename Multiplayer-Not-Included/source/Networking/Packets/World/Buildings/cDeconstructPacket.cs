@@ -4,7 +4,7 @@ using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World
+namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
 {
     public class cDeconstructPacket : iIPacket
     {
