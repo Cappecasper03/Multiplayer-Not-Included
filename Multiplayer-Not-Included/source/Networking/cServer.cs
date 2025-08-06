@@ -112,7 +112,8 @@ namespace MultiplayerNotIncluded.Networking
 
         public static void setWaitingForPlayers()
         {
-            SpeedControlScreen.Instance.Pause( false );
+            if( !SpeedControlScreen.Instance.IsPaused )
+                SpeedControlScreen.Instance.Pause( false );
 
             int    ready_count = 0;
             string waiting_for = "";

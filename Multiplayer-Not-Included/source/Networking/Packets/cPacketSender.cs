@@ -33,6 +33,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
         public static EResult sendToPlayer( CSteamID _steam_id, iIPacket _packet, eSteamNetworkingSend _send_type = eSteamNetworkingSend.kReliableNoNagle )
         {
+            _packet.log( "Send" );
+
             cPlayer player;
             if( cSession.tryGetPlayer( _steam_id, out player ) )
                 return sendToConnection( player.m_connection, _packet, _send_type );

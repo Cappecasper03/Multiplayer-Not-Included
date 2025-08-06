@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
         public void deserialize( BinaryReader _reader ) => m_steam_id = new CSteamID( _reader.ReadUInt64() );
 
-        public void onDispatched()
+        public void onReceived()
         {
             if( !cSession.isHost() )
                 return;
@@ -44,6 +44,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
 
             CoroutineRunner.RunOne( sendChunks( packets, m_steam_id ) );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
 
         private static IEnumerator sendChunks( Queue< cSaveFileChunkPacket > _packets, CSteamID _steam_id )
         {

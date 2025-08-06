@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace MultiplayerNotIncluded
+﻿namespace MultiplayerNotIncluded
 {
     public static class cUtils
     {

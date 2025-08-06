@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_max      = _reader.ReadVector2();
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             CaptureTool.MarkForCapture( m_min, m_max, true );
 
@@ -44,5 +45,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
             cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
     }
 }

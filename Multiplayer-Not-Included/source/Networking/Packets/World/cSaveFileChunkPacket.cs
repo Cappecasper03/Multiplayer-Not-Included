@@ -41,6 +41,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
             m_data = _reader.ReadBytes( length );
         }
 
-        public void onDispatched() => cSaveChunkAssembler.receiveChunk( this );
+        public void onReceived() => cSaveChunkAssembler.receiveChunk( this );
+
+        public void log( string _message ) {}
     }
 }

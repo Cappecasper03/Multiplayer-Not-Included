@@ -24,6 +24,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kMoveToLocationTool,
         kPrioritizeTool,
         kBuildTool,
+
+        kSpeedChange,
     }
 
     public interface iIPacket
@@ -33,6 +35,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         void serialize( BinaryWriter   _writer );
         void deserialize( BinaryReader _reader );
 
-        void onDispatched();
+        void onReceived();
+
+        void log( string _message );
     }
 }

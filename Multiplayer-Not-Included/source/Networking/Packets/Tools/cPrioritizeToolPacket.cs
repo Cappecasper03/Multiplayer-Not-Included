@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 using UnityEngine;
@@ -38,7 +39,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_priority    = new PrioritySetting( ( PriorityScreen.PriorityClass )_reader.ReadInt32(), _reader.ReadInt32() );
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             Prioritizable[] prioritizables = Object.FindObjectsOfType< Prioritizable >();
             foreach( Prioritizable prioritizable in prioritizables )
@@ -59,5 +60,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
             cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
     }
 }

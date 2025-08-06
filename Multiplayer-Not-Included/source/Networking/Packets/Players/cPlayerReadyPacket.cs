@@ -15,7 +15,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
 
         public void deserialize( BinaryReader _reader ) => m_steam_id = new CSteamID( _reader.ReadUInt64() );
 
-        public void onDispatched()
+        public void onReceived()
         {
             if( cSession.isHost() )
             {
@@ -38,5 +38,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             else if( cSession.isClient() && m_steam_id == cSession.m_host_steam_id )
                 cMultiplayerLoadingOverlay.hide();
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
     }
 }

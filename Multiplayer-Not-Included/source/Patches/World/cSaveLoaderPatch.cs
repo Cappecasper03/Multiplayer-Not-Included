@@ -20,7 +20,8 @@ namespace MultiplayerNotIncluded.Patches.World
                 return;
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            SpeedControlScreen.Instance.Pause( false );
+            if( !SpeedControlScreen.Instance.IsPaused )
+                SpeedControlScreen.Instance.Pause( false );
 
             cPacketSender.sendToHost( new cPlayerReadyPacket() );
         }

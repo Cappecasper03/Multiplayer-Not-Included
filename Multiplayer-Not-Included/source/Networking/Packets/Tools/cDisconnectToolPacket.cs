@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_up_pos   = _reader.ReadVector3();
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             cDisconnectToolPatch.s_skip_sending = true;
             MethodInfo on_drag_tool = DisconnectTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
@@ -49,5 +50,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
             cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
     }
 }

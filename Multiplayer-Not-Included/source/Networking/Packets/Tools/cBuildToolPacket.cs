@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
@@ -54,7 +55,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 m_selected_elements.Add( _reader.ReadString() );
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             if( !Grid.IsValidCell( m_cell ) )
                 return;
@@ -74,5 +75,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
             cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id} ({m_prefab_id})" );
     }
 }

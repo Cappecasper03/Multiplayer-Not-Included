@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
 
@@ -28,7 +29,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_cell     = _reader.ReadInt32();
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             cDeconstructToolPatch.s_skip_sending = true;
             DeconstructTool.Instance.DeconstructCell( m_cell );
@@ -39,5 +40,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
             cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
     }
 }
