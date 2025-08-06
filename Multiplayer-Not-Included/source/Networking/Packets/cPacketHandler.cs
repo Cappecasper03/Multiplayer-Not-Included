@@ -14,7 +14,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             packet.deserialize( reader );
             packet.onReceived();
-            packet.log( "Received" );
+            packet.log( $"Receive({_data.Length})" );
         }
     }
 }
