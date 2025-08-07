@@ -50,6 +50,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();
+            s_constructors[ ePacketType.kSchedule ]       = () => new cSchedulePacket();
         }
     }
 }
