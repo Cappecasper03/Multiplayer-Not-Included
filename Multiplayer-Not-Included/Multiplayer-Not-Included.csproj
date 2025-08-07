@@ -3,7 +3,7 @@
         <TargetFramework>net472</TargetFramework>
         <ImplicitUsings>false</ImplicitUsings>
         <SteamLibraryPath></SteamLibraryPath>
-        <GameDataPath>$(SteamLibraryPath)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
+        <GameDataPath>$(SteamLibraryPath)\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
     </PropertyGroup>
 
     <ItemGroup>
