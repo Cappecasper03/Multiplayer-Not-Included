@@ -62,13 +62,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                     MinionIdentity[] minion_identities = Object.FindObjectsOfType< MinionIdentity >();
                     foreach( MinionIdentity identity in minion_identities )
                     {
-                        cLogger.logWarning( identity.GetProperName() );
                         if( identity.GetProperName() != m_identity_name )
                             continue;
 
                         ConsumableConsumer component   = identity.GetComponent< ConsumableConsumer >();
                         bool               can_consume = m_value == TableScreen.ResultValues.True || m_value == TableScreen.ResultValues.ConditionalGroup;
-                        component.SetPermitted( m_consumable_id, can_consume );
+                        component?.SetPermitted( m_consumable_id, can_consume );
                         break;
                     }
 

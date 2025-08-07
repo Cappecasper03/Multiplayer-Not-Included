@@ -10,12 +10,12 @@ using UnityEngine;
 namespace MultiplayerNotIncluded.source.Patches.Menus
 {
     [HarmonyPatch]
-    public static class cConsumablesTableScreen
+    public static class cConsumablesTableScreenPatch
     {
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( ConsumablesTableScreen ), "set_value_consumable_info" )]
-        [HarmonyPatch( new Type[] { typeof( GameObject ), typeof( TableScreen.ResultValues ) } )]
+        [HarmonyPatch( new[] { typeof( GameObject ), typeof( TableScreen.ResultValues ) } )]
         private static void setValueConsumableInfo( GameObject widget_go, TableScreen.ResultValues new_value, ConsumablesTableScreen __instance )
         {
             if( !cSteamLobby.inLobby() )
