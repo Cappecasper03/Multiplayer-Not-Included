@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.World
         [HarmonyPatch( typeof( SpeedControlScreen ), nameof( SpeedControlScreen.TogglePause ) )]
         private static void togglePause( bool playsound )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             bool               is_paused = SpeedControlScreen.Instance.IsPaused;
@@ -34,7 +34,7 @@ namespace MultiplayerNotIncluded.Patches.World
         [HarmonyPatch( typeof( SpeedControlScreen ), nameof( SpeedControlScreen.SetSpeed ) )]
         private static void setSpeed( int Speed )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             bool               is_paused = SpeedControlScreen.Instance.IsPaused;

@@ -74,6 +74,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id} ({m_prefab_id})" );
+        public void log( string _message )
+        {
+            cLogger.logInfo( $"{_message}: {m_cell}, {m_prefab_id}, {m_facade_id}, {m_orientation}, {m_selected_elements.Count}" );
+        }
     }
 }

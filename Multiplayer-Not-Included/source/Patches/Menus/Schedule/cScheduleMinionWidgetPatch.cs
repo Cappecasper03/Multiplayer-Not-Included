@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( typeof( ScheduleMinionWidget ), nameof( ScheduleMinionWidget.ChangeAssignment ) )]
         private static void changeAssignment( Schedule targetSchedule, Schedulable schedulable, ScheduleMinionWidget __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             string          name   = __instance.schedulable != null ? __instance.schedulable.name : "";

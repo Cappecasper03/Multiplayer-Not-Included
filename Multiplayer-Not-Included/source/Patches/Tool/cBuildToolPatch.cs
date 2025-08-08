@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ) } )]
         private static void tryBuild( int cell, BuildTool __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             BuildingDef  building_def      = AccessTools.Field( typeof( BuildTool ), "def" ).GetValue( __instance ) as BuildingDef;

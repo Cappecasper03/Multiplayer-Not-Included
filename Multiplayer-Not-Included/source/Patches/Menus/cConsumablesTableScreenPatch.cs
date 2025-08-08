@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( GameObject ), typeof( TableScreen.ResultValues ) } )]
         private static void setValueConsumableInfo( GameObject widget_go, TableScreen.ResultValues new_value, ConsumablesTableScreen __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             MethodInfo get_widget_row    = __instance.GetType().GetMethod( "GetWidgetRow",    BindingFlags.NonPublic | BindingFlags.Instance );
@@ -33,7 +33,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             IAssignableIdentity identity        = widget_row.GetIdentity();
             string              identity_name   = identity != null ? identity.GetProperName() : "None";
 
-            cConsumableInfoPacket packet = new cConsumableInfoPacket( widget_row.rowType, identity_name, consumable_info.ConsumableId, new_value );
+            cConsumableInfoPacket packet = new cConsumableInfoPacket( widget_row.rowType, consumable_info.ConsumableId, new_value, identity_name );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

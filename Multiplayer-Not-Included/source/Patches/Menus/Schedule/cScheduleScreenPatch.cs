@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( typeof( ScheduleScreen ), "OnAddScheduleClick" )]
         private static void onAddScheduleClick()
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createDefault();

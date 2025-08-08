@@ -59,6 +59,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_instance_id}, {m_priority.priority_class}, {m_priority.priority_value}" );
     }
 }

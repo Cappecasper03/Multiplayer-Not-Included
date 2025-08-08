@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onDeconstruct( Deconstructable __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();

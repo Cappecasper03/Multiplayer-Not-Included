@@ -17,7 +17,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( Vector3 ), typeof( Vector3 ) } )]
         private static void onDragComplete( Vector3 downPos, Vector3 upPos, AttackTool __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             MethodInfo get_regularized_pos = __instance.GetType().GetMethod( "GetRegularizedPos", BindingFlags.NonPublic | BindingFlags.Instance );

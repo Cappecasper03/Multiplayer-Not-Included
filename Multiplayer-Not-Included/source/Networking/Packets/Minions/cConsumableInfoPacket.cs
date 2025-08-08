@@ -11,38 +11,42 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
     {
         private CSteamID                 m_steam_id = cSession.m_local_steam_id;
         private TableRow.RowType         m_row_type;
-        private string                   m_identity_name;
         private string                   m_consumable_id;
         private TableScreen.ResultValues m_value;
+        private string                   m_identity_name;
 
         public ePacketType m_type => ePacketType.kConsumableInfo;
 
         public cConsumableInfoPacket() {}
 
-        public cConsumableInfoPacket( TableRow.RowType _row_type, string _identity_name, string _consumable_id, TableScreen.ResultValues _value )
+        public cConsumableInfoPacket( TableRow.RowType _row_type, string _consumable_id, TableScreen.ResultValues _value, string _identity_name )
         {
             m_row_type      = _row_type;
-            m_identity_name = _identity_name;
             m_consumable_id = _consumable_id;
             m_value         = _value;
+            m_identity_name = _identity_name;
         }
 
         public void serialize( BinaryWriter _writer )
         {
             _writer.Write( m_steam_id.m_SteamID );
             _writer.Write( ( int )m_row_type );
-            _writer.Write( m_identity_name );
             _writer.Write( m_consumable_id );
             _writer.Write( ( int )m_value );
+
+            if( m_row_type == TableRow.RowType.Minion )
+                _writer.Write( m_identity_name );
         }
 
         public void deserialize( BinaryReader _reader )
         {
             m_steam_id      = new CSteamID( _reader.ReadUInt64() );
             m_row_type      = ( TableRow.RowType )_reader.ReadInt32();
-            m_identity_name = _reader.ReadString();
             m_consumable_id = _reader.ReadString();
             m_value         = ( TableScreen.ResultValues )_reader.ReadInt32();
+
+            if( m_row_type == TableRow.RowType.Minion )
+                m_identity_name = _reader.ReadString();
         }
 
         public void onReceived()
@@ -79,6 +83,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_row_type}, {m_identity_name}, {m_consumable_id}, {m_value}" );
+        public void log( string _message )
+        {
+            if( m_row_type == TableRow.RowType.Minion )
+                cLogger.logInfo( $"{_message}: {m_row_type}, {m_consumable_id}, {m_value}, {m_identity_name}" );
+            else
+                cLogger.logInfo( $"{_message}: {m_row_type}, {m_consumable_id}, {m_value}" );
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.World
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onSpawn()
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.isClient() )
                 return;
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using HarmonyLib;
@@ -182,7 +183,23 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_action}" );
+        public void log( string _message )
+        {
+            switch( m_action )
+            {
+                case eAction.kAddDefault:  cLogger.logInfo( $"{_message}: {m_action}" ); break;
+                case eAction.kChangeName:  cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_new_name}" ); break;
+                case eAction.kToggleAlarm: cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_alarm}" ); break;
+                case eAction.kDuplicate:   cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_timetable}" ); break;
+                case eAction.kDelete:      cLogger.logInfo( $"{_message}: {m_action}, {m_name}" ); break;
+                case eAction.kDuplicateTimetable:
+                case eAction.kRemoveTimetable: cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_timetable}" ); break;
+                case eAction.kRotateTimetable:
+                case eAction.kShiftTimetable: cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_timetable}, {m_rotate_direction}" ); break;
+                case eAction.kChangeAssignment: cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_schedule}, {m_identity}" ); break;
+                case eAction.kChangeSchedule:   cLogger.logInfo( $"{_message}: {m_action}, {m_name}, {m_block_index}, {m_group_name}, {m_group_id}" ); break;
+            }
+        }
 
         private static void addDefault()
         {
@@ -347,9 +364,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         {
             ScheduleScreenEntry entry = findEntry( m_name );
 
-            cScheduleScreenEntryPatch.s_skip_sending = true;
+            cSchedulePatch.s_skip_sending = true;
             entry.schedule.SetBlockGroup( m_block_index, new ScheduleGroup( m_group_id, null, 0, m_group_name, "", Color.black, "", new List< ScheduleBlockType >() ) );
-            cScheduleScreenEntryPatch.s_skip_sending = false;
+            cSchedulePatch.s_skip_sending = false;
         }
 
         private static ScheduleScreenEntry findEntry( string _name )

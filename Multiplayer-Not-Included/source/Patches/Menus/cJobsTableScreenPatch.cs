@@ -21,7 +21,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changePersonalPriority( object widget_go_obj, int delta, JobsTableScreen __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             MethodInfo get_widget_row    = __instance.GetType().GetMethod( "GetWidgetRow",    BindingFlags.NonPublic | BindingFlags.Instance );
@@ -41,7 +41,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             else if( widget_row.GetIdentity() != null )
                 identities.Add( widget_row.GetIdentity().GetProperName() );
 
-            cJobPriorityPacket packet = new cJobPriorityPacket( delta, new List< int > { chore_group.IdHash.HashValue }, identities );
+            cJobPriorityPacket packet = cJobPriorityPacket.createPersonal( delta, new List< int > { chore_group.IdHash.HashValue }, identities );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
@@ -55,7 +55,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changeColumnPriority( object widget_go_obj, int new_priority, JobsTableScreen __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             MethodInfo get_widget_column = __instance.GetType().GetMethod( "GetWidgetColumn", BindingFlags.NonPublic | BindingFlags.Instance );
@@ -76,7 +76,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
                     identities.Add( table_row.GetIdentity().GetProperName() );
             }
 
-            cJobPriorityPacket packet = new cJobPriorityPacket( new_priority, new List< int > { chore_group.IdHash.HashValue }, identities );
+            cJobPriorityPacket packet = cJobPriorityPacket.createColumn( new_priority, new List< int > { chore_group.IdHash.HashValue }, identities );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
@@ -90,7 +90,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changeRowPriority( object widget_go_obj, int delta, JobsTableScreen __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             MethodInfo get_widget_row = __instance.GetType().GetMethod( "GetWidgetRow", BindingFlags.NonPublic | BindingFlags.Instance );
@@ -119,7 +119,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             else if( widget_row.GetIdentity() != null )
                 identities.Add( widget_row.GetIdentity().GetProperName() );
 
-            cJobPriorityPacket packet = new cJobPriorityPacket( delta, chore_group_ids, identities );
+            cJobPriorityPacket packet = cJobPriorityPacket.createRow( delta, chore_group_ids, identities );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
@@ -133,10 +133,10 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onResetSettingsClicked()
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
-            cJobPriorityPacket packet = new cJobPriorityPacket( -1, new List< int >(), new List< string >() );
+            cJobPriorityPacket packet = cJobPriorityPacket.createReset();
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
@@ -150,10 +150,10 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onAdvancedModeToggleClicked()
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
-            cJobPriorityPacket packet = new cJobPriorityPacket( Convert.ToInt32( Game.Instance.advancedPersonalPriorities ), new List< int >(), new List< string >() );
+            cJobPriorityPacket packet = cJobPriorityPacket.createToggleAdvanced( Convert.ToInt32( Game.Instance.advancedPersonalPriorities ) );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

@@ -53,6 +53,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: IsPaused: {m_is_paused}, Speed: {m_speed}" );
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_is_paused}, {m_speed}" );
     }
 }

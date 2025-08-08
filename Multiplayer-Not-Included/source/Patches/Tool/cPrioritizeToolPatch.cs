@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( GameObject ), typeof( PrioritySetting ) } )]
         private static void tryPrioritizeGameObject( GameObject target, PrioritySetting priority )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             KPrefabID prefab_id = target?.GetComponent< KPrefabID >();

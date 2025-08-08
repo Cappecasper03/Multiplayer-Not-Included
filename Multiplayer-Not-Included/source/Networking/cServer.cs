@@ -73,8 +73,9 @@ namespace MultiplayerNotIncluded.Networking
             {
                 if( player.m_connection != HSteamNetConnection.Invalid )
                     SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
-                player.m_connection = HSteamNetConnection.Invalid;
             }
+
+            cSession.s_connected_players.Clear();
 
             if( m_poll_group.m_HSteamNetPollGroup != 0 )
                 SteamNetworkingSockets.DestroyPollGroup( m_poll_group );
@@ -145,8 +146,8 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void rejectConnection( HSteamNetConnection _connection, CSteamID _client_id, string _reason )
         {
-            cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
             SteamNetworkingSockets.CloseConnection( _connection, 0, _reason, false );
+            cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
         }
 
         private static void OnClientConnected( HSteamNetConnection _connection, CSteamID _client_id )

@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ) } )]
         private static void setMoveToLocation( int target_cell, MoveToLocationTool __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             Navigator navigator = AccessTools.Field( typeof( MoveToLocationTool ), "targetNavigator" ).GetValue( __instance ) as Navigator;

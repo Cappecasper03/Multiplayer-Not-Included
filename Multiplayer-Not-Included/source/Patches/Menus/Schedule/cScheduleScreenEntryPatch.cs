@@ -20,7 +20,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new Type[ 0 ] )]
         private static void duplicateSchedule( ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createDuplicate( __instance.schedule.name );
@@ -37,7 +37,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new Type[ 0 ] )]
         private static void deleteSchedule( ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createDelete( __instance.schedule.name );
@@ -54,7 +54,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( int ) } )]
         private static void duplicateTimetableRow( int sourceTimetableIdx, ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createDuplicateTimetable( __instance.schedule.name, sourceTimetableIdx );
@@ -71,7 +71,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( GameObject ) } )]
         private static void removeTimetableRow( GameObject row, ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             List< GameObject > timetable_rows = AccessTools.Field( typeof( ScheduleScreenEntry ), "timetableRows" ).GetValue( __instance ) as List< GameObject >;
@@ -101,7 +101,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new[] { typeof( string ) } )]
         private static void onNameChanged( string newName, ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createChangeName( __instance.schedule.name, newName );
@@ -118,7 +118,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onAlarmClicked( ScheduleScreenEntry __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSession() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createToggleAlarm( __instance.schedule.name, __instance.schedule.alarmActivated );

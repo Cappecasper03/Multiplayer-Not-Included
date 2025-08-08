@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.World
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onRedAlertClick()
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSession() )
                 return;
 
             cRedAlertPacket packet = new cRedAlertPacket( ClusterManager.Instance.activeWorld.AlertManager.IsRedAlertToggledOn() );

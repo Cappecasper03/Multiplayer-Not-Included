@@ -96,7 +96,6 @@ namespace MultiplayerNotIncluded.Networking
         private static void onEntered( LobbyEnter_t _data )
         {
             m_lobby_id = new CSteamID( _data.m_ulSteamIDLobby );
-
             cSession.clear();
 
             string host = SteamMatchmaking.GetLobbyData( m_lobby_id, "host" );

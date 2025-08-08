@@ -45,7 +45,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
             CoroutineRunner.RunOne( sendChunks( packets, m_steam_id ) );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
+        public void log( string _message ) {}
 
         private static IEnumerator sendChunks( Queue< cSaveFileChunkPacket > _packets, CSteamID _steam_id )
         {
