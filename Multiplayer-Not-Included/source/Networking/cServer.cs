@@ -75,7 +75,7 @@ namespace MultiplayerNotIncluded.Networking
                     SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
             }
 
-            cSession.s_connected_players.Clear();
+            cSession.clear();
 
             if( m_poll_group.m_HSteamNetPollGroup != 0 )
                 SteamNetworkingSockets.DestroyPollGroup( m_poll_group );

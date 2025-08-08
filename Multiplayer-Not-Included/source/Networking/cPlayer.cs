@@ -28,8 +28,6 @@ namespace MultiplayerNotIncluded.Networking
                 m_ready = true;
         }
 
-        ~cPlayer() => destroyCursor();
-
         public bool getOrCreateCursor( out cPlayerCursorComponent _cursor )
         {
             if( m_cursor != null )
