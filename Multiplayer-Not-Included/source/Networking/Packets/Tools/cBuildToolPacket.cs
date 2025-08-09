@@ -179,7 +179,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                         Traverse.Create( instance ).Method( "BuildPath" ).GetValue();
                         cBaseUtilityBuildToolPatch.s_skip_sending = false;
                     }
-                    catch( Exception e )
+                    catch( Exception )
                     {
                         cUtils.delayAction( 2000, () => cUtils.initializeUtility( "Power",       "Wire" ) );
                         cUtils.delayAction( 2250, () => cUtils.initializeUtility( "Plumbing",    "LiquidConduit" ) );

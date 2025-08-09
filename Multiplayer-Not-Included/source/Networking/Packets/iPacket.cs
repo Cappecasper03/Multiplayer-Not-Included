@@ -36,6 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kConsumableInfo,
         kJobPriority,
         kSchedule,
+        kSkills,
     }
 
     public interface iIPacket
