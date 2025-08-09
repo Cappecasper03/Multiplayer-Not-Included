@@ -33,10 +33,14 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
                     return;
 
                 cPacketSender.sendToAll( new cPlayerReadyPacket() );
-                cMultiplayerLoadingOverlay.hide();
             }
-            else if( cSession.isClient() && m_steam_id == cSession.m_host_steam_id )
-                cMultiplayerLoadingOverlay.hide();
+            else if( !cSession.isClient() || m_steam_id != cSession.m_host_steam_id )
+                return;
+
+            cMultiplayerLoadingOverlay.hide();
+            cUtils.delayAction( 2000, () => cUtils.initializeUtility( "Power",       "Wire" ) );
+            cUtils.delayAction( 2250, () => cUtils.initializeUtility( "Plumbing",    "LiquidConduit" ) );
+            cUtils.delayAction( 2500, () => cUtils.initializeUtility( "Ventilation", "GasConduit" ) );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );

@@ -5,7 +5,7 @@ using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
 
-namespace MultiplayerNotIncluded.Patches.Tool
+namespace MultiplayerNotIncluded.Patches.Tool.Build
 {
     [HarmonyPatch]
     public static class cBuildToolPatch
@@ -26,10 +26,10 @@ namespace MultiplayerNotIncluded.Patches.Tool
             string       facade_id         = AccessTools.Field( typeof( BuildTool ), "facadeID" ).GetValue( __instance ) as string;
             Orientation  orientation       = __instance.GetBuildingOrientation;
 
-            if( building_def == null || selected_elements == null )
+            if( building_def == null || selected_elements == null || facade_id == null )
                 return;
 
-            cBuildToolPacket packet = new cBuildToolPacket( cell, building_def.PrefabID, facade_id, orientation, selected_elements );
+            cBuildToolPacket packet = cBuildToolPacket.createBuilding( building_def.PrefabID, cell, facade_id, orientation, selected_elements );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
