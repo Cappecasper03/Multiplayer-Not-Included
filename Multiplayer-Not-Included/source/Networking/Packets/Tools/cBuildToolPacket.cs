@@ -9,6 +9,7 @@ using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool.Build;
 using Steamworks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
@@ -20,37 +21,41 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             kUtility,
         }
 
-        private CSteamID                   m_steam_id = cSession.m_local_steam_id;
-        private eAction                    m_action;
-        private string                     m_prefab_id;
-        private int                        m_cell;
-        private string                     m_facade_id;
-        private Orientation                m_orientation;
-        private List< string >             m_selected_elements = new List< string >();
-        private List< Tuple< int, bool > > m_path              = new List< Tuple< int, bool > >();
+        private CSteamID           m_steam_id = cSession.m_local_steam_id;
+        private eAction            m_action;
+        private string             m_prefab_id;
+        private string             m_facade_id;
+        private List< string >     m_selected_elements = new List< string >();
+        private int                m_cell;
+        private Orientation        m_orientation;
+        private List< int >        m_path        = new List< int >();
+        List< UtilityConnections > m_connections = new List< UtilityConnections >();
 
         public ePacketType m_type => ePacketType.kBuildTool;
 
-        public static cBuildToolPacket createBuilding( string _prefab_id, int _cell, string _facade_id, Orientation _orientation, IList< Tag > _selected_elements )
+        public static cBuildToolPacket createBuilding( string _prefab_id, string _facade_id, IList< Tag > _selected_elements, int _cell, Orientation _orientation )
         {
             return new cBuildToolPacket
             {
                 m_action            = eAction.kBuilding,
                 m_prefab_id         = _prefab_id,
-                m_cell              = _cell,
                 m_facade_id         = _facade_id,
+                m_selected_elements = _selected_elements.Select( _e => _e.ToString() ).ToList(),
+                m_cell              = _cell,
                 m_orientation       = _orientation,
-                m_selected_elements = _selected_elements.Select( _e => _e.ToString() ).ToList()
             };
         }
 
-        public static cBuildToolPacket createUtility( string _prefab_id, List< Tuple< int, bool > > _path )
+        public static cBuildToolPacket createUtility( string _prefab_id, string _facade_id, IList< Tag > _selected_elements, List< int > _path, List< UtilityConnections > _connections )
         {
             return new cBuildToolPacket
             {
-                m_action    = eAction.kUtility,
-                m_prefab_id = _prefab_id,
-                m_path      = _path
+                m_action            = eAction.kUtility,
+                m_prefab_id         = _prefab_id,
+                m_facade_id         = _facade_id,
+                m_selected_elements = _selected_elements.Select( _e => _e.ToString() ).ToList(),
+                m_path              = _path,
+                m_connections       = _connections,
             };
         }
 
@@ -59,28 +64,30 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             _writer.Write( m_steam_id.m_SteamID );
             _writer.Write( ( int )m_action );
             _writer.Write( m_prefab_id );
+            _writer.Write( m_facade_id );
+
+            _writer.Write( m_selected_elements.Count );
+            foreach( string element_tag in m_selected_elements )
+                _writer.Write( element_tag );
 
             switch( m_action )
             {
                 case eAction.kBuilding:
                 {
                     _writer.Write( m_cell );
-                    _writer.Write( m_facade_id );
                     _writer.Write( ( int )m_orientation );
 
-                    _writer.Write( m_selected_elements.Count );
-                    foreach( string element_tag in m_selected_elements )
-                        _writer.Write( element_tag );
                     break;
                 }
                 case eAction.kUtility:
                 {
                     _writer.Write( m_path.Count );
-                    foreach( Tuple< int, bool > path in m_path )
-                    {
-                        _writer.Write( path.first );
-                        _writer.Write( path.second );
-                    }
+                    foreach( int cell in m_path )
+                        _writer.Write( cell );
+
+                    _writer.Write( m_connections.Count );
+                    foreach( UtilityConnections connection in m_connections )
+                        _writer.Write( ( int )connection );
 
                     break;
                 }
@@ -92,25 +99,30 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_steam_id  = new CSteamID( _reader.ReadUInt64() );
             m_action    = ( eAction )_reader.ReadInt32();
             m_prefab_id = _reader.ReadString();
+            m_facade_id = _reader.ReadString();
+
+            int element_count = _reader.ReadInt32();
+            for( int i = 0; i < element_count; i++ )
+                m_selected_elements.Add( _reader.ReadString() );
 
             switch( m_action )
             {
                 case eAction.kBuilding:
                 {
                     m_cell        = _reader.ReadInt32();
-                    m_facade_id   = _reader.ReadString();
                     m_orientation = ( Orientation )_reader.ReadInt32();
 
-                    int element_count = _reader.ReadInt32();
-                    for( int i = 0; i < element_count; i++ )
-                        m_selected_elements.Add( _reader.ReadString() );
                     break;
                 }
                 case eAction.kUtility:
                 {
-                    int count = _reader.ReadInt32();
-                    for( int i = 0; i < count; i++ )
-                        m_path.Add( new Tuple< int, bool >( _reader.ReadInt32(), _reader.ReadBoolean() ) );
+                    int cell_count = _reader.ReadInt32();
+                    for( int i = 0; i < cell_count; i++ )
+                        m_path.Add( _reader.ReadInt32() );
+
+                    int connection_count = _reader.ReadInt32();
+                    for( int i = 0; i < connection_count; i++ )
+                        m_connections.Add( ( UtilityConnections )_reader.ReadInt32() );
 
                     break;
                 }
@@ -123,73 +135,48 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             if( building_def == null )
                 return;
 
+            List< Tag > selected_elements = m_selected_elements.Select( _e => new Tag( _e ) ).ToList();
+            string      facade            = !string.IsNullOrEmpty( m_facade_id ) ? m_facade_id : "DEFAULT_FACADE";
+
             switch( m_action )
             {
                 case eAction.kBuilding:
                 {
-                    List< Tag > selected_elements = m_selected_elements.Select( _e => new Tag( _e ) ).ToList();
-                    Vector3     position          = Grid.CellToPosCBC( m_cell, Grid.SceneLayer.Building );
+                    Vector3 position = Grid.CellToPosCBC( m_cell, building_def.SceneLayer );
 
                     cBuildToolPatch.s_skip_sending = true;
-                    string facade = !string.IsNullOrEmpty( m_facade_id ) ? m_facade_id : "DEFAULT_FACADE";
                     building_def.TryPlace( BuildTool.Instance.visualizer, position, m_orientation, selected_elements, facade );
                     cBuildToolPatch.s_skip_sending = false;
                     break;
                 }
                 case eAction.kUtility:
                 {
-                    cLogger.logWarning( $"{m_prefab_id}" );
-                    BaseUtilityBuildTool instance = null;
-                    switch( m_prefab_id )
+                    if( m_path.Count == 1 )
                     {
-                        case "Wire": instance = WireBuildTool.Instance; break;
-                        case "LiquidConduit":
-                        case "GasConduit":
+                        Vector3 position = Grid.CellToPosCBC( m_path[ 0 ], building_def.SceneLayer );
+
+                        building_def.TryPlace( null, position, Orientation.Neutral, selected_elements, facade );
+                    }
+                    else
+                    {
+                        IUtilityNetworkMgr manager = building_def.BuildingComplete.GetComponent< IHaveUtilityNetworkMgr >().GetNetworkManager();
+                        if( manager == null )
+                            return;
+
+                        for( int i = 0; i < m_path.Count; i++ )
                         {
-                            instance = UtilityBuildTool.Instance;
-                            if( instance != null )
-                                Traverse.Create( instance ).Field( "def" ).SetValue( building_def );
-                            break;
+                            int                cell       = m_path[ i ];
+                            UtilityConnections connection = m_connections[ i ];
+
+                            Vector3 position = Grid.CellToPosCBC( cell, building_def.SceneLayer );
+
+                            GameObject utility = building_def.TryPlace( null, position, Orientation.Neutral, selected_elements, facade );
+                            manager.SetConnections( connection, cell, false );
+
+                            KAnimGraphTileVisualizer component = utility.GetComponent< KAnimGraphTileVisualizer >();
+                            if( component != null )
+                                component.UpdateConnections( component.Connections | manager.GetConnections( cell, false ) );
                         }
-                    }
-
-                    if( instance == null )
-                        return;
-
-                    Type path_node_type = typeof( BaseUtilityBuildTool ).GetNestedType( "PathNode", BindingFlags.NonPublic );
-                    if( path_node_type == null )
-                        return;
-
-                    IList instance_path = Traverse.Create( instance ).Field( "path" ).GetValue< IList >();
-                    if( instance_path == null )
-                        return;
-
-                    object path_object = Activator.CreateInstance( path_node_type );
-                    instance_path.Clear();
-                    foreach( Tuple< int, bool > path in m_path )
-                    {
-                        path_node_type.GetField( "cell" ).SetValue( path_object, path.first );
-                        path_node_type.GetField( "valid" ).SetValue( path_object, path.second );
-                        instance_path.Add( path_object );
-                    }
-
-                    try
-                    {
-                        cBaseUtilityBuildToolPatch.s_skip_sending = true;
-                        Traverse.Create( instance ).Method( "BuildPath" ).GetValue();
-                        cBaseUtilityBuildToolPatch.s_skip_sending = false;
-                    }
-                    catch( Exception )
-                    {
-                        cUtils.delayAction( 2000, () => cUtils.initializeUtility( "Power",       "Wire" ) );
-                        cUtils.delayAction( 2250, () => cUtils.initializeUtility( "Plumbing",    "LiquidConduit" ) );
-                        cUtils.delayAction( 2500, () => cUtils.initializeUtility( "Ventilation", "GasConduit" ) );
-                        cUtils.delayAction( 3000, () =>
-                        {
-                            cBaseUtilityBuildToolPatch.s_skip_sending = true;
-                            Traverse.Create( instance ).Method( "BuildPath" ).GetValue();
-                            cBaseUtilityBuildToolPatch.s_skip_sending = false;
-                        } );
                     }
 
                     break;

@@ -10,31 +10,37 @@ namespace MultiplayerNotIncluded.Patches.Tool.Build
     [HarmonyPatch]
     public static class cBaseUtilityBuildToolPatch
     {
-        public static bool s_skip_sending = false;
-
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( BaseUtilityBuildTool ), "BuildPath" )]
         private static void buildPath( BaseUtilityBuildTool __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSession() )
                 return;
 
-            BuildingDef              building_def  = Traverse.Create( __instance ).Field( "def" ).GetValue< BuildingDef >();
-            System.Collections.IList instance_path = Traverse.Create( __instance ).Field( "path" ).GetValue< System.Collections.IList >();
-            if( building_def == null || instance_path == null )
+            IList< Tag >             selected_elements = Traverse.Create( __instance ).Field( "selectedElements" ).GetValue< IList< Tag > >();
+            BuildingDef              building_def      = Traverse.Create( __instance ).Field( "def" ).GetValue< BuildingDef >();
+            System.Collections.IList instance_path     = Traverse.Create( __instance ).Field( "path" ).GetValue< System.Collections.IList >();
+            string                   facade_id         = Traverse.Create( __instance ).Field( "facadeID" ).GetValue< string >();
+            if( selected_elements == null || building_def == null || instance_path == null || facade_id == null )
                 return;
 
-            List< Tuple< int, bool > > path = new List< Tuple< int, bool > >();
+            IUtilityNetworkMgr manager = building_def.BuildingComplete.GetComponent< IHaveUtilityNetworkMgr >().GetNetworkManager();
+            if( manager == null )
+                return;
+
+            List< int >                path        = new List< int >();
+            List< UtilityConnections > connections = new List< UtilityConnections >();
             foreach( object obj in instance_path )
             {
                 Traverse traverse = Traverse.Create( obj );
                 int      cell     = traverse.Field( "cell" ).GetValue< int >();
-                bool     valid    = traverse.Field( "valid" ).GetValue< bool >();
-                path.Add( new Tuple< int, bool >( cell, valid ) );
+                path.Add( cell );
+
+                connections.Add( manager.GetConnections( cell, false ) );
             }
 
-            cBuildToolPacket packet = cBuildToolPacket.createUtility( building_def.PrefabID, path );
+            cBuildToolPacket packet = cBuildToolPacket.createUtility( building_def.PrefabID, facade_id, selected_elements, path, connections );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

@@ -29,7 +29,7 @@ namespace MultiplayerNotIncluded.Patches.Tool.Build
             if( building_def == null || selected_elements == null || facade_id == null )
                 return;
 
-            cBuildToolPacket packet = cBuildToolPacket.createBuilding( building_def.PrefabID, cell, facade_id, orientation, selected_elements );
+            cBuildToolPacket packet = cBuildToolPacket.createBuilding( building_def.PrefabID, facade_id, selected_elements, cell, orientation );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

@@ -38,9 +38,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
                 return;
 
             cMultiplayerLoadingOverlay.hide();
-            cUtils.delayAction( 2000, () => cUtils.initializeUtility( "Power",       "Wire" ) );
-            cUtils.delayAction( 2250, () => cUtils.initializeUtility( "Plumbing",    "LiquidConduit" ) );
-            cUtils.delayAction( 2500, () => cUtils.initializeUtility( "Ventilation", "GasConduit" ) );
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_steam_id}" );
