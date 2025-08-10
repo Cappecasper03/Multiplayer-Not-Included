@@ -17,7 +17,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ), typeof( int ) } )]
         private static void onDragTool( int cell, int distFromOrigin )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cClearToolPacket packet = new cClearToolPacket( cell );

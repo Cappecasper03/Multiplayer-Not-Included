@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( typeof( DeconstructTool ), nameof( DeconstructTool.DeconstructCell ) )]
         private static void deconstructCell( int cell )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cDeconstructToolPacket packet = new cDeconstructToolPacket( cell );

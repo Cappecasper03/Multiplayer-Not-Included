@@ -30,7 +30,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
                 player.m_ready = true;
                 cServer.setWaitingForPlayers();
 
-                if( !cSession.isAllReady() )
+                if( !cSession.isAllPlayersReady() )
                     return;
 
                 cPacketSender.sendToAll( new cPlayerReadyPacket() );
@@ -38,7 +38,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             else if( !cSession.isClient() || m_steam_id != cSession.m_host_steam_id )
                 return;
 
-            cFactionAlignmentPatch.s_skip_send = false;
+            cUtils.delayAction( 1000, () => { cSession.m_ready = true; } );
             cMultiplayerLoadingOverlay.hide();
         }
 

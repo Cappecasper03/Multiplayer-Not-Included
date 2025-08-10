@@ -15,7 +15,7 @@ namespace MultiplayerNotIncluded.Patches.Tool.Build
         [HarmonyPatch( typeof( BaseUtilityBuildTool ), "BuildPath" )]
         private static void buildPath( BaseUtilityBuildTool __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             IList< Tag >             selected_elements = Traverse.Create( __instance ).Field( "selectedElements" ).GetValue< IList< Tag > >();

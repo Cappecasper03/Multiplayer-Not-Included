@@ -21,7 +21,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changePersonalPriority( object widget_go_obj, int delta, JobsTableScreen __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             Traverse get_widget_row    = Traverse.Create( __instance ).Method( "GetWidgetRow",    new[] { typeof( GameObject ) } );
@@ -54,7 +54,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changeColumnPriority( object widget_go_obj, int new_priority, JobsTableScreen __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             MethodInfo get_widget_column = __instance.GetType().GetMethod( "GetWidgetColumn", BindingFlags.NonPublic | BindingFlags.Instance );
@@ -89,7 +89,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new[] { typeof( object ), typeof( int ) } )]
         private static void changeRowPriority( object widget_go_obj, int delta, JobsTableScreen __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             MethodInfo get_widget_row = __instance.GetType().GetMethod( "GetWidgetRow", BindingFlags.NonPublic | BindingFlags.Instance );
@@ -132,7 +132,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onResetSettingsClicked()
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cJobPriorityPacket packet = cJobPriorityPacket.createReset();
@@ -149,7 +149,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onAdvancedModeToggleClicked()
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cJobPriorityPacket packet = cJobPriorityPacket.createToggleAdvanced( Convert.ToInt32( Game.Instance.advancedPersonalPriorities ) );

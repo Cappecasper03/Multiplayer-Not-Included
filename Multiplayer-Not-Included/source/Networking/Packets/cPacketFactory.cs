@@ -49,7 +49,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kAutoDisinfect ]   = () => new cAutoDisinfectPacket();
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
 
-            s_constructors[ ePacketType.kAttackCreature ] = () => new cAttackCreaturePacket();
+            s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
+            s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
 
             s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();

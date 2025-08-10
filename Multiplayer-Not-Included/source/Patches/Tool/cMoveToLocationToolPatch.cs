@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ) } )]
         private static void setMoveToLocation( int target_cell, MoveToLocationTool __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             Navigator navigator = Traverse.Create( __instance ).Field( "targetNavigator" ).GetValue< Navigator >();

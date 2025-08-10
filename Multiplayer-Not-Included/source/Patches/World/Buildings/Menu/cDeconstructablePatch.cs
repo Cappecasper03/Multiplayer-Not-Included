@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings.Menu
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onDeconstruct( Deconstructable __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();

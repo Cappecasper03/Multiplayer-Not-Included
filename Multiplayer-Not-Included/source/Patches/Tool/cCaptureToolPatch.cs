@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( Vector3 ), typeof( Vector3 ) } )]
         private static void onDragComplete( Vector3 downPos, Vector3 upPos, CaptureTool __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             Traverse get_regularized_pos = Traverse.Create( __instance ).Method( "GetRegularizedPos", new[] { typeof( Vector2 ), typeof( bool ) } );

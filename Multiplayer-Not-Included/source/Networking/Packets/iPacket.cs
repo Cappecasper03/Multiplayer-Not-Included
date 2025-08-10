@@ -34,6 +34,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kBuildingEnabled,
 
         kAttackCreature,
+        kCaptureCreature,
 
         kConsumableInfo,
         kJobPriority,

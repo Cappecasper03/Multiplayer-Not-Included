@@ -7,11 +7,14 @@ namespace MultiplayerNotIncluded.Networking
 {
     public static class cSession
     {
-        public static bool inSession() => cSteamLobby.inLobby() && s_connected_players.Count > 0;
+        public static bool inSessionAndReady() => inSession()           && m_ready;
+        public static bool inSession()         => cSteamLobby.inLobby() && s_connected_players.Count > 0;
 
-        public static bool isHost()     => cSteamLobby.inLobby() && m_host_steam_id == m_local_steam_id;
-        public static bool isClient()   => cSteamLobby.inLobby() && !isHost();
-        public static bool isAllReady() => s_connected_players.All( _player => _player.Value.m_ready );
+        public static bool isHost()            => cSteamLobby.inLobby() && m_host_steam_id == m_local_steam_id;
+        public static bool isClient()          => cSteamLobby.inLobby() && !isHost();
+        public static bool isAllPlayersReady() => s_connected_players.All( _player => _player.Value.m_ready );
+
+        public static bool m_ready = false;
 
         public static CSteamID m_host_steam_id  { get; private set; } = CSteamID.Nil;
         public static CSteamID m_local_steam_id => SteamUser.GetSteamID();
@@ -43,6 +46,7 @@ namespace MultiplayerNotIncluded.Networking
             foreach( cPlayer player in s_connected_players.Values )
                 player.destroyCursor();
 
+            m_ready = false;
             s_connected_players.Clear();
             m_host_steam_id = CSteamID.Nil;
             cLogger.logInfo( "Session cleared" );

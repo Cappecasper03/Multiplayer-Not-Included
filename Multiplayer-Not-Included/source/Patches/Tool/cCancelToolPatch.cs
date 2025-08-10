@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ), typeof( int ) } )]
         private static void onDragTool( int cell, int distFromOrigin )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cCancelToolPacket packet = cCancelToolPacket.createCell( cell );
@@ -35,7 +35,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( Vector3 ), typeof( Vector3 ) } )]
         private static void onDragComplete( Vector3 downPos, Vector3 upPos, CancelTool __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cCancelToolPacket packet = cCancelToolPacket.createArea( downPos, upPos );

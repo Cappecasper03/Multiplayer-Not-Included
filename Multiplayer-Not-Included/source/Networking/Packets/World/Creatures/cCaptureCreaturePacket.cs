@@ -3,51 +3,52 @@ using System.IO;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.World.Creatures;
 using Steamworks;
+using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
 {
-    public class cAttackCreaturePacket : iIPacket
+    public class cCaptureCreaturePacket : iIPacket
     {
         private CSteamID m_steam_id = cSession.m_local_steam_id;
-        private bool     m_targeted;
+        private bool     m_marked;
         private int      m_instance_id;
 
-        public ePacketType m_type => ePacketType.kAttackCreature;
+        public ePacketType m_type => ePacketType.kCaptureCreature;
 
-        public cAttackCreaturePacket() {}
+        public cCaptureCreaturePacket() {}
 
-        public cAttackCreaturePacket( bool _targeted, int _instance_id )
+        public cCaptureCreaturePacket( bool _marked, int _instance_id )
         {
-            m_targeted    = _targeted;
+            m_marked      = _marked;
             m_instance_id = _instance_id;
         }
 
         public void serialize( BinaryWriter _writer )
         {
             _writer.Write( m_steam_id.m_SteamID );
-            _writer.Write( m_targeted );
+            _writer.Write( m_marked );
             _writer.Write( m_instance_id );
         }
 
         public void deserialize( BinaryReader _reader )
         {
             m_steam_id    = new CSteamID( _reader.ReadUInt64() );
-            m_targeted    = _reader.ReadBoolean();
+            m_marked      = _reader.ReadBoolean();
             m_instance_id = _reader.ReadInt32();
         }
 
         public void onReceived()
         {
-            foreach( FactionAlignment faction_alignment in Components.FactionAlignments.Items )
+            Capturable[] capturables = Object.FindObjectsOfType< Capturable >();
+            foreach( Capturable capturable in capturables )
             {
-                if( faction_alignment.kprefabID.InstanceID != m_instance_id )
+                KPrefabID prefab_id = capturable.GetComponent< KPrefabID >();
+                if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
-                cFactionAlignmentPatch.s_skip_send = true;
-                faction_alignment.SetPlayerTargeted( m_targeted );
-                cFactionAlignmentPatch.s_skip_send = false;
-
-                Game.Instance.userMenu.Refresh( faction_alignment.gameObject );
+                cCapturablePatch.s_skip_send = true;
+                capturable.MarkForCapture( m_marked );
+                cCapturablePatch.s_skip_send = false;
                 break;
             }
 

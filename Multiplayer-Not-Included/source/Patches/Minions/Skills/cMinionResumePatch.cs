@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
         [HarmonyPatch( typeof( MinionResume ), nameof( MinionResume.MasterSkill ) )]
         private static void masterSkill( string skillId, MinionResume __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cSkillsPacket packet = cSkillsPacket.createSkill( __instance.GetIdentity.GetProperName(), skillId );

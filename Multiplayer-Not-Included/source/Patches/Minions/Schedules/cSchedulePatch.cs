@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
         [HarmonyPatch( typeof( Schedule ), nameof( Schedule.SetBlockGroup ) )]
         private static void setBlockGroup( int idx, ScheduleGroup group, Schedule __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createChangeSchedule( __instance.name, idx, group.Name, group.Id );
@@ -32,7 +32,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
         [HarmonyPatch( typeof( Schedule ), nameof( Schedule.ShiftTimetable ) )]
         private static void shiftTimetable( bool up, int timetableToShiftIdx, Schedule __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createShiftTimetable( __instance.name, timetableToShiftIdx, up );
@@ -48,7 +48,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
         [HarmonyPatch( typeof( Schedule ), nameof( Schedule.RotateBlocks ) )]
         private static void rotateBlocks( bool directionLeft, int timetableToRotateIdx, Schedule __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createRotateTimetable( __instance.name, timetableToRotateIdx, directionLeft );

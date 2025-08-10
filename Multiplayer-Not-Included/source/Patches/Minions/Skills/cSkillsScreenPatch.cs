@@ -17,7 +17,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
         [HarmonyPatch( new[] { typeof( IListableOption ), typeof( object ) } )]
         private static void onHatDropEntryClick( IListableOption skill, object data, SkillsScreen __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             HatListable         hat_listable = skill as HatListable;

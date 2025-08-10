@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.Patches.World.Creatures;
 using Steamworks;
 using UnityEngine;
 
@@ -38,7 +39,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
 
         public void onReceived()
         {
+            cFactionAlignmentPatch.s_skip_send = true;
             AttackTool.MarkForAttack( m_min, m_max, true );
+            cFactionAlignmentPatch.s_skip_send = false;
 
             if( cSession.isHost() )
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );

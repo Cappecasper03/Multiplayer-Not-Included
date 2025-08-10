@@ -7,19 +7,24 @@ using MultiplayerNotIncluded.Networking.Packets.World.Creatures;
 namespace MultiplayerNotIncluded.Patches.World.Creatures
 {
     [HarmonyPatch]
-    public static class cFactionAlignmentPatch
+    public static class cCapturablePatch
     {
         public static bool s_skip_send = false;
 
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( FactionAlignment ), nameof( FactionAlignment.SetPlayerTargeted ) )]
-        private static void setPlayerTargeted( bool state, FactionAlignment __instance )
+        [HarmonyPatch( typeof( Capturable ), nameof( Capturable.MarkForCapture ) )]
+        [HarmonyPatch( new[] { typeof( bool ) } )]
+        private static void setPlayerTargeted( bool mark, Capturable __instance )
         {
             if( !cSession.inSessionAndReady() || s_skip_send )
                 return;
 
-            cAttackCreaturePacket packet = new cAttackCreaturePacket( state, __instance.kprefabID.InstanceID );
+            KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();
+            if( prefab_id == null )
+                return;
+
+            cCaptureCreaturePacket packet = new cCaptureCreaturePacket( mark, prefab_id.InstanceID );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

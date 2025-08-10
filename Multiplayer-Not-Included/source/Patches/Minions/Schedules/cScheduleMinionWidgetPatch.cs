@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
         [HarmonyPatch( typeof( ScheduleMinionWidget ), nameof( ScheduleMinionWidget.ChangeAssignment ) )]
         private static void changeAssignment( Schedule targetSchedule, Schedulable schedulable, ScheduleMinionWidget __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             string          name   = __instance.schedulable != null ? __instance.schedulable.name : "";

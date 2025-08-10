@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.Tool.Build
         [HarmonyPatch( new[] { typeof( int ) } )]
         private static void tryBuild( int cell, BuildTool __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             IList< Tag > selected_elements = Traverse.Create( __instance ).Field( "selectedElements" ).GetValue< IList< Tag > >();

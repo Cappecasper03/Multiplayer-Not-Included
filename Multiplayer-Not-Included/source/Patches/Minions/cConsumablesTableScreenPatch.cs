@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
         [HarmonyPatch( new[] { typeof( GameObject ), typeof( TableScreen.ResultValues ) } )]
         private static void setValueConsumableInfo( GameObject widget_go, TableScreen.ResultValues new_value, ConsumablesTableScreen __instance )
         {
-            if( !cSession.inSession() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
             Traverse get_widget_row    = Traverse.Create( __instance ).Method( "GetWidgetRow",    new[] { typeof( GameObject ) } );

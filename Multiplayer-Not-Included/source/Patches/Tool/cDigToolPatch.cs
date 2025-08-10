@@ -17,7 +17,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( typeof( DigTool ), nameof( DigTool.PlaceDig ) )]
         private static void placeDig( int cell, int animationDelay, GameObject __result )
         {
-            if( !cSession.inSession() || __result == null || s_skip_sending )
+            if( !cSession.inSessionAndReady() || __result == null || s_skip_sending )
                 return;
 
             cDigToolPacket packet = new cDigToolPacket( cell, animationDelay );

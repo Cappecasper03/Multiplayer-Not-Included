@@ -26,7 +26,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings.Menu
 
         private static void changeDisinfect( bool _enable, AutoDisinfectable _instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             KPrefabID prefab_id = _instance.GetComponent< KPrefabID >();

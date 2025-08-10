@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings.Menu
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onMenuToggle( BuildingEnabledButton __instance )
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();

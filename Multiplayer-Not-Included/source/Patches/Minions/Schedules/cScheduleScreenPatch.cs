@@ -16,7 +16,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
         [HarmonyPatch( typeof( ScheduleScreen ), "OnAddScheduleClick" )]
         private static void onAddScheduleClick()
         {
-            if( !cSession.inSession() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cSchedulePacket packet = cSchedulePacket.createDefault();
