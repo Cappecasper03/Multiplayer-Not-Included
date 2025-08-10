@@ -5,6 +5,7 @@ using MultiplayerNotIncluded.Networking.Packets.Players;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
 using MultiplayerNotIncluded.Networking.Packets.World;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu;
+using MultiplayerNotIncluded.Networking.Packets.World.Creatures;
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {
@@ -47,6 +48,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kAutoRepair ]      = () => new cAutoRepairPacket();
             s_constructors[ ePacketType.kAutoDisinfect ]   = () => new cAutoDisinfectPacket();
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
+
+            s_constructors[ ePacketType.kAttackCreature ] = () => new cAttackCreaturePacket();
 
             s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();

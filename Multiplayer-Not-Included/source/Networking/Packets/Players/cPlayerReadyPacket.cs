@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
+using MultiplayerNotIncluded.Patches.World.Creatures;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Players
@@ -37,6 +38,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             else if( !cSession.isClient() || m_steam_id != cSession.m_host_steam_id )
                 return;
 
+            cFactionAlignmentPatch.s_skip_send = false;
             cMultiplayerLoadingOverlay.hide();
         }
 

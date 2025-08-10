@@ -33,6 +33,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kAutoDisinfect,
         kBuildingEnabled,
 
+        kAttackCreature,
+
         kConsumableInfo,
         kJobPriority,
         kSchedule,
