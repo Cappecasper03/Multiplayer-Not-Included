@@ -33,9 +33,10 @@ namespace MultiplayerNotIncluded.Networking
                 return;
             }
 
-            s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
-            m_state                        = eClientState.kConnecting;
+            if( s_on_connection_status_changed == null )
+                s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
 
+            m_state = eClientState.kConnecting;
             cMultiplayerLoadingOverlay.show( $"Connecting to {SteamFriends.GetFriendPersonaName( _steam_id )}..." );
 
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
@@ -99,7 +100,6 @@ namespace MultiplayerNotIncluded.Networking
                     break;
                 }
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-                case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
                 {
                     m_state = eClientState.kDisconnected;
                     cLogger.logInfo( $"Disconnected from {steam_id}: Closed by peer or problem detected locally" );
@@ -113,6 +113,28 @@ namespace MultiplayerNotIncluded.Networking
                             PauseScreen.TriggerQuitGame();
                         } );
                     }
+
+                    break;
+                }
+                case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_None:
+                {
+                    m_state = eClientState.kDisconnected;
+                    cLogger.logInfo( "Connection to the host was lost" );
+
+                    cMultiplayerLoadingOverlay.show( "Connection to the host was lost..." );
+
+                    cSteamLobby.leave();
+                    cUtils.delayAction( 3000, () =>
+                    {
+                        if( PauseScreen.Instance != null )
+                        {
+                            LoadingOverlay.Load( () =>
+                            {
+                                PauseScreen.Instance.Deactivate();
+                                PauseScreen.TriggerQuitGame();
+                            } );
+                        }
+                    } );
 
                     break;
                 }
