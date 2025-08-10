@@ -4,7 +4,7 @@ using MultiplayerNotIncluded.Networking.Packets.Minions;
 using MultiplayerNotIncluded.Networking.Packets.Players;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
 using MultiplayerNotIncluded.Networking.Packets.World;
-using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu;
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {

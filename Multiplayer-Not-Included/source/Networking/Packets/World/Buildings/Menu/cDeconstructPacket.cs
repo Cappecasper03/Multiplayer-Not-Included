@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
+namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
 {
     public class cDeconstructPacket : iIPacket
     {
@@ -49,6 +50,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                     deconstructable.CancelDeconstruction();
                 else
                     deconstructable.QueueDeconstruction( true );
+
+                Game.Instance.userMenu.Refresh( deconstructable.gameObject );
                 break;
             }
 

@@ -2,11 +2,11 @@
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.Patches.World.Buildings;
+using MultiplayerNotIncluded.Patches.World.Buildings.Menu;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
+namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
 {
     public class cAutoDisinfectPacket : iIPacket
     {
@@ -53,6 +53,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                 else
                     Traverse.Create( auto_disinfectable ).Method( "DisableAutoDisinfect" )?.GetValue();
 
+                Game.Instance.userMenu.Refresh( auto_disinfectable.gameObject );
                 cAutoDisinfectablePatch.s_skip_sending = false;
 
                 break;

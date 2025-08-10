@@ -3,9 +3,9 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu;
 
-namespace MultiplayerNotIncluded.Patches.World.Buildings
+namespace MultiplayerNotIncluded.Patches.World.Buildings.Menu
 {
     [HarmonyPatch]
     public static class cAutoDisinfectablePatch

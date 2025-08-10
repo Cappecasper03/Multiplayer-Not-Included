@@ -2,11 +2,11 @@
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.Patches.World.Buildings;
+using MultiplayerNotIncluded.Patches.World.Buildings.Menu;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
+namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
 {
     public class cBuildingEnabledPacket : iIPacket
     {
@@ -53,6 +53,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                 if( m_enabled != queued_toggle )
                     Traverse.Create( button ).Method( "OnMenuToggle" ).GetValue();
 
+                Game.Instance.userMenu.Refresh( button.gameObject );
                 cBuildingEnabledButtonPatch.s_skip_sending = false;
 
                 break;
