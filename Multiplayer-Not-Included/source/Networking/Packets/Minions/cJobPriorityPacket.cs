@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.source.Patches.Menus;
+using MultiplayerNotIncluded.source.Patches.Minions;
 using Steamworks;
 using Object = UnityEngine.Object;
 
@@ -135,6 +135,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 }
             }
 
+            Traverse.Create( ManagementMenu.Instance.jobsScreen ).Method( "MarkRowsDirty" )?.GetValue();
             cJobsTableScreenPatch.s_skip_sending = false;
 
             if( cSession.isHost() )

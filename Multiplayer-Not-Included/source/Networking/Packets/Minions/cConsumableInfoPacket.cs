@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using Object = UnityEngine.Object;
@@ -78,6 +79,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                     break;
                 }
             }
+
+            Traverse.Create( ManagementMenu.Instance.consumablesScreen ).Method( "MarkRowsDirty" )?.GetValue();
 
             if( cSession.isHost() )
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );

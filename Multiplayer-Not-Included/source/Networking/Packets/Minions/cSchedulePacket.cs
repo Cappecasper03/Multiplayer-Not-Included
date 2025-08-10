@@ -2,7 +2,7 @@
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.source.Patches.Menus;
+using MultiplayerNotIncluded.source.Patches.Minions.Schedules;
 using Steamworks;
 using UnityEngine;
 using Object = UnityEngine.Object;

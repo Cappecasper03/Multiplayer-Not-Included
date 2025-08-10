@@ -4,7 +4,7 @@ using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
 
-namespace MultiplayerNotIncluded.source.Patches.Menus
+namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
 {
     [HarmonyPatch]
     public static class cMinionResumePatch

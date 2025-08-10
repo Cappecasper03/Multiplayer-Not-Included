@@ -58,7 +58,8 @@ namespace MultiplayerNotIncluded.Networking
                 return;
             }
 
-            s_connection_status_changed_callback = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
+            if( s_connection_status_changed_callback == null )
+                s_connection_status_changed_callback = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
             m_state = eServerState.kStarted;
             cLogger.logInfo( "Server started" );

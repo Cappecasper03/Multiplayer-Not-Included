@@ -7,7 +7,7 @@ using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.source.Patches.Menus
+namespace MultiplayerNotIncluded.source.Patches.Minions.Schedules
 {
     [HarmonyPatch]
     public static class cScheduleScreenEntryPatch

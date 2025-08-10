@@ -4,24 +4,24 @@ using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
 
-namespace MultiplayerNotIncluded.source.Patches.Menus
+namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
 {
     [HarmonyPatch]
-    public static class cSkillMinionWidgetPatch
+    public static class cSkillsScreenPatch
     {
         public static bool s_skip_sending = false;
 
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( SkillMinionWidget ), "OnHatDropEntryClick" )]
+        [HarmonyPatch( typeof( SkillsScreen ), "OnHatDropEntryClick" )]
         [HarmonyPatch( new[] { typeof( IListableOption ), typeof( object ) } )]
-        private static void onHatDropEntryClick( IListableOption hatOption, object data, SkillMinionWidget __instance )
+        private static void onHatDropEntryClick( IListableOption skill, object data, SkillsScreen __instance )
         {
             if( !cSession.inSession() || s_skip_sending )
                 return;
 
-            HatListable         hat_listable = hatOption as HatListable;
-            IAssignableIdentity identity     = __instance.assignableIdentity;
+            HatListable         hat_listable = skill as HatListable;
+            IAssignableIdentity identity     = Traverse.Create( __instance ).Field( "currentlySelectedMinion" ).GetValue< IAssignableIdentity >();
             if( hat_listable == null || identity == null )
                 return;
 

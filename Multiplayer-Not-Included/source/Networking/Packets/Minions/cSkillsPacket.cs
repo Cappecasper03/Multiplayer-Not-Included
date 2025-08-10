@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.source.Patches.Menus;
+using MultiplayerNotIncluded.source.Patches.Minions.Skills;
 using Steamworks;
 using Object = UnityEngine.Object;
 
