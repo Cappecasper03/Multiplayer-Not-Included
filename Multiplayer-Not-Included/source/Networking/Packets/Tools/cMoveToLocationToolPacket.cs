@@ -47,8 +47,13 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
-                navigator.GetSMI< MoveToLocationMonitor.Instance >()?.MoveToLocation( m_cell );
-                found = true;
+                MoveToLocationMonitor.Instance instance = navigator.GetSMI< MoveToLocationMonitor.Instance >();
+                if( instance != null )
+                {
+                    instance.MoveToLocation( m_cell );
+                    found = true;
+                }
+
                 break;
             }
 
