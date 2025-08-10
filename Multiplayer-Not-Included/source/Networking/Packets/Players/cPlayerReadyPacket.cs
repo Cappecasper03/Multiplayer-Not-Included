@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
-using MultiplayerNotIncluded.Patches.World.Creatures;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Players

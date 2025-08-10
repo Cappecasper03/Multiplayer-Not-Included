@@ -5,19 +5,19 @@ using MultiplayerNotIncluded.Patches.World.Creatures;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
+namespace MultiplayerNotIncluded.Networking.Packets.World.Items
 {
-    public class cCaptureCreaturePacket : iIPacket
+    public class cClearItemPacket : iIPacket
     {
         private CSteamID m_steam_id = cSession.m_local_steam_id;
         private bool     m_marked;
         private int      m_instance_id;
 
-        public ePacketType m_type => ePacketType.kCaptureCreature;
+        public ePacketType m_type => ePacketType.kClearItem;
 
-        public cCaptureCreaturePacket() {}
+        public cClearItemPacket() {}
 
-        public cCaptureCreaturePacket( bool _marked, int _instance_id )
+        public cClearItemPacket( bool _marked, int _instance_id )
         {
             m_marked      = _marked;
             m_instance_id = _instance_id;
@@ -39,18 +39,20 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
 
         public void onReceived()
         {
-            Capturable[] capturables = Object.FindObjectsOfType< Capturable >();
-            foreach( Capturable capturable in capturables )
+            Clearable[] clearables = Object.FindObjectsOfType< Clearable >();
+            foreach( Clearable clearable in clearables )
             {
-                KPrefabID prefab_id = capturable.GetComponent< KPrefabID >();
+                KPrefabID prefab_id = clearable.GetComponent< KPrefabID >();
                 if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
-                cCapturablePatch.s_skip_send = true;
-                capturable.MarkForCapture( m_marked );
-                cCapturablePatch.s_skip_send = false;
+                cLogger.logWarning( "found it" );
+                if( m_marked )
+                    clearable.MarkForClear();
+                else
+                    clearable.CancelClearing();
 
-                Game.Instance.userMenu.Refresh( capturable.gameObject );
+                Game.Instance.userMenu.Refresh( clearable.gameObject );
                 break;
             }
 

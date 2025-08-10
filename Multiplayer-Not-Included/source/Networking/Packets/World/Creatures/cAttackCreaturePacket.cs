@@ -55,6 +55,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: " );
+        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_targeted}, {m_instance_id}" );
     }
 }

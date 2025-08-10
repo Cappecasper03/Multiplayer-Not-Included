@@ -59,7 +59,7 @@ namespace MultiplayerNotIncluded.source.Networking.Components
 
         private void Update()
         {
-            if( !cSteamLobby.inLobby() || !cUtils.isInGame() || cMultiplayerLoadingOverlay.isVisible() )
+            if( !cSession.inSessionAndReady() || cMultiplayerLoadingOverlay.isVisible() )
                 return;
 
             if( m_steam_id != cSession.m_local_steam_id )
