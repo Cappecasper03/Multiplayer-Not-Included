@@ -74,7 +74,7 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             if( !cSession.inSession() || s_skip_sending )
                 return;
 
-            List< GameObject > timetable_rows = AccessTools.Field( typeof( ScheduleScreenEntry ), "timetableRows" ).GetValue( __instance ) as List< GameObject >;
+            List< GameObject > timetable_rows = Traverse.Create( __instance ).Field( "timetableRows" ).GetValue< List< GameObject > >();
             if( timetable_rows == null || timetable_rows.Count == 0 )
                 return;
 

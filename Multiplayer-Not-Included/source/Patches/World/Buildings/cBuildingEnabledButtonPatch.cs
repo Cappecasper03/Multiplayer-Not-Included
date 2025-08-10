@@ -25,7 +25,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             if( prefab_id == null )
                 return;
 
-            bool queued_toggle = ( bool )AccessTools.Field( typeof( BuildingEnabledButton ), "queuedToggle" ).GetValue( __instance );
+            bool queued_toggle = Traverse.Create( __instance ).Field( "queuedToggle" ).GetValue< bool >();
 
             cBuildingEnabledPacket packet = new cBuildingEnabledPacket( queued_toggle, prefab_id.InstanceID );
 

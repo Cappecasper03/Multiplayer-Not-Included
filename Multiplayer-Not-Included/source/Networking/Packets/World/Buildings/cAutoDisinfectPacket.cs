@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.World.Buildings;
 using Steamworks;
@@ -49,15 +49,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
 
                 cAutoDisinfectablePatch.s_skip_sending = true;
                 if( m_auto_disinfect )
-                {
-                    MethodInfo enable_auto_disinfect = auto_disinfectable.GetType().GetMethod( "EnableAutoDisinfect", BindingFlags.NonPublic | BindingFlags.Instance );
-                    enable_auto_disinfect?.Invoke( auto_disinfectable, new object[] {} );
-                }
+                    Traverse.Create( auto_disinfectable ).Method( "EnableAutoDisinfect" )?.GetValue();
                 else
-                {
-                    MethodInfo disable_auto_disinfect = auto_disinfectable.GetType().GetMethod( "DisableAutoDisinfect", BindingFlags.NonPublic | BindingFlags.Instance );
-                    disable_auto_disinfect?.Invoke( auto_disinfectable, new object[] {} );
-                }
+                    Traverse.Create( auto_disinfectable ).Method( "DisableAutoDisinfect" )?.GetValue();
 
                 cAutoDisinfectablePatch.s_skip_sending = false;
 

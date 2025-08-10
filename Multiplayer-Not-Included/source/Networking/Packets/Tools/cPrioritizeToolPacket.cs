@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -49,8 +49,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                     continue;
 
                 cPrioritizeToolPatch.s_skip_sending = true;
-                MethodInfo try_prioritize_game_object = PrioritizeTool.Instance.GetType().GetMethod( "TryPrioritizeGameObject", BindingFlags.NonPublic | BindingFlags.Instance );
-                try_prioritize_game_object?.Invoke( PrioritizeTool.Instance, new object[] { prioritizable.gameObject, m_priority } );
+                Traverse method = Traverse.Create( PrioritizeTool.Instance ).Method( "TryPrioritizeGameObject", new[] { typeof( GameObject ), typeof( PrioritySetting ) } );
+                method?.GetValue( prioritizable.gameObject, m_priority );
                 cPrioritizeToolPatch.s_skip_sending = false;
                 break;
             }

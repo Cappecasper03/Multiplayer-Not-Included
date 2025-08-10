@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.source.Patches.Menus;
@@ -204,21 +202,22 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         private static void addDefault()
         {
             cScheduleScreenPatch.s_skip_sending = true;
-            MethodInfo method_info = ManagementMenu.Instance.scheduleScreen.GetType().GetMethod( "OnAddScheduleClick", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( ManagementMenu.Instance.scheduleScreen, new object[] {} );
+            Traverse.Create( ManagementMenu.Instance.scheduleScreen ).Method( "OnAddScheduleClick" )?.GetValue();
             cScheduleScreenPatch.s_skip_sending = false;
         }
 
         private void changeName()
         {
             ScheduleScreenEntry entry = findEntry( m_name );
-            EditableTitleBar    title = AccessTools.Field( typeof( ScheduleScreenEntry ), "title" ).GetValue( entry ) as EditableTitleBar;
-            if( entry == null || title == null )
+            if( entry == null )
+                return;
+
+            EditableTitleBar title = Traverse.Create( entry ).Field( "title" ).GetValue< EditableTitleBar >();
+            if( title == null )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = title.GetType().GetMethod( "OnEndEdit", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( title, new object[] { m_new_name } );
+            Traverse.Create( title ).Method( "OnEndEdit", new[] { typeof( string ) } )?.GetValue( m_new_name );
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -229,8 +228,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = entry.GetType().GetMethod( "OnAlarmClicked", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( entry, new object[] {} );
+            Traverse.Create( entry ).Method( "OnAlarmClicked" )?.GetValue();
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -241,8 +239,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = entry.GetType().GetMethod( "DuplicateSchedule", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( entry, new object[] {} );
+            Traverse.Create( entry ).Method( "DuplicateSchedule" )?.GetValue();
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -253,8 +250,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = entry.GetType().GetMethod( "DeleteSchedule", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( entry, new object[] {} );
+            Traverse.Create( entry ).Method( "DeleteSchedule" )?.GetValue();
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -265,8 +261,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = entry.GetType().GetMethod( "DuplicateTimetableRow", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( entry, new object[] { m_timetable } );
+            Traverse.Create( entry ).Method( "DuplicateTimetableRow", new[] { typeof( int ) } )?.GetValue( m_timetable );
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -276,13 +271,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             if( entry == null )
                 return;
 
-            List< GameObject > timetable_rows = AccessTools.Field( typeof( ScheduleScreenEntry ), "timetableRows" ).GetValue( entry ) as List< GameObject >;
+            List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
             if( timetable_rows == null || m_timetable > timetable_rows.Count - 1 )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
-            MethodInfo method_info = entry.GetType().GetMethod( "RemoveTimetableRow", BindingFlags.NonPublic | BindingFlags.Instance );
-            method_info?.Invoke( entry, new object[] { timetable_rows[ m_timetable ] } );
+            Traverse.Create( entry ).Method( "RemoveTimetableRow", new[] { typeof( GameObject ) } )?.GetValue( timetable_rows[ m_timetable ] );
             cScheduleScreenEntryPatch.s_skip_sending = false;
         }
 
@@ -292,7 +286,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             if( entry == null )
                 return;
 
-            List< GameObject > timetable_rows = AccessTools.Field( typeof( ScheduleScreenEntry ), "timetableRows" ).GetValue( entry ) as List< GameObject >;
+            List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
             if( timetable_rows == null || m_timetable / 24 > timetable_rows.Count - 1 )
                 return;
 
@@ -307,7 +301,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             if( entry == null )
                 return;
 
-            List< GameObject > timetable_rows = AccessTools.Field( typeof( ScheduleScreenEntry ), "timetableRows" ).GetValue( entry ) as List< GameObject >;
+            List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
             if( timetable_rows == null || m_timetable / 24 > timetable_rows.Count - 1 )
                 return;
 
@@ -372,12 +366,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         private static ScheduleScreenEntry findEntry( string _name )
         {
             ScheduleScreen              screen  = ManagementMenu.Instance.scheduleScreen;
-            List< ScheduleScreenEntry > entries = AccessTools.Field( typeof( ScheduleScreen ), "scheduleEntries" ).GetValue( screen ) as List< ScheduleScreenEntry >;
+            List< ScheduleScreenEntry > entries = Traverse.Create( screen ).Field( "scheduleEntries" ).GetValue< List< ScheduleScreenEntry > >();
 
             if( entries == null )
             {
-                object dictionary_object = AccessTools.Field( typeof( ManagementMenu ), "ScreenInfoMatch" ).GetValue( ManagementMenu.Instance );
-                object info_object       = AccessTools.Field( typeof( ManagementMenu ), "scheduleInfo" ).GetValue( ManagementMenu.Instance );
+                object dictionary_object = Traverse.Create( ManagementMenu.Instance ).Field( "ScreenInfoMatch" ).GetValue();
+                object info_object       = Traverse.Create( ManagementMenu.Instance ).Field( "scheduleInfo" ).GetValue();
 
                 var                                     dictionary = dictionary_object as Dictionary< ManagementMenu.ManagementMenuToggleInfo, ManagementMenu.ScreenData >;
                 ManagementMenu.ManagementMenuToggleInfo info       = info_object as ManagementMenu.ManagementMenuToggleInfo;
@@ -391,7 +385,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 screen.Start();
                 ManagementMenu.Instance.ToggleScreen( screen_data );
 
-                entries = AccessTools.Field( typeof( ScheduleScreen ), "scheduleEntries" ).GetValue( screen ) as List< ScheduleScreenEntry >;
+                entries = Traverse.Create( screen ).Field( "scheduleEntries" ).GetValue< List< ScheduleScreenEntry > >();
                 if( entries == null )
                     return null;
             }

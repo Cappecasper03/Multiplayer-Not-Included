@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -33,8 +33,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         public void onReceived()
         {
             cEmptyPipeToolPatch.s_skip_sending = true;
-            MethodInfo on_drag_tool = EmptyPipeTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
-            on_drag_tool?.Invoke( EmptyPipeTool.Instance, new object[] { m_cell, 0 } );
+            Traverse.Create( EmptyPipeTool.Instance ).Method( "OnDragTool", new[] { typeof( int ), typeof( int ) } )?.GetValue( m_cell, 0 );
             cEmptyPipeToolPatch.s_skip_sending = false;
 
             if( cSession.isHost() )

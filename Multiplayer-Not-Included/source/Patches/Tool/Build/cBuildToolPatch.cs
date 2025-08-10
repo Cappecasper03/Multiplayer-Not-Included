@@ -21,15 +21,13 @@ namespace MultiplayerNotIncluded.Patches.Tool.Build
             if( !cSession.inSession() || s_skip_sending )
                 return;
 
-            BuildingDef  building_def      = AccessTools.Field( typeof( BuildTool ), "def" ).GetValue( __instance ) as BuildingDef;
-            IList< Tag > selected_elements = AccessTools.Field( typeof( BuildTool ), "selectedElements" ).GetValue( __instance ) as IList< Tag >;
-            string       facade_id         = AccessTools.Field( typeof( BuildTool ), "facadeID" ).GetValue( __instance ) as string;
-            Orientation  orientation       = __instance.GetBuildingOrientation;
-
+            IList< Tag > selected_elements = Traverse.Create( __instance ).Field( "selectedElements" ).GetValue< IList< Tag > >();
+            BuildingDef  building_def      = Traverse.Create( __instance ).Field( "def" ).GetValue< BuildingDef >();
+            string       facade_id         = Traverse.Create( __instance ).Field( "facadeID" ).GetValue< string >();
             if( building_def == null || selected_elements == null || facade_id == null )
                 return;
 
-            cBuildToolPacket packet = cBuildToolPacket.createBuilding( building_def.PrefabID, facade_id, selected_elements, cell, orientation );
+            cBuildToolPacket packet = cBuildToolPacket.createBuilding( building_def.PrefabID, facade_id, selected_elements, cell, __instance.GetBuildingOrientation );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

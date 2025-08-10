@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -41,8 +43,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         public void onReceived()
         {
             cDisconnectToolPatch.s_skip_sending = true;
-            MethodInfo on_drag_tool = DisconnectTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
-            on_drag_tool?.Invoke( DisconnectTool.Instance, new object[] { m_down_pos, m_up_pos } );
+            Traverse single_disconnect_mode = Traverse.Create( DisconnectTool.Instance ).Field( "singleDisconnectMode" );
+            bool     original_value         = single_disconnect_mode.GetValue< bool >();
+            single_disconnect_mode.SetValue( false );
+            Traverse.Create( DisconnectTool.Instance ).Method( "OnDragComplete", new[] { typeof( Vector3 ), typeof( Vector3 ) } )?.GetValue( m_down_pos, m_up_pos );
+            single_disconnect_mode.SetValue( original_value );
+
             cDisconnectToolPatch.s_skip_sending = false;
 
             if( cSession.isHost() )

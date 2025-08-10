@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -33,8 +33,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         public void onReceived()
         {
             cDisinfectToolPatch.s_skip_sending = true;
-            MethodInfo on_drag_tool = DisinfectTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
-            on_drag_tool?.Invoke( DisinfectTool.Instance, new object[] { m_cell, 0 } );
+            Traverse.Create( DisinfectTool.Instance ).Method( "OnDragTool", new[] { typeof( int ), typeof( int ) } )?.GetValue( m_cell, 0 );
             cDisinfectToolPatch.s_skip_sending = false;
 
             if( cSession.isHost() )

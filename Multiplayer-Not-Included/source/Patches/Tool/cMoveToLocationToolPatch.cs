@@ -19,12 +19,11 @@ namespace MultiplayerNotIncluded.Patches.Tool
             if( !cSession.inSession() )
                 return;
 
-            Navigator navigator = AccessTools.Field( typeof( MoveToLocationTool ), "targetNavigator" ).GetValue( __instance ) as Navigator;
-            Movable   movable   = AccessTools.Field( typeof( MoveToLocationTool ), "targetMovable" ).GetValue( __instance ) as Movable;
+            Navigator navigator = Traverse.Create( __instance ).Field( "targetNavigator" ).GetValue< Navigator >();
+            Movable   movable   = Traverse.Create( __instance ).Field( "targetMovable" ).GetValue< Movable >();
 
             GameObject game_object = navigator?.gameObject ?? movable?.gameObject;
             KPrefabID  prefab_id   = game_object?.GetComponent< KPrefabID >();
-
             if( prefab_id == null )
                 return;
 

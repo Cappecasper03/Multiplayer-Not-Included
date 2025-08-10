@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Steamworks;
@@ -16,17 +15,17 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPatch( typeof( MainMenu ), "OnPrefabInit" )]
         private static void onPrefabInit( MainMenu __instance )
         {
-            const int         font_size        = 22;
             ColorStyleSetting style            = Traverse.Create( __instance ).Field( "normalButtonStyle" ).GetValue< ColorStyleSetting >();
-            Type              button_info_type = __instance.GetType().GetNestedType( "ButtonInfo", BindingFlags.NonPublic );
-            MethodInfo        make_button      = __instance.GetType().GetMethod( "MakeButton", BindingFlags.NonPublic | BindingFlags.Instance );
+            var               button_info_type = AccessTools.Inner( typeof( MainMenu ), "ButtonInfo" );
 
-            object join_info = Activator.CreateInstance( button_info_type );
-            button_info_type.GetField( "text" ).SetValue( join_info, new LocString( "Join Game" ) );
-            button_info_type.GetField( "action" ).SetValue( join_info, new System.Action( () => { SteamFriends.ActivateGameOverlay( "friends" ); } ) );
-            button_info_type.GetField( "fontSize" ).SetValue( join_info, font_size );
-            button_info_type.GetField( "style" ).SetValue( join_info, style );
-            make_button?.Invoke( __instance, new object[] { join_info } );
+            var new_button_info = Activator.CreateInstance(
+                button_info_type,
+                new LocString( "Join Game" ),
+                ( System.Action )( () => { SteamFriends.ActivateGameOverlay( "friends" ); } ),
+                22,
+                style );
+
+            Traverse.Create( __instance ).Method( "MakeButton", new_button_info ).GetValue();
 
             updatePlacements( __instance );
         }

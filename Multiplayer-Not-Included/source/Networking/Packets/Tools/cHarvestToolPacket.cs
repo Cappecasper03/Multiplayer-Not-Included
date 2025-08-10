@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -33,8 +33,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         public void onReceived()
         {
             cHarvestToolPatch.s_skip_sending = true;
-            MethodInfo on_drag_tool = HarvestTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
-            on_drag_tool?.Invoke( HarvestTool.Instance, new object[] { m_cell, 0 } );
+            Traverse.Create( HarvestTool.Instance ).Method( "OnDragTool", new[] { typeof( int ), typeof( int ) } )?.GetValue( m_cell, 0 );
             cHarvestToolPatch.s_skip_sending = false;
 
             if( cSession.isHost() )

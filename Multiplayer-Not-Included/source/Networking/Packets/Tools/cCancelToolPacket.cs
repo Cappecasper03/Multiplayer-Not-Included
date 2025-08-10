@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool;
 using Steamworks;
@@ -70,16 +70,10 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             cCancelToolPatch.s_skip_sending = true;
             switch( m_action )
             {
-                case eAction.kCell:
-                {
-                    MethodInfo on_drag_tool = CancelTool.Instance.GetType().GetMethod( "OnDragTool", BindingFlags.NonPublic | BindingFlags.Instance );
-                    on_drag_tool?.Invoke( CancelTool.Instance, new object[] { m_cell, 0 } );
-                    break;
-                }
+                case eAction.kCell: Traverse.Create( CancelTool.Instance ).Method( "OnDragTool", new[] { typeof( int ), typeof( int ) } )?.GetValue( m_cell, 0 ); break;
                 case eAction.kArea:
                 {
-                    MethodInfo on_drag_complete = CancelTool.Instance.GetType().GetMethod( "OnDragComplete", BindingFlags.NonPublic | BindingFlags.Instance );
-                    on_drag_complete?.Invoke( CancelTool.Instance, new object[] { m_down_pos, m_up_pos } );
+                    Traverse.Create( CancelTool.Instance ).Method( "OnDragComplete", new[] { typeof( Vector3 ), typeof( Vector3 ) } )?.GetValue( m_down_pos, m_up_pos );
                     break;
                 }
             }

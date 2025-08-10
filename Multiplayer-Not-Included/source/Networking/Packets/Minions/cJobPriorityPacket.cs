@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.source.Patches.Menus;
 using Steamworks;
@@ -105,19 +105,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             cJobsTableScreenPatch.s_skip_sending = true;
             switch( m_action )
             {
-                case eAction.kReset:
-                {
-                    MethodInfo method_info = ManagementMenu.Instance.jobsScreen.GetType().GetMethod( "OnResetSettingsClicked", BindingFlags.NonPublic | BindingFlags.Instance );
-                    method_info?.Invoke( ManagementMenu.Instance.jobsScreen, new object[] {} );
-                    break;
-                }
+                case eAction.kReset: Traverse.Create( ManagementMenu.Instance.jobsScreen ).Method( "OnResetSettingsClicked" )?.GetValue(); break;
                 case eAction.kToggleAdvanced:
                 {
                     if( Game.Instance.advancedPersonalPriorities != Convert.ToBoolean( m_priority ) )
-                    {
-                        MethodInfo method_info = ManagementMenu.Instance.jobsScreen.GetType().GetMethod( "OnAdvancedModeToggleClicked", BindingFlags.NonPublic | BindingFlags.Instance );
-                        method_info?.Invoke( ManagementMenu.Instance.jobsScreen, new object[] {} );
-                    }
+                        Traverse.Create( ManagementMenu.Instance.jobsScreen ).Method( "OnAdvancedModeToggleClicked" )?.GetValue();
 
                     break;
                 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.World.Buildings;
 using Steamworks;
@@ -49,10 +49,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
 
                 cRepairablePatch.s_skip_sending = true;
                 if( m_auto_repair )
-                {
-                    MethodInfo allow_repair = repairable.GetType().GetMethod( "AllowRepair", BindingFlags.NonPublic | BindingFlags.Instance );
-                    allow_repair?.Invoke( repairable, new object[] {} );
-                }
+                    Traverse.Create( repairable ).Method( "AllowRepair" )?.GetValue();
                 else
                     repairable.CancelRepair();
 

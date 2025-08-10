@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using HarmonyLib;
+﻿using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
@@ -21,11 +19,11 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             if( !cSession.inSession() )
                 return;
 
-            MethodInfo get_widget_row    = __instance.GetType().GetMethod( "GetWidgetRow",    BindingFlags.NonPublic | BindingFlags.Instance );
-            MethodInfo get_widget_column = __instance.GetType().GetMethod( "GetWidgetColumn", BindingFlags.NonPublic | BindingFlags.Instance );
+            Traverse get_widget_row    = Traverse.Create( __instance ).Method( "GetWidgetRow",    new[] { typeof( GameObject ) } );
+            Traverse get_widget_column = Traverse.Create( __instance ).Method( "GetWidgetColumn", new[] { typeof( GameObject ) } );
 
-            TableRow                  widget_row    = get_widget_row?.Invoke( __instance, new object[] { widget_go } ) as TableRow;
-            ConsumableInfoTableColumn widget_column = get_widget_column?.Invoke( __instance, new object[] { widget_go } ) as ConsumableInfoTableColumn;
+            TableRow                  widget_row    = get_widget_row?.GetValue< TableRow >( widget_go );
+            ConsumableInfoTableColumn widget_column = get_widget_column?.GetValue< ConsumableInfoTableColumn >( widget_go );
             if( widget_row == null || widget_column == null )
                 return;
 

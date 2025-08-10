@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.World.Buildings;
@@ -48,15 +47,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                 if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
-                bool queued_toggle = ( bool )AccessTools.Field( typeof( BuildingEnabledButton ), "queuedToggle" ).GetValue( button );
+                bool queued_toggle = Traverse.Create( button ).Field( "queuedToggle" ).GetValue< bool >();
 
                 cBuildingEnabledButtonPatch.s_skip_sending = true;
                 if( m_enabled != queued_toggle )
-                {
-                    cLogger.logWarning( "Toggle object" );
-                    MethodInfo allow_repair = button.GetType().GetMethod( "OnMenuToggle", BindingFlags.NonPublic | BindingFlags.Instance );
-                    allow_repair?.Invoke( button, new object[] {} );
-                }
+                    Traverse.Create( button ).Method( "OnMenuToggle" ).GetValue();
 
                 cBuildingEnabledButtonPatch.s_skip_sending = false;
 

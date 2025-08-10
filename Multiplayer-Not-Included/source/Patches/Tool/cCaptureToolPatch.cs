@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using HarmonyLib;
+﻿using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
@@ -20,10 +19,10 @@ namespace MultiplayerNotIncluded.Patches.Tool
             if( !cSession.inSession() )
                 return;
 
-            MethodInfo get_regularized_pos = __instance.GetType().GetMethod( "GetRegularizedPos", BindingFlags.NonPublic | BindingFlags.Instance );
+            Traverse get_regularized_pos = Traverse.Create( __instance ).Method( "GetRegularizedPos", new[] { typeof( Vector2 ), typeof( bool ) } );
 
-            object min_object = get_regularized_pos?.Invoke( __instance, new object[] { Vector2.Min( downPos, upPos ), true } );
-            object max_object = get_regularized_pos?.Invoke( __instance, new object[] { Vector2.Max( downPos, upPos ), false } );
+            object min_object = get_regularized_pos?.GetValue( Vector2.Min( downPos, upPos ), true );
+            object max_object = get_regularized_pos?.GetValue( Vector2.Max( downPos, upPos ), false );
 
             if( min_object == null || max_object == null )
                 return;

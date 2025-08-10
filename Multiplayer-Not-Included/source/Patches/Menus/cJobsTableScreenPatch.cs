@@ -24,14 +24,13 @@ namespace MultiplayerNotIncluded.source.Patches.Menus
             if( !cSession.inSession() )
                 return;
 
-            MethodInfo get_widget_row    = __instance.GetType().GetMethod( "GetWidgetRow",    BindingFlags.NonPublic | BindingFlags.Instance );
-            MethodInfo get_widget_column = __instance.GetType().GetMethod( "GetWidgetColumn", BindingFlags.NonPublic | BindingFlags.Instance );
+            Traverse get_widget_row    = Traverse.Create( __instance ).Method( "GetWidgetRow",    new[] { typeof( GameObject ) } );
+            Traverse get_widget_column = Traverse.Create( __instance ).Method( "GetWidgetColumn", new[] { typeof( GameObject ) } );
 
             GameObject                     widget_go     = widget_go_obj as GameObject;
-            TableRow                       widget_row    = get_widget_row?.Invoke( __instance, new object[] { widget_go } ) as TableRow;
-            PrioritizationGroupTableColumn widget_column = get_widget_column?.Invoke( __instance, new object[] { widget_go } ) as PrioritizationGroupTableColumn;
-
-            ChoreGroup chore_group = widget_column?.userData as ChoreGroup;
+            TableRow                       widget_row    = get_widget_row?.GetValue< TableRow >( widget_go );
+            PrioritizationGroupTableColumn widget_column = get_widget_column?.GetValue< PrioritizationGroupTableColumn >( widget_go );
+            ChoreGroup                     chore_group   = widget_column?.userData as ChoreGroup;
             if( widget_row == null || chore_group == null )
                 return;
 

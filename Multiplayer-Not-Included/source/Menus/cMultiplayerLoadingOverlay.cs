@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using TMPro;
 using UnityEngine;
@@ -29,7 +29,7 @@ namespace MultiplayerNotIncluded.Menus
         {
             Func< float > get_scale;
             LoadingOverlay.Load( () => {} );
-            LoadingOverlay instance = typeof( LoadingOverlay ).GetField( "instance", BindingFlags.NonPublic | BindingFlags.Static )?.GetValue( null ) as LoadingOverlay;
+            LoadingOverlay instance = AccessTools.Field( typeof( LoadingOverlay ), "instance" )?.GetValue( null ) as LoadingOverlay;
 
             if( instance == null )
             {

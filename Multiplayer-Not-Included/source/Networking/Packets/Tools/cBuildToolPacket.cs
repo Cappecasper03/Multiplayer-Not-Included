@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Patches.Tool.Build;
 using Steamworks;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Tools
 {
