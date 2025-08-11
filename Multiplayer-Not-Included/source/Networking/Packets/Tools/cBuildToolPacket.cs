@@ -149,7 +149,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                     GameObject game_object = building_def.TryPlace( BuildTool.Instance.visualizer, position, m_orientation, selected_elements, facade );
                     cBuildToolPatch.s_skip_sending = false;
 
-                    Prioritizable prioritizable = game_object.GetComponent< Prioritizable >();
+                    Prioritizable prioritizable = game_object?.GetComponent< Prioritizable >();
                     prioritizable?.SetMasterPriority( m_priority );
                     break;
                 }

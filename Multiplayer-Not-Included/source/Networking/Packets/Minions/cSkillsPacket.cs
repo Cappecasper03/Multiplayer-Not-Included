@@ -73,8 +73,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         public void onReceived()
         {
-            MinionIdentity identity = findIdentity();
-            if( identity == null )
+            MinionIdentity identity;
+            if( !cUtils.findAndCache( m_identity, out identity ) )
                 return;
 
             switch( m_action )
@@ -148,18 +148,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 case eAction.kHat:   cLogger.logInfo( $"{_message}: {m_action}, {m_identity}, {m_hat_name}, {m_hat}" ); break;
                 case eAction.kSKill: cLogger.logInfo( $"{_message}: {m_action}, {m_identity}, {m_skill}" ); break;
             }
-        }
-
-        private MinionIdentity findIdentity()
-        {
-            MinionIdentity[] identities = Object.FindObjectsOfType< MinionIdentity >();
-            foreach( MinionIdentity identity in identities )
-            {
-                if( identity.GetProperName() == m_identity )
-                    return identity;
-            }
-
-            return null;
         }
     }
 }

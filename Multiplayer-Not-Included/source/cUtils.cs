@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using HarmonyLib;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace MultiplayerNotIncluded
 {
     public static class cUtils
     {
+        private static Dictionary< string, MinionIdentity > s_identity = new Dictionary< string, MinionIdentity >();
+
         public static bool isInMenu() => App.GetCurrentSceneName() == "frontend";
         public static bool isInGame() => App.GetCurrentSceneName() == "backend";
 
@@ -20,30 +21,23 @@ namespace MultiplayerNotIncluded
             _action.Invoke();
         }
 
-        public static void initializeUtility( string _category, string _name )
+        public static bool findAndCache( string _name, out MinionIdentity _identity )
         {
-            var entries = Traverse.Create( PlanScreen.Instance ).Field( "toggleEntries" ).GetValue< IList >();
-            var toggles = Traverse.Create( PlanScreen.Instance ).Field( "allBuildingToggles" ).GetValue< Dictionary< string, PlanBuildingToggle > >();
-            if( entries == null || toggles == null )
-                return;
+            if( s_identity.TryGetValue( _name, out _identity ) )
+                return true;
 
-            foreach( var entry in entries )
+            MinionIdentity[] minion_identities = Object.FindObjectsOfType< MinionIdentity >();
+            foreach( MinionIdentity identity in minion_identities )
             {
-                var info = Traverse.Create( entry ).Field( "toggleInfo" ).GetValue< KIconToggleMenu.ToggleInfo >();
-                if( info.text != _category )
+                if( identity.GetProperName() != _name )
                     continue;
 
-                info.toggle.Click();
-                PlanBuildingToggle toggle;
-                if( toggles.TryGetValue( _name, out toggle ) )
-                    toggle.Click();
-                else
-                    return;
-
-                info.toggle.Click();
-                info.toggle.Click();
-                break;
+                s_identity.Add( _name, identity );
+                _identity = identity;
+                return true;
             }
+
+            return false;
         }
     }
 }

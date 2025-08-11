@@ -64,17 +64,13 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 }
                 case TableRow.RowType.Minion:
                 {
-                    MinionIdentity[] minion_identities = Object.FindObjectsOfType< MinionIdentity >();
-                    foreach( MinionIdentity identity in minion_identities )
-                    {
-                        if( identity.GetProperName() != m_identity_name )
-                            continue;
+                    MinionIdentity identity;
+                    if( !cUtils.findAndCache( m_identity_name, out identity ) )
+                        return;
 
-                        ConsumableConsumer component   = identity.GetComponent< ConsumableConsumer >();
-                        bool               can_consume = m_value == TableScreen.ResultValues.True || m_value == TableScreen.ResultValues.ConditionalGroup;
-                        component?.SetPermitted( m_consumable_id, can_consume );
-                        break;
-                    }
+                    ConsumableConsumer component   = identity.GetComponent< ConsumableConsumer >();
+                    bool               can_consume = m_value == TableScreen.ResultValues.True || m_value == TableScreen.ResultValues.ConditionalGroup;
+                    component?.SetPermitted( m_consumable_id, can_consume );
 
                     break;
                 }
