@@ -38,6 +38,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
         kClearItem,
 
+        kUprootPlant,
+
         kConsumableInfo,
         kJobPriority,
         kSchedule,

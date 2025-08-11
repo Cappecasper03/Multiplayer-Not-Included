@@ -7,6 +7,7 @@ using MultiplayerNotIncluded.Networking.Packets.World;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu;
 using MultiplayerNotIncluded.Networking.Packets.World.Creatures;
 using MultiplayerNotIncluded.Networking.Packets.World.Items;
+using MultiplayerNotIncluded.Networking.Packets.World.Plants;
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {
@@ -54,6 +55,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
 
             s_constructors[ ePacketType.kClearItem ] = () => new cClearItemPacket();
+
+            s_constructors[ ePacketType.kUprootPlant ] = () => new cUprootPlantPacket();
 
             s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();

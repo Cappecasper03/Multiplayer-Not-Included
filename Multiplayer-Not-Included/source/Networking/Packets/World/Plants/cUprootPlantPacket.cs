@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
 using UnityEngine;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Items
+namespace MultiplayerNotIncluded.Networking.Packets.World.Plants
 {
-    public class cClearItemPacket : iIPacket
+    public class cUprootPlantPacket : iIPacket
     {
         private CSteamID m_steam_id = cSession.m_local_steam_id;
         private bool     m_marked;
         private int      m_instance_id;
 
-        public ePacketType m_type => ePacketType.kClearItem;
+        public ePacketType m_type => ePacketType.kUprootPlant;
 
-        public cClearItemPacket() {}
+        public cUprootPlantPacket() {}
 
-        public cClearItemPacket( bool _marked, int _instance_id )
+        public cUprootPlantPacket( bool _marked, int _instance_id )
         {
             m_marked      = _marked;
             m_instance_id = _instance_id;
@@ -38,19 +39,19 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Items
 
         public void onReceived()
         {
-            Clearable[] clearables = Object.FindObjectsOfType< Clearable >();
-            foreach( Clearable clearable in clearables )
+            Uprootable[] uprootables = Object.FindObjectsOfType< Uprootable >();
+            foreach( Uprootable uprootable in uprootables )
             {
-                KPrefabID prefab_id = clearable.GetComponent< KPrefabID >();
+                KPrefabID prefab_id = uprootable.GetComponent< KPrefabID >();
                 if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
                     continue;
 
                 if( m_marked )
-                    clearable.MarkForClear();
+                    uprootable.MarkForUproot( false );
                 else
-                    clearable.CancelClearing();
+                    Traverse.Create( uprootable ).Method( "OnCancel", new[] { typeof( object ) } )?.GetValue( ( object )null );
 
-                Game.Instance.userMenu.Refresh( clearable.gameObject );
+                Game.Instance.userMenu.Refresh( uprootable.gameObject );
                 break;
             }
 
