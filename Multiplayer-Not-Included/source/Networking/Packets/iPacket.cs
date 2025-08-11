@@ -33,6 +33,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kAutoRepair,
         kAutoDisinfect,
         kBuildingEnabled,
+        kCancelBuild,
 
         kAttackCreature,
         kCaptureCreature,

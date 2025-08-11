@@ -3,13 +3,15 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.Tools;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
 
 namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
     [HarmonyPatch]
     public static class cConstructablePatch
     {
+        public static bool s_skip_send = false;
+
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( Constructable ), "OnPressCancel" )]
@@ -19,7 +21,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             if( !cSession.inSessionAndReady() )
                 return;
 
-            cCancelToolPacket packet = cCancelToolPacket.createCell( Grid.PosToCell( __instance.transform.localPosition ) );
+            cCancelBuildPacket packet = new cCancelBuildPacket( Grid.PosToCell( __instance.transform.localPosition ), __instance.name );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

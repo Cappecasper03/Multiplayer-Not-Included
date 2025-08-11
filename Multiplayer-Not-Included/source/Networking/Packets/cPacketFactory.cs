@@ -51,6 +51,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kAutoRepair ]      = () => new cAutoRepairPacket();
             s_constructors[ ePacketType.kAutoDisinfect ]   = () => new cAutoDisinfectPacket();
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
+            s_constructors[ ePacketType.kCancelBuild ]     = () => new cCancelBuildPacket();
 
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
