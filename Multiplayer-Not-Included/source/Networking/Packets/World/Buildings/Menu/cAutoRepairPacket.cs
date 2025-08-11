@@ -1,68 +1,23 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using HarmonyLib;
-using MultiplayerNotIncluded.DebugTools;
+﻿using HarmonyLib;
 using MultiplayerNotIncluded.Patches.World.Buildings.Menu;
-using Steamworks;
-using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
 {
-    public class cAutoRepairPacket : iIPacket
+    public class cAutoRepairPacket : cObjectMenuPacket< Repairable >
     {
-        private CSteamID m_steam_id = cSession.m_local_steam_id;
-        private bool     m_auto_repair;
-        private int      m_instance_id;
+        public cAutoRepairPacket() : base( ePacketType.kAutoRepair ) {}
 
-        public ePacketType m_type => ePacketType.kAutoRepair;
+        public cAutoRepairPacket( bool _value, int _instance_id ) : base( ePacketType.kAutoRepair, _value, _instance_id ) {}
 
-        public cAutoRepairPacket() {}
-
-        public cAutoRepairPacket( bool _auto_repair, int _instance_id )
+        protected override void onAction( bool _value, Repairable _type_object )
         {
-            m_auto_repair = _auto_repair;
-            m_instance_id = _instance_id;
+            cRepairablePatch.s_skip_sending = true;
+            if( _value )
+                Traverse.Create( _type_object ).Method( "AllowRepair" )?.GetValue();
+            else
+                _type_object.CancelRepair();
+
+            cRepairablePatch.s_skip_sending = false;
         }
-
-        public void serialize( BinaryWriter _writer )
-        {
-            _writer.Write( m_steam_id.m_SteamID );
-            _writer.Write( m_auto_repair );
-            _writer.Write( m_instance_id );
-        }
-
-        public void deserialize( BinaryReader _reader )
-        {
-            m_steam_id    = new CSteamID( _reader.ReadUInt64() );
-            m_auto_repair = _reader.ReadBoolean();
-            m_instance_id = _reader.ReadInt32();
-        }
-
-        public void onReceived()
-        {
-            Repairable[] repairables = Object.FindObjectsOfType< Repairable >();
-            foreach( Repairable repairable in repairables )
-            {
-                KPrefabID prefab_id = repairable?.GetComponent< KPrefabID >();
-                if( prefab_id == null || prefab_id.InstanceID != m_instance_id )
-                    continue;
-
-                cRepairablePatch.s_skip_sending = true;
-                if( m_auto_repair )
-                    Traverse.Create( repairable ).Method( "AllowRepair" )?.GetValue();
-                else
-                    repairable.CancelRepair();
-
-                Game.Instance.userMenu.Refresh( repairable.gameObject );
-                cRepairablePatch.s_skip_sending = false;
-
-                break;
-            }
-
-            if( cSession.isHost() )
-                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
-        }
-
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_auto_repair}, {m_instance_id}" );
     }
 }

@@ -1,60 +1,18 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using MultiplayerNotIncluded.DebugTools;
-using MultiplayerNotIncluded.Patches.World.Creatures;
-using Steamworks;
+﻿using MultiplayerNotIncluded.Patches.World.Creatures;
 
 namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
 {
-    public class cAttackCreaturePacket : iIPacket
+    public class cAttackCreaturePacket : cObjectMenuPacket< FactionAlignment >
     {
-        private CSteamID m_steam_id = cSession.m_local_steam_id;
-        private bool     m_targeted;
-        private int      m_instance_id;
+        public cAttackCreaturePacket() : base( ePacketType.kAttackCreature ) {}
 
-        public ePacketType m_type => ePacketType.kAttackCreature;
+        public cAttackCreaturePacket( bool _value, int _instance_id ) : base( ePacketType.kAttackCreature, _value, _instance_id ) {}
 
-        public cAttackCreaturePacket() {}
-
-        public cAttackCreaturePacket( bool _targeted, int _instance_id )
+        protected override void onAction( bool _value, FactionAlignment _type_object )
         {
-            m_targeted    = _targeted;
-            m_instance_id = _instance_id;
+            cFactionAlignmentPatch.s_skip_send = true;
+            _type_object.SetPlayerTargeted( _value );
+            cFactionAlignmentPatch.s_skip_send = false;
         }
-
-        public void serialize( BinaryWriter _writer )
-        {
-            _writer.Write( m_steam_id.m_SteamID );
-            _writer.Write( m_targeted );
-            _writer.Write( m_instance_id );
-        }
-
-        public void deserialize( BinaryReader _reader )
-        {
-            m_steam_id    = new CSteamID( _reader.ReadUInt64() );
-            m_targeted    = _reader.ReadBoolean();
-            m_instance_id = _reader.ReadInt32();
-        }
-
-        public void onReceived()
-        {
-            foreach( FactionAlignment faction_alignment in Components.FactionAlignments.Items )
-            {
-                if( faction_alignment.kprefabID.InstanceID != m_instance_id )
-                    continue;
-
-                cFactionAlignmentPatch.s_skip_send = true;
-                faction_alignment.SetPlayerTargeted( m_targeted );
-                cFactionAlignmentPatch.s_skip_send = false;
-
-                Game.Instance.userMenu.Refresh( faction_alignment.gameObject );
-                break;
-            }
-
-            if( cSession.isHost() )
-                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
-        }
-
-        public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_targeted}, {m_instance_id}" );
     }
 }

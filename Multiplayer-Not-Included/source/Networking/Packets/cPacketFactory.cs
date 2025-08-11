@@ -56,7 +56,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
 
             s_constructors[ ePacketType.kClearItem ] = () => new cClearItemPacket();
 
-            s_constructors[ ePacketType.kUprootPlant ] = () => new cUprootPlantPacket();
+            s_constructors[ ePacketType.kUproot ]      = () => new cUprootPacket();
+            s_constructors[ ePacketType.kAutoHarvest ] = () => new cAutoHarvestPacket();
 
             s_constructors[ ePacketType.kConsumableInfo ] = () => new cConsumableInfoPacket();
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();

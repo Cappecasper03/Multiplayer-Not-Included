@@ -8,21 +8,21 @@ using MultiplayerNotIncluded.Networking.Packets.World.Plants;
 namespace MultiplayerNotIncluded.Patches.World.Items
 {
     [HarmonyPatch]
-    public static class cUprootablePatch
+    public static class cHarvestDesignatablePatch
     {
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( Uprootable ), "OnClickUproot" )]
+        [HarmonyPatch( typeof( HarvestDesignatable ), "OnClickHarvestWhenReady" )]
         [HarmonyPatch( new Type[ 0 ] )]
-        private static void onClickUproot( Uprootable __instance ) => markForUproot( true, __instance );
+        private static void onClickHarvestWhenReady( HarvestDesignatable __instance ) => markForHarvest( true, __instance );
 
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( Uprootable ), "OnClickCancelUproot" )]
+        [HarmonyPatch( typeof( HarvestDesignatable ), "OnClickCancelHarvestWhenReady" )]
         [HarmonyPatch( new Type[ 0 ] )]
-        private static void onClickCancelUproot( Uprootable __instance ) => markForUproot( false, __instance );
+        private static void onClickCancelHarvestWhenReady( HarvestDesignatable __instance ) => markForHarvest( false, __instance );
 
-        private static void markForUproot( bool _marked, Uprootable _instance )
+        private static void markForHarvest( bool _marked, HarvestDesignatable _instance )
         {
             if( !cSession.inSessionAndReady() )
                 return;
@@ -31,7 +31,7 @@ namespace MultiplayerNotIncluded.Patches.World.Items
             if( prefab_id == null )
                 return;
 
-            cUprootPacket packet = new cUprootPacket( _marked, prefab_id.InstanceID );
+            cAutoHarvestPacket packet = new cAutoHarvestPacket( _marked, prefab_id.InstanceID );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
