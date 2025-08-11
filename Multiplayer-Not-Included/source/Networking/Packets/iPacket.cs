@@ -24,6 +24,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kMoveToLocationTool,
         kPrioritizeTool,
         kBuildTool,
+        kCopySettingsTool,
 
         kSpeedChange,
         kRedAlert,

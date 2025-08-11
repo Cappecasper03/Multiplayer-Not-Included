@@ -42,6 +42,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kMoveToLocationTool ] = () => new cMoveToLocationToolPacket();
             s_constructors[ ePacketType.kPrioritizeTool ]     = () => new cPrioritizeToolPacket();
             s_constructors[ ePacketType.kBuildTool ]          = () => new cBuildToolPacket();
+            s_constructors[ ePacketType.kCopySettingsTool ]   = () => new cCopySettingsToolPacket();
 
             s_constructors[ ePacketType.kSpeedChange ] = () => new cSpeedChangePacket();
             s_constructors[ ePacketType.kRedAlert ]    = () => new cRedAlertPacket();
