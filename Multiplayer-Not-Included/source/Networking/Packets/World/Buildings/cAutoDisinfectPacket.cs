@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
-using MultiplayerNotIncluded.Patches.World.Buildings.Menu;
+using MultiplayerNotIncluded.Patches.World.Buildings;
 
-namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
+namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
 {
     public class cAutoDisinfectPacket : cObjectMenuPacket< AutoDisinfectable >
     {

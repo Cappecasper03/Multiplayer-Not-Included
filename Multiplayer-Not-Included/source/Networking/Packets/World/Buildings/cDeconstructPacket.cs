@@ -1,4 +1,4 @@
-﻿namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings.Menu
+﻿namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
 {
     public class cDeconstructPacket : cObjectMenuPacket< Deconstructable >
     {
