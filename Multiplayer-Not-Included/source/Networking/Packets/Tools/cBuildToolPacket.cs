@@ -20,6 +20,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         private eAction            m_action;
         private string             m_prefab_id;
         private string             m_facade_id;
+        private PrioritySetting    m_priority;
         private List< string >     m_selected_elements = new List< string >();
         private int                m_cell;
         private Orientation        m_orientation;
@@ -35,6 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 m_action            = eAction.kBuilding,
                 m_prefab_id         = _prefab_id,
                 m_facade_id         = _facade_id,
+                m_priority          = PlanScreen.Instance.GetBuildingPriority(),
                 m_selected_elements = _selected_elements.Select( _e => _e.ToString() ).ToList(),
                 m_cell              = _cell,
                 m_orientation       = _orientation,
@@ -48,6 +50,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                 m_action            = eAction.kUtility,
                 m_prefab_id         = _prefab_id,
                 m_facade_id         = _facade_id,
+                m_priority          = PlanScreen.Instance.GetBuildingPriority(),
                 m_selected_elements = _selected_elements.Select( _e => _e.ToString() ).ToList(),
                 m_path              = _path,
                 m_connections       = _connections,
@@ -60,6 +63,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             _writer.Write( ( int )m_action );
             _writer.Write( m_prefab_id );
             _writer.Write( m_facade_id );
+            _writer.Write( ( int )m_priority.priority_class );
+            _writer.Write( m_priority.priority_value );
 
             _writer.Write( m_selected_elements.Count );
             foreach( string element_tag in m_selected_elements )
@@ -95,6 +100,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             m_action    = ( eAction )_reader.ReadInt32();
             m_prefab_id = _reader.ReadString();
             m_facade_id = _reader.ReadString();
+            m_priority  = new PrioritySetting( ( PriorityScreen.PriorityClass )_reader.ReadInt32(), _reader.ReadInt32() );
 
             int element_count = _reader.ReadInt32();
             for( int i = 0; i < element_count; i++ )
@@ -140,8 +146,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                     Vector3 position = Grid.CellToPosCBC( m_cell, building_def.SceneLayer );
 
                     cBuildToolPatch.s_skip_sending = true;
-                    building_def.TryPlace( BuildTool.Instance.visualizer, position, m_orientation, selected_elements, facade );
+                    GameObject game_object = building_def.TryPlace( BuildTool.Instance.visualizer, position, m_orientation, selected_elements, facade );
                     cBuildToolPatch.s_skip_sending = false;
+
+                    Prioritizable prioritizable = game_object.GetComponent< Prioritizable >();
+                    prioritizable?.SetMasterPriority( m_priority );
                     break;
                 }
                 case eAction.kUtility:
@@ -168,6 +177,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
                             GameObject utility = building_def.TryPlace( null, position, Orientation.Neutral, selected_elements, facade );
                             manager.SetConnections( connection, cell, false );
 
+                            Prioritizable prioritizable = utility.GetComponent< Prioritizable >();
+                            prioritizable?.SetMasterPriority( m_priority );
+
                             KAnimGraphTileVisualizer component = utility.GetComponent< KAnimGraphTileVisualizer >();
                             if( component != null )
                                 component.UpdateConnections( component.Connections | manager.GetConnections( cell, false ) );
@@ -186,8 +198,14 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
         {
             switch( m_action )
             {
-                case eAction.kBuilding: cLogger.logInfo( $"{_message}: {m_action}, {m_cell}, {m_prefab_id}, {m_facade_id}, {m_orientation}, {m_selected_elements.Count}" ); break;
-                case eAction.kUtility:  cLogger.logInfo( $"{_message}: {m_action}, {m_prefab_id}, {m_path.Count}" ); break;
+                case eAction.kBuilding:
+                {
+                    string message = $"{_message}: {m_action}, {m_cell}, {m_prefab_id}, {m_priority.priority_class}, {m_priority.priority_value}, ";
+                    message += $"{m_facade_id}, {m_orientation}, {m_selected_elements.Count}";
+                    cLogger.logInfo( message );
+                    break;
+                }
+                case eAction.kUtility: cLogger.logInfo( $"{_message}: {m_action}, {m_prefab_id}, {m_path.Count}" ); break;
             }
         }
     }

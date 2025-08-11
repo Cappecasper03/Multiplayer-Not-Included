@@ -5,6 +5,9 @@
         <SteamLibraryPath></SteamLibraryPath>
         <GameDataPath>$(SteamLibraryPath)\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DebugType>none</DebugType>
+    </PropertyGroup>
 
     <ItemGroup>
         <Reference Include="UnityEngine" HintPath="$(GameDataPath)\UnityEngine.dll" Private="false"/>
