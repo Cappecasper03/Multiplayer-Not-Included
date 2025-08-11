@@ -65,6 +65,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kJobPriority ]    = () => new cJobPriorityPacket();
             s_constructors[ ePacketType.kSchedule ]       = () => new cSchedulePacket();
             s_constructors[ ePacketType.kSkills ]         = () => new cSkillsPacket();
+
+            s_constructors[ ePacketType.kPriority ] = () => new cPriorityPacket();
         }
     }
 }

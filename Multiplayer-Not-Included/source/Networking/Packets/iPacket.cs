@@ -47,6 +47,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kJobPriority,
         kSchedule,
         kSkills,
+
+        kPriority,
     }
 
     public interface iIPacket
