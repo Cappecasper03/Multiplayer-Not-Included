@@ -15,7 +15,7 @@ namespace MultiplayerNotIncluded.Patches.World.Creatures
         [UsedImplicitly]
         [HarmonyPatch( typeof( Capturable ), nameof( Capturable.MarkForCapture ) )]
         [HarmonyPatch( new[] { typeof( bool ) } )]
-        private static void setPlayerTargeted( bool mark, Capturable __instance )
+        private static void markForCapture( bool mark, Capturable __instance )
         {
             if( !cSession.inSessionAndReady() || s_skip_send )
                 return;
