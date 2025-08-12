@@ -47,6 +47,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kJobPriority,
         kSchedule,
         kSkills,
+        kResearch,
 
         kPriority,
     }

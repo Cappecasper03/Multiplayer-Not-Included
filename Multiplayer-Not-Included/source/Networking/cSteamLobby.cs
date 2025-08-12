@@ -69,6 +69,7 @@ namespace MultiplayerNotIncluded.Networking
             cClient.disconnect();
             cServer.stop();
             cSession.clear();
+            cCacheManager.clear();
 
             SteamMatchmaking.LeaveLobby( m_lobby_id );
             cLogger.logInfo( $"Left lobby: {m_lobby_id}" );

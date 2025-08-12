@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
 using Steamworks;
-using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Minions
 {
@@ -65,7 +63,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 case TableRow.RowType.Minion:
                 {
                     MinionIdentity identity;
-                    if( !cUtils.findAndCache( m_identity_name, out identity ) )
+                    if( !cCacheManager.findAndCache( m_identity_name, out identity ) )
                         return;
 
                     ConsumableConsumer component   = identity.GetComponent< ConsumableConsumer >();

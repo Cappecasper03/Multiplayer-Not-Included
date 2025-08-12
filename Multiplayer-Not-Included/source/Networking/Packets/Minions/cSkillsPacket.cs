@@ -74,7 +74,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         public void onReceived()
         {
             MinionIdentity identity;
-            if( !cUtils.findAndCache( m_identity, out identity ) )
+            if( !cCacheManager.findAndCache( m_identity, out identity ) )
                 return;
 
             switch( m_action )
@@ -135,10 +135,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             }
 
             if( cSession.isHost() )
-                cPacketSender.sendToAllExcluding( this, new List< CSteamID >
-                {
-                    m_steam_id
-                } );
+                cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
 
         public void log( string _message )
