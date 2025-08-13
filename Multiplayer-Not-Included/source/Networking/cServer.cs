@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking.Packets;
+using MultiplayerNotIncluded.Networking.Packets.Players;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
@@ -116,14 +118,16 @@ namespace MultiplayerNotIncluded.Networking
             if( !SpeedControlScreen.Instance.IsPaused )
                 SpeedControlScreen.Instance.Pause( false );
 
-            int    ready_count = 0;
-            string waiting_for = "";
+            int              ready_count   = 0;
+            string           waiting_for   = "";
+            List< CSteamID > ready_players = new List< CSteamID >();
             foreach( cPlayer player in cSession.s_connected_players.Values )
             {
                 if( player.m_ready )
                 {
                     waiting_for += $"{player.m_steam_name}: Ready\n";
                     ready_count++;
+                    ready_players.Add( player.m_steam_id );
                 }
                 else
                     waiting_for = waiting_for.Insert( 0, $"{player.m_steam_name}: Not Ready\n" );
@@ -131,6 +135,10 @@ namespace MultiplayerNotIncluded.Networking
 
             waiting_for = $"Waiting for players...({ready_count}/{cSession.s_connected_players.Count})\n{waiting_for}";
             cMultiplayerLoadingOverlay.show( waiting_for );
+
+            cPlayerWaitPacket packet = new cPlayerWaitPacket( waiting_for );
+            foreach( CSteamID steam_id in ready_players )
+                cPacketSender.sendToPlayer( steam_id, packet );
         }
 
         private static void tryAcceptConnection( HSteamNetConnection _connection, CSteamID _client_id )

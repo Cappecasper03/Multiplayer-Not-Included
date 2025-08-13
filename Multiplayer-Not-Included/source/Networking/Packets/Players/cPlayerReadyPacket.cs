@@ -37,7 +37,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             else if( !cSession.isClient() || m_steam_id != cSession.m_host_steam_id )
                 return;
 
-            cUtils.delayAction( 1000, () => { cSession.m_ready = true; } );
+            cUtils.delayAction( 1000, () => { cSession.s_ready = true; } );
             cMultiplayerLoadingOverlay.hide();
         }
 

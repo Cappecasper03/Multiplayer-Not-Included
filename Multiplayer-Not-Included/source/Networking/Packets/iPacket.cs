@@ -8,6 +8,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSaveFileChunk,
 
         kPlayerReady,
+        kPlayerWait,
         kPlayerCursor,
 
         kDigTool,
