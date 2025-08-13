@@ -12,6 +12,18 @@ namespace MultiplayerNotIncluded.Patches.World.Creatures
     {
         public static bool s_skip_send = false;
 
+        [HarmonyPrefix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( Capturable ), "OnTagsChanged" )]
+        [HarmonyPatch( new[] { typeof( object ) } )]
+        private static void onTagsChangedPre( object data, Capturable __instance ) => s_skip_send = true;
+
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( Capturable ), "OnTagsChanged" )]
+        [HarmonyPatch( new[] { typeof( object ) } )]
+        private static void onTagsChangedPost( object data, Capturable __instance ) => s_skip_send = false;
+
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( Capturable ), nameof( Capturable.MarkForCapture ) )]

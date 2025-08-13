@@ -124,7 +124,7 @@ namespace MultiplayerNotIncluded.Networking
                     cMultiplayerLoadingOverlay.show( "Connection to the host was lost..." );
 
                     cSteamLobby.leave();
-                    cUtils.delayAction( 3000, () =>
+                    cUtils.delayAction( 1000, () =>
                     {
                         if( PauseScreen.Instance != null )
                         {
