@@ -12,6 +12,16 @@ namespace MultiplayerNotIncluded.Patches.World.Creatures
     {
         public static bool s_skip_send = false;
 
+        [HarmonyPrefix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( FactionAlignment ), nameof( FactionAlignment.SetAlignmentActive ) )]
+        private static void setAlignmentActivePre( bool active, FactionAlignment __instance ) => s_skip_send = true;
+
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( FactionAlignment ), nameof( FactionAlignment.SetAlignmentActive ) )]
+        private static void setAlignmentActivePost( bool active, FactionAlignment __instance ) => s_skip_send = false;
+
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( FactionAlignment ), nameof( FactionAlignment.SetPlayerTargeted ) )]
