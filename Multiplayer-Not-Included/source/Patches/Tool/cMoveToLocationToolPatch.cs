@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.Patches.Tool
@@ -23,11 +24,23 @@ namespace MultiplayerNotIncluded.Patches.Tool
             Movable   movable   = Traverse.Create( __instance ).Field( "targetMovable" ).GetValue< Movable >();
 
             GameObject game_object = navigator?.gameObject ?? movable?.gameObject;
-            KPrefabID  prefab_id   = game_object?.GetComponent< KPrefabID >();
-            if( prefab_id == null )
+            if( game_object == null )
                 return;
 
-            cMoveToLocationToolPacket packet = new cMoveToLocationToolPacket( target_cell, prefab_id.InstanceID );
+            cMoveToLocationToolPacket packet;
+            cNetworkIdentity          identity = game_object.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( game_object.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, game_object.gameObject, out layer ) )
+                    return;
+
+                packet = cMoveToLocationToolPacket.createStatic( target_cell, cell, layer );
+            }
+            else
+
+                packet = cMoveToLocationToolPacket.createDynamic( target_cell, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

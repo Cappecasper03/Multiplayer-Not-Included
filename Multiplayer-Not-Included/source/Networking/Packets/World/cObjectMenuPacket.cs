@@ -114,8 +114,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World
         {
             switch( m_action )
             {
-                case eAction.kStatic:  cLogger.logInfo( $"{_message}: {m_type}, {m_value}, {m_cell}, {( Grid.SceneLayer )m_layer}" ); break;
-                case eAction.kDynamic: cLogger.logInfo( $"{_message}: {m_type}, {m_value}, {m_network_id}" ); break;
+                case eAction.kStatic:  cLogger.logInfo( $"{_message}: {m_type}, {m_action}, {m_value}, {m_cell}, {( Grid.SceneLayer )m_layer}" ); break;
+                case eAction.kDynamic: cLogger.logInfo( $"{_message}: {m_type}, {m_action}, {m_value}, {m_network_id}" ); break;
             }
         }
 
