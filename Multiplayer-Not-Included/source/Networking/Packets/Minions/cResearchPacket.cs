@@ -42,7 +42,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         public void onReceived()
         {
             ResearchEntry entry;
-            if( !cCacheManager.findAndCache( m_name, out entry ) )
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             cResearchEntryPatch.s_skip_send = true;
@@ -59,5 +59,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         }
 
         public void log( string _message ) => cLogger.logInfo( $"{_message}: {m_action}, {m_name}" );
+
+        private static bool isEntry( string _name, ResearchEntry _entry ) => _name == _entry.name;
     }
 }

@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Creatures;
+using MultiplayerNotIncluded.source.Networking.Components;
 
 namespace MultiplayerNotIncluded.Patches.World.Creatures
 {
@@ -20,11 +21,19 @@ namespace MultiplayerNotIncluded.Patches.World.Creatures
             if( !cSession.inSessionAndReady() || s_skip_send )
                 return;
 
-            KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();
-            if( prefab_id == null )
-                return;
+            cCaptureCreaturePacket packet;
+            cNetworkIdentity       identity = __instance.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( __instance.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, __instance.gameObject, out layer ) )
+                    return;
 
-            cCaptureCreaturePacket packet = new cCaptureCreaturePacket( mark, prefab_id.InstanceID );
+                packet = new cCaptureCreaturePacket( mark, cell, layer );
+            }
+            else
+                packet = new cCaptureCreaturePacket( mark, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

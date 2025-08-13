@@ -1,55 +1,56 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Satsuma;
+using UnityEngine.Events;
+using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded
 {
     public static class cCacheManager
     {
-        private static readonly Dictionary< string, MinionIdentity > s_minion_identities = new Dictionary< string, MinionIdentity >();
-        private static readonly Dictionary< string, ResearchEntry >  s_research_entries  = new Dictionary< string, ResearchEntry >();
+        private static readonly Dictionary< System.Type, object > s_caches = new Dictionary< System.Type, object >();
 
         public static void clear()
         {
-            s_minion_identities.Clear();
-            s_research_entries.Clear();
+            foreach( object cache in s_caches.Values )
+            {
+                if( cache is IClearable clearable_cache )
+                    clearable_cache.Clear();
+            }
         }
 
-        public static bool findAndCache( string _name, out MinionIdentity _identity )
+        public static bool findAndCache< T >( string _name, Func< string, T, bool > _action, out T _out )
+            where T : KMonoBehaviour
         {
-            if( s_minion_identities.TryGetValue( _name, out _identity ) )
+            Dictionary< string, T > cache = getCache< T >();
+
+            if( cache.TryGetValue( _name, out _out ) )
                 return true;
 
-            MinionIdentity[] minion_identities = Object.FindObjectsOfType< MinionIdentity >();
-            foreach( MinionIdentity identity in minion_identities )
+            T[] type_objects = Object.FindObjectsOfType< T >();
+            foreach( T type_object in type_objects )
             {
-                if( identity.GetProperName() != _name )
+                if( !_action.Invoke( _name, type_object ) )
                     continue;
 
-                s_minion_identities.Add( _name, identity );
-                _identity = identity;
+                cache.Add( _name, type_object );
+                _out = type_object;
                 return true;
             }
 
             return false;
         }
 
-        public static bool findAndCache( string _name, out ResearchEntry _entry )
+        private static Dictionary< string, T > getCache< T >()
+            where T : KMonoBehaviour
         {
-            if( s_research_entries.TryGetValue( _name, out _entry ) )
-                return true;
+            if( s_caches.TryGetValue( typeof( T ), out var cache ) )
+                return ( Dictionary< string, T > )cache;
 
-            ResearchEntry[] research_entries = Object.FindObjectsOfType< ResearchEntry >();
-            foreach( ResearchEntry research_entry in research_entries )
-            {
-                if( research_entry.name != _name )
-                    continue;
+            cache                   = new Dictionary< string, T >();
+            s_caches[ typeof( T ) ] = cache;
 
-                s_research_entries.Add( _name, research_entry );
-                _entry = research_entry;
-                return true;
-            }
-
-            return false;
+            return ( Dictionary< string, T > )cache;
         }
     }
 }

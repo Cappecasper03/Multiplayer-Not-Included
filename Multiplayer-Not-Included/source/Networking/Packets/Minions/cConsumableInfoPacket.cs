@@ -2,6 +2,7 @@
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Minions
@@ -12,18 +13,18 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         private TableRow.RowType         m_row_type;
         private string                   m_consumable_id;
         private TableScreen.ResultValues m_value;
-        private string                   m_identity_name;
+        private int                      m_network_id;
 
         public ePacketType m_type => ePacketType.kConsumableInfo;
 
         public cConsumableInfoPacket() {}
 
-        public cConsumableInfoPacket( TableRow.RowType _row_type, string _consumable_id, TableScreen.ResultValues _value, string _identity_name )
+        public cConsumableInfoPacket( TableRow.RowType _row_type, string _consumable_id, TableScreen.ResultValues _value, int _network_id )
         {
             m_row_type      = _row_type;
             m_consumable_id = _consumable_id;
             m_value         = _value;
-            m_identity_name = _identity_name;
+            m_network_id    = _network_id;
         }
 
         public void serialize( BinaryWriter _writer )
@@ -34,7 +35,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             _writer.Write( ( int )m_value );
 
             if( m_row_type == TableRow.RowType.Minion )
-                _writer.Write( m_identity_name );
+                _writer.Write( m_network_id );
         }
 
         public void deserialize( BinaryReader _reader )
@@ -45,7 +46,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             m_value         = ( TableScreen.ResultValues )_reader.ReadInt32();
 
             if( m_row_type == TableRow.RowType.Minion )
-                m_identity_name = _reader.ReadString();
+                m_network_id = _reader.ReadInt32();
         }
 
         public void onReceived()
@@ -62,8 +63,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                 }
                 case TableRow.RowType.Minion:
                 {
-                    MinionIdentity identity;
-                    if( !cCacheManager.findAndCache( m_identity_name, out identity ) )
+                    cNetworkIdentity identity;
+                    if( !cNetworkIdentity.tryGetIdentity( m_network_id, out identity ) )
                         return;
 
                     ConsumableConsumer component   = identity.GetComponent< ConsumableConsumer >();
@@ -83,7 +84,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         public void log( string _message )
         {
             if( m_row_type == TableRow.RowType.Minion )
-                cLogger.logInfo( $"{_message}: {m_row_type}, {m_consumable_id}, {m_value}, {m_identity_name}" );
+                cLogger.logInfo( $"{_message}: {m_row_type}, {m_consumable_id}, {m_value}, {m_network_id}" );
             else
                 cLogger.logInfo( $"{_message}: {m_row_type}, {m_consumable_id}, {m_value}" );
         }

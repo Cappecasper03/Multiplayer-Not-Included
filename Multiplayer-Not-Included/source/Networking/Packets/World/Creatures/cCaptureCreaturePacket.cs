@@ -6,7 +6,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Creatures
     {
         public cCaptureCreaturePacket() : base( ePacketType.kCaptureCreature ) {}
 
-        public cCaptureCreaturePacket( bool _value, int _instance_id ) : base( ePacketType.kCaptureCreature, _value, _instance_id ) {}
+        public cCaptureCreaturePacket( bool _value, int _cell, int _layer ) : base( ePacketType.kCaptureCreature, eAction.kStatic, _value, _cell, _layer ) {}
+        public cCaptureCreaturePacket( bool _value, int _network_id ) : base( ePacketType.kCaptureCreature, eAction.kDynamic, _value, _network_id ) {}
 
         protected override void onAction( bool _value, Capturable _type_object )
         {

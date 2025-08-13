@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World;
+using MultiplayerNotIncluded.source.Networking.Components;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.Patches.World
@@ -20,11 +21,22 @@ namespace MultiplayerNotIncluded.Patches.World
                 return;
 
             GameObject game_object = Traverse.Create( __instance ).Field( "selected" ).GetValue< GameObject >();
-            KPrefabID  prefab_id   = game_object?.GetComponent< KPrefabID >();
-            if( prefab_id == null )
+            if( game_object == null )
                 return;
 
-            cPriorityPacket packet = new cPriorityPacket( priority, prefab_id.InstanceID );
+            cPriorityPacket  packet;
+            cNetworkIdentity identity = game_object.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( game_object.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, game_object, out layer ) )
+                    return;
+
+                packet = cPriorityPacket.createStatic( priority, cell, layer );
+            }
+            else
+                packet = cPriorityPacket.createDynamic( priority, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

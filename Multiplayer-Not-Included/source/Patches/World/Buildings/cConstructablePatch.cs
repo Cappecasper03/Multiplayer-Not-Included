@@ -18,10 +18,15 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onPressCancel( Constructable __instance )
         {
-            if( !cSession.inSessionAndReady() )
+            if( !cSession.inSessionAndReady() || s_skip_send )
                 return;
 
-            cCancelBuildPacket packet = new cCancelBuildPacket( Grid.PosToCell( __instance.transform.localPosition ), __instance.name );
+            int cell = Grid.PosToCell( __instance.transform.localPosition );
+            int layer;
+            if( !cUtils.tryGetLayer( cell, __instance.gameObject, out layer ) )
+                return;
+
+            cCancelBuildPacket packet = new cCancelBuildPacket( cell, layer );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

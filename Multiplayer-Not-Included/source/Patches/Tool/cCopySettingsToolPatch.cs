@@ -14,17 +14,21 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [UsedImplicitly]
         [HarmonyPatch( typeof( CopySettingsTool ), "OnDragTool" )]
         [HarmonyPatch( new[] { typeof( int ), typeof( int ) } )]
-        private static void onDragComplete( int cell, int distFromOrigin, CopySettingsTool __instance )
+        private static void onDragTool( int cell, int distFromOrigin, CopySettingsTool __instance )
         {
             if( !cSession.inSessionAndReady() )
                 return;
 
             GameObject game_object = Traverse.Create( __instance ).Field( "sourceGameObject" ).GetValue< GameObject >();
-            KPrefabID  prefab_id   = game_object?.GetComponent< KPrefabID >();
-            if( prefab_id == null )
+            if( game_object == null )
                 return;
 
-            cCopySettingsToolPacket packet = new cCopySettingsToolPacket( cell, prefab_id.InstanceID );
+            int source_cell = Grid.PosToCell( game_object.transform.localPosition );
+            int layer;
+            if( !cUtils.tryGetLayer( source_cell, game_object, out layer ) )
+                return;
+
+            cCopySettingsToolPacket packet = new cCopySettingsToolPacket( cell, source_cell, layer );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

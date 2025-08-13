@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using MultiplayerNotIncluded.source.Patches.Minions;
 using Steamworks;
-using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded.Networking.Packets.Minions
 {
@@ -20,30 +20,30 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             kRow,
         }
 
-        private CSteamID       m_steam_id = cSession.m_local_steam_id;
-        private eAction        m_action;
-        private int            m_priority;
-        private List< int >    m_chore_type_ids = new List< int >();
-        private List< string > m_identities     = new List< string >();
+        private CSteamID    m_steam_id = cSession.m_local_steam_id;
+        private eAction     m_action;
+        private int         m_priority;
+        private List< int > m_chore_type_ids = new List< int >();
+        private List< int > m_network_ids    = new List< int >();
 
         public ePacketType m_type => ePacketType.kJobPriority;
 
         public static cJobPriorityPacket createReset()                         => new cJobPriorityPacket { m_action = eAction.kReset };
         public static cJobPriorityPacket createToggleAdvanced( int _priority ) => new cJobPriorityPacket { m_action = eAction.kToggleAdvanced, m_priority = _priority };
 
-        public static cJobPriorityPacket createPersonal( int _priority, List< int > _chore_type_ids, List< string > _identities )
+        public static cJobPriorityPacket createPersonal( int _priority, List< int > _chore_type_ids, List< int > _network_ids )
         {
-            return new cJobPriorityPacket { m_action = eAction.kPersonal, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_identities = _identities };
+            return new cJobPriorityPacket { m_action = eAction.kPersonal, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_network_ids = _network_ids };
         }
 
-        public static cJobPriorityPacket createColumn( int _priority, List< int > _chore_type_ids, List< string > _identities )
+        public static cJobPriorityPacket createColumn( int _priority, List< int > _chore_type_ids, List< int > _network_ids )
         {
-            return new cJobPriorityPacket { m_action = eAction.kColumn, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_identities = _identities };
+            return new cJobPriorityPacket { m_action = eAction.kColumn, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_network_ids = _network_ids };
         }
 
-        public static cJobPriorityPacket createRow( int _priority, List< int > _chore_type_ids, List< string > _identities )
+        public static cJobPriorityPacket createRow( int _priority, List< int > _chore_type_ids, List< int > _network_ids )
         {
-            return new cJobPriorityPacket { m_action = eAction.kRow, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_identities = _identities };
+            return new cJobPriorityPacket { m_action = eAction.kRow, m_priority = _priority, m_chore_type_ids = _chore_type_ids, m_network_ids = _network_ids };
         }
 
         public void serialize( BinaryWriter _writer )
@@ -65,8 +65,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                     foreach( int chore_type_id in m_chore_type_ids )
                         _writer.Write( chore_type_id );
 
-                    _writer.Write( m_identities.Count );
-                    foreach( string identity in m_identities )
+                    _writer.Write( m_network_ids.Count );
+                    foreach( int identity in m_network_ids )
                         _writer.Write( identity );
                     break;
                 }
@@ -94,7 +94,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
                     int identity_count = _reader.ReadInt32();
                     for( int i = 0; i < identity_count; i++ )
-                        m_identities.Add( _reader.ReadString() );
+                        m_network_ids.Add( _reader.ReadInt32() );
                     break;
                 }
             }
@@ -148,9 +148,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
             {
                 case eAction.kReset:          cLogger.logInfo( $"{_message}: {m_action}" ); break;
                 case eAction.kToggleAdvanced: cLogger.logInfo( $"{_message}: {m_action}, {m_priority}" ); break;
-                case eAction.kPersonal:       cLogger.logInfo( $"{_message}: {m_action}, {m_priority}, {m_identities[ 0 ]}, {m_chore_type_ids[ 0 ]}" ); break;
+                case eAction.kPersonal:       cLogger.logInfo( $"{_message}: {m_action}, {m_priority}, {m_network_ids[ 0 ]}, {m_chore_type_ids[ 0 ]}" ); break;
                 case eAction.kColumn:         cLogger.logInfo( $"{_message}: {m_action}, {m_priority}, {m_chore_type_ids[ 0 ]}" ); break;
-                case eAction.kRow:            cLogger.logInfo( $"{_message}: {m_action}, {m_priority}, {m_identities[ 0 ]}" ); break;
+                case eAction.kRow:            cLogger.logInfo( $"{_message}: {m_action}, {m_priority}, {m_network_ids[ 0 ]}" ); break;
             }
         }
 
@@ -174,21 +174,21 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         {
             List< IPersonalPriorityManager > priority_managers = new List< IPersonalPriorityManager >();
 
-            if( m_identities.Count == 0 )
+            if( m_network_ids.Count == 0 )
                 return priority_managers;
 
-            if( m_identities.Contains( "default" ) )
+            if( m_network_ids.Contains( -1 ) )
             {
                 priority_managers.Add( Immigration.Instance );
 
-                if( m_identities.Count == 1 )
+                if( m_network_ids.Count == 1 )
                     return priority_managers;
             }
 
-            MinionIdentity[] minion_identities = Object.FindObjectsOfType< MinionIdentity >();
-            foreach( MinionIdentity identity in minion_identities )
+            foreach( int network_id in m_network_ids )
             {
-                if( m_identities.Contains( identity.GetProperName() ) )
+                cNetworkIdentity identity;
+                if( cNetworkIdentity.tryGetIdentity( network_id, out identity ) )
                     priority_managers.Add( identity.GetComponent< ChoreConsumer >() );
             }
 

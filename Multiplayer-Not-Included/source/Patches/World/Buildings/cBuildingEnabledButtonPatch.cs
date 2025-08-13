@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
+using MultiplayerNotIncluded.source.Networking.Components;
 
 namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
@@ -21,13 +22,21 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
-            KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();
-            if( prefab_id == null )
-                return;
-
             bool queued_toggle = Traverse.Create( __instance ).Field( "queuedToggle" ).GetValue< bool >();
 
-            cBuildingEnabledPacket packet = new cBuildingEnabledPacket( queued_toggle, prefab_id.InstanceID );
+            cBuildingEnabledPacket packet;
+            cNetworkIdentity       identity = __instance.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( __instance.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, __instance.gameObject, out layer ) )
+                    return;
+
+                packet = new cBuildingEnabledPacket( queued_toggle, cell, layer );
+            }
+            else
+                packet = new cBuildingEnabledPacket( queued_toggle, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

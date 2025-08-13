@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Plants;
+using MultiplayerNotIncluded.source.Networking.Components;
 
 namespace MultiplayerNotIncluded.Patches.World.Items
 {
@@ -27,11 +28,19 @@ namespace MultiplayerNotIncluded.Patches.World.Items
             if( !cSession.inSessionAndReady() )
                 return;
 
-            KPrefabID prefab_id = _instance.GetComponent< KPrefabID >();
-            if( prefab_id == null )
-                return;
+            cUprootPacket    packet;
+            cNetworkIdentity identity = _instance.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( _instance.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, _instance.gameObject, out layer ) )
+                    return;
 
-            cUprootPacket packet = new cUprootPacket( _marked, prefab_id.InstanceID );
+                packet = new cUprootPacket( _marked, cell, layer );
+            }
+            else
+                packet = new cUprootPacket( _marked, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

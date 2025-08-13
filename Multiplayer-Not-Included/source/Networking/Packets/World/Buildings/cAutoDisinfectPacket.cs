@@ -7,7 +7,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
     {
         public cAutoDisinfectPacket() : base( ePacketType.kAutoDisinfect ) {}
 
-        public cAutoDisinfectPacket( bool _value, int _instance_id ) : base( ePacketType.kAutoDisinfect, _value, _instance_id ) {}
+        public cAutoDisinfectPacket( bool _value, int _cell, int _layer ) : base( ePacketType.kAutoDisinfect, eAction.kStatic, _value, _cell, _layer ) {}
+        public cAutoDisinfectPacket( bool _value, int _network_id ) : base( ePacketType.kAutoDisinfect, eAction.kDynamic, _value, _network_id ) {}
 
         protected override void onAction( bool _value, AutoDisinfectable _type_object )
         {

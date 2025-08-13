@@ -162,6 +162,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         public void onReceived()
         {
+            initScheduleScreen(); // TODO: Implement a better solution
+
             switch( m_action )
             {
                 case eAction.kAddDefault:         addDefault(); break;
@@ -208,8 +210,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void changeName()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             EditableTitleBar title = Traverse.Create( entry ).Field( "title" ).GetValue< EditableTitleBar >();
@@ -223,8 +225,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void toggleAlarm()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null || entry.schedule.alarmActivated == m_alarm )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) || entry.schedule.alarmActivated == m_alarm )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
@@ -234,8 +236,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void duplicate()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
@@ -245,8 +247,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void delete()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
@@ -256,8 +258,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void duplicateTimetable()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             cScheduleScreenEntryPatch.s_skip_sending = true;
@@ -267,8 +269,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void removeTimetable()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
@@ -282,8 +284,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void rotateTimetable()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
@@ -297,8 +299,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void shiftTimetable()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
                 return;
 
             List< GameObject > timetable_rows = Traverse.Create( entry ).Field( "timetableRows" ).GetValue< List< GameObject > >();
@@ -312,8 +314,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void changeAssignment()
         {
-            ScheduleScreenEntry entry = findEntry( m_schedule );
-            if( entry == null )
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_schedule, isEntry, out entry ) )
                 return;
 
             foreach( Schedulable schedulable in Object.FindObjectsOfType< Schedulable >() )
@@ -356,47 +358,38 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private void changeSchedule()
         {
-            ScheduleScreenEntry entry = findEntry( m_name );
+            ScheduleScreenEntry entry;
+            if( !cCacheManager.findAndCache( m_name, isEntry, out entry ) )
+                return;
 
             cSchedulePatch.s_skip_sending = true;
             entry.schedule.SetBlockGroup( m_block_index, new ScheduleGroup( m_group_id, null, 0, m_group_name, "", Color.black, "", new List< ScheduleBlockType >() ) );
             cSchedulePatch.s_skip_sending = false;
         }
 
-        private static ScheduleScreenEntry findEntry( string _name )
+        private static bool isEntry( string _name, ScheduleScreenEntry _entry ) => _name == _entry.schedule.name;
+
+        private static void initScheduleScreen()
         {
             ScheduleScreen              screen  = ManagementMenu.Instance.scheduleScreen;
             List< ScheduleScreenEntry > entries = Traverse.Create( screen ).Field( "scheduleEntries" ).GetValue< List< ScheduleScreenEntry > >();
 
-            if( entries == null )
-            {
-                object dictionary_object = Traverse.Create( ManagementMenu.Instance ).Field( "ScreenInfoMatch" ).GetValue();
-                object info_object       = Traverse.Create( ManagementMenu.Instance ).Field( "scheduleInfo" ).GetValue();
+            if( entries != null )
+                return;
 
-                var                                     dictionary = dictionary_object as Dictionary< ManagementMenu.ManagementMenuToggleInfo, ManagementMenu.ScreenData >;
-                ManagementMenu.ManagementMenuToggleInfo info       = info_object as ManagementMenu.ManagementMenuToggleInfo;
-                if( dictionary == null || info == null )
-                    return null;
+            object dictionary_object = Traverse.Create( ManagementMenu.Instance ).Field( "ScreenInfoMatch" ).GetValue();
+            object info_object       = Traverse.Create( ManagementMenu.Instance ).Field( "scheduleInfo" ).GetValue();
 
-                ManagementMenu.ScreenData screen_data = dictionary[ info ];
+            var                                     dictionary = dictionary_object as Dictionary< ManagementMenu.ManagementMenuToggleInfo, ManagementMenu.ScreenData >;
+            ManagementMenu.ManagementMenuToggleInfo info       = info_object as ManagementMenu.ManagementMenuToggleInfo;
+            if( dictionary == null || info == null )
+                return;
 
-                // Forces the screen to initialize
-                ManagementMenu.Instance.ToggleScreen( screen_data );
-                screen.Start();
-                ManagementMenu.Instance.ToggleScreen( screen_data );
+            ManagementMenu.ScreenData screen_data = dictionary[ info ];
 
-                entries = Traverse.Create( screen ).Field( "scheduleEntries" ).GetValue< List< ScheduleScreenEntry > >();
-                if( entries == null )
-                    return null;
-            }
-
-            foreach( ScheduleScreenEntry entry in entries )
-            {
-                if( entry.schedule.name == _name )
-                    return entry;
-            }
-
-            return null;
+            // Forces the screen to initialize
+            ManagementMenu.Instance.ToggleScreen( screen_data );
+            screen.Start();
         }
     }
 }

@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
+using MultiplayerNotIncluded.source.Networking.Components;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.source.Patches.Minions
@@ -27,11 +28,15 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
             if( widget_row == null || widget_column == null )
                 return;
 
-            IConsumableUIItem   consumable_info = widget_column.consumable_info;
-            IAssignableIdentity identity        = widget_row.GetIdentity();
-            string              identity_name   = identity != null ? identity.GetProperName() : "None";
+            IConsumableUIItem consumable_info = widget_column.consumable_info;
+            MinionIdentity    minion_identity = widget_row.GetIdentity() as MinionIdentity;
+            cNetworkIdentity  identity        = minion_identity?.GetComponent< cNetworkIdentity >();
 
-            cConsumableInfoPacket packet = new cConsumableInfoPacket( widget_row.rowType, consumable_info.ConsumableId, new_value, identity_name );
+            int id = -1;
+            if( identity != null )
+                id = identity.getNetworkId();
+
+            cConsumableInfoPacket packet = new cConsumableInfoPacket( widget_row.rowType, consumable_info.ConsumableId, new_value, id );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

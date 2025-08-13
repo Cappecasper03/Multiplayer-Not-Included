@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
+using MultiplayerNotIncluded.source.Networking.Components;
 
 namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
 {
@@ -19,7 +20,11 @@ namespace MultiplayerNotIncluded.source.Patches.Minions.Skills
             if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
-            cSkillsPacket packet = cSkillsPacket.createSkill( __instance.GetIdentity.GetProperName(), skillId );
+            cNetworkIdentity identity = __instance.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+                return;
+
+            cSkillsPacket packet = cSkillsPacket.createSkill( identity.getNetworkId(), skillId );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

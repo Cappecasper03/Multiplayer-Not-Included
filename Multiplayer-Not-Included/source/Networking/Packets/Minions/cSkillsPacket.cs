@@ -2,6 +2,7 @@
 using System.IO;
 using HarmonyLib;
 using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using MultiplayerNotIncluded.source.Patches.Minions.Skills;
 using Steamworks;
 using Object = UnityEngine.Object;
@@ -18,28 +19,28 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         private CSteamID m_steam_id = cSession.m_local_steam_id;
         private eAction  m_action;
-        private string   m_identity;
+        private int      m_network_id;
         private string   m_hat_name;
         private string   m_hat;
         private string   m_skill;
 
         public ePacketType m_type => ePacketType.kSkills;
 
-        public static cSkillsPacket createHat( string _identity, string _hat_name, string _hat )
+        public static cSkillsPacket createHat( int _network_id, string _hat_name, string _hat )
         {
-            return new cSkillsPacket { m_action = eAction.kHat, m_identity = _identity, m_hat_name = _hat_name, m_hat = _hat };
+            return new cSkillsPacket { m_action = eAction.kHat, m_network_id = _network_id, m_hat_name = _hat_name, m_hat = _hat };
         }
 
-        public static cSkillsPacket createSkill( string _identity, string _skill )
+        public static cSkillsPacket createSkill( int _network_id, string _skill )
         {
-            return new cSkillsPacket { m_action = eAction.kSKill, m_identity = _identity, m_skill = _skill };
+            return new cSkillsPacket { m_action = eAction.kSKill, m_network_id = _network_id, m_skill = _skill };
         }
 
         public void serialize( BinaryWriter _writer )
         {
             _writer.Write( m_steam_id.m_SteamID );
             _writer.Write( ( int )m_action );
-            _writer.Write( m_identity );
+            _writer.Write( m_network_id );
 
             switch( m_action )
             {
@@ -55,9 +56,9 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         public void deserialize( BinaryReader _reader )
         {
-            m_steam_id = new CSteamID( _reader.ReadUInt64() );
-            m_action   = ( eAction )_reader.ReadInt32();
-            m_identity = _reader.ReadString();
+            m_steam_id   = new CSteamID( _reader.ReadUInt64() );
+            m_action     = ( eAction )_reader.ReadInt32();
+            m_network_id = _reader.ReadInt32();
 
             switch( m_action )
             {
@@ -73,8 +74,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
 
         public void onReceived()
         {
-            MinionIdentity identity;
-            if( !cCacheManager.findAndCache( m_identity, out identity ) )
+            cNetworkIdentity identity;
+            if( !cNetworkIdentity.tryGetIdentity( m_network_id, out identity ) )
                 return;
 
             switch( m_action )
@@ -96,14 +97,17 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                         if( assignable_identity == null )
                             return;
 
-                        if( assignable_identity.GetProperName() != m_identity )
+                        cLogger.logWarning( "1" );
+                        if( assignable_identity.GetProperName() != identity.getProperName() )
                         {
                             SkillMinionWidget[] widgets = Object.FindObjectsOfType< SkillMinionWidget >();
                             foreach( SkillMinionWidget widget in widgets )
                             {
-                                if( widget.assignableIdentity.GetProperName() != m_identity )
+                                cLogger.logWarning( $"{widget.assignableIdentity.GetProperName()} != {identity.getProperName()}" );
+                                if( widget.assignableIdentity.GetProperName() != identity.getProperName() )
                                     continue;
 
+                                cLogger.logWarning( "2" );
                                 cSkillMinionWidgetPatch.s_skip_sending = true;
                                 Traverse.Create( widget ).Method( "OnHatDropEntryClick", new[] { typeof( IListableOption ), typeof( object ) } ).GetValue( hat, null );
                                 cSkillMinionWidgetPatch.s_skip_sending = false;
@@ -112,6 +116,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                         }
                         else
                         {
+                            cLogger.logWarning( "3" );
                             cSkillsScreenPatch.s_skip_sending = true;
                             traverse.Method( "OnHatDropEntryClick", new[] { typeof( IListableOption ), typeof( object ) } ).GetValue( hat, null );
                             cSkillsScreenPatch.s_skip_sending = false;
@@ -142,8 +147,8 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
         {
             switch( m_action )
             {
-                case eAction.kHat:   cLogger.logInfo( $"{_message}: {m_action}, {m_identity}, {m_hat_name}, {m_hat}" ); break;
-                case eAction.kSKill: cLogger.logInfo( $"{_message}: {m_action}, {m_identity}, {m_skill}" ); break;
+                case eAction.kHat:   cLogger.logInfo( $"{_message}: {m_action}, {m_network_id}, {m_hat_name}, {m_hat}" ); break;
+                case eAction.kSKill: cLogger.logInfo( $"{_message}: {m_action}, {m_network_id}, {m_skill}" ); break;
             }
         }
     }

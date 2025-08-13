@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
+using MultiplayerNotIncluded.source.Networking.Components;
 
 namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
@@ -19,11 +20,19 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             if( !cSession.inSessionAndReady() )
                 return;
 
-            KPrefabID prefab_id = __instance.GetComponent< KPrefabID >();
-            if( prefab_id == null )
-                return;
+            cDeconstructPacket packet;
+            cNetworkIdentity   identity = __instance.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( __instance.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, __instance.gameObject, out layer ) )
+                    return;
 
-            cDeconstructPacket packet = new cDeconstructPacket( !__instance.IsMarkedForDeconstruction(), prefab_id.InstanceID );
+                packet = new cDeconstructPacket( !__instance.IsMarkedForDeconstruction(), cell, layer );
+            }
+            else
+                packet = new cDeconstructPacket( !__instance.IsMarkedForDeconstruction(), identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

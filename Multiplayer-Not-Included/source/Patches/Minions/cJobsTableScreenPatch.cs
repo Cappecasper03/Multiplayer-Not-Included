@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Minions;
+using MultiplayerNotIncluded.source.Networking.Components;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.source.Patches.Minions
@@ -34,11 +35,18 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
             if( widget_row == null || chore_group == null )
                 return;
 
-            List< string > identities = new List< string >();
+            List< int > identities = new List< int >();
             if( widget_row.rowType == TableRow.RowType.Default )
-                identities.Add( "default" );
+                identities.Add( -1 );
             else if( widget_row.GetIdentity() != null )
-                identities.Add( widget_row.GetIdentity().GetProperName() );
+            {
+                MinionIdentity   minion_identity = widget_row.GetIdentity() as MinionIdentity;
+                cNetworkIdentity identity        = minion_identity?.GetComponent< cNetworkIdentity >();
+                if( identity == null )
+                    return;
+
+                identities.Add( identity.getNetworkId() );
+            }
 
             cJobPriorityPacket packet = cJobPriorityPacket.createPersonal( delta, new List< int > { chore_group.IdHash.HashValue }, identities );
 
@@ -66,13 +74,20 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
             if( chore_group == null )
                 return;
 
-            List< string > identities = new List< string >();
+            List< int > identities = new List< int >();
             foreach( TableRow table_row in __instance.rows )
             {
                 if( table_row.rowType == TableRow.RowType.Default )
-                    identities.Add( "default" );
+                    identities.Add( -1 );
                 else if( table_row.GetIdentity() != null )
-                    identities.Add( table_row.GetIdentity().GetProperName() );
+                {
+                    MinionIdentity   minion_identity = table_row.GetIdentity() as MinionIdentity;
+                    cNetworkIdentity identity        = minion_identity?.GetComponent< cNetworkIdentity >();
+                    if( identity == null )
+                        return;
+
+                    identities.Add( identity.getNetworkId() );
+                }
             }
 
             cJobPriorityPacket packet = cJobPriorityPacket.createColumn( new_priority, new List< int > { chore_group.IdHash.HashValue }, identities );
@@ -112,11 +127,18 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
                 chore_group_ids.Add( chore_group.IdHash.HashValue );
             }
 
-            List< string > identities = new List< string >();
+            List< int > identities = new List< int >();
             if( widget_row.rowType == TableRow.RowType.Default )
-                identities.Add( "default" );
+                identities.Add( -1 );
             else if( widget_row.GetIdentity() != null )
-                identities.Add( widget_row.GetIdentity().GetProperName() );
+            {
+                MinionIdentity   minion_identity = widget_row.GetIdentity() as MinionIdentity;
+                cNetworkIdentity identity        = minion_identity?.GetComponent< cNetworkIdentity >();
+                if( identity == null )
+                    return;
+
+                identities.Add( identity.getNetworkId() );
+            }
 
             cJobPriorityPacket packet = cJobPriorityPacket.createRow( delta, chore_group_ids, identities );
 
