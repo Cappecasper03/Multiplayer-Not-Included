@@ -70,6 +70,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kResearch ]       = () => new cResearchPacket();
 
             s_constructors[ ePacketType.kPriority ] = () => new cPriorityPacket();
+
+            s_constructors[ ePacketType.kTreeFilter ] = () => new cTreeFilterPacket();
         }
     }
 }

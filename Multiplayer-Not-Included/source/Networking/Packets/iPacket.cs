@@ -52,6 +52,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kResearch,
 
         kPriority,
+
+        kTreeFilter,
     }
 
     public interface iIPacket
