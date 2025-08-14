@@ -32,12 +32,14 @@ namespace MultiplayerNotIncluded.Networking
             s_connected_players.Remove( _steam_id );
         }
 
-        public static cPlayer updateOrCreatePlayer( CSteamID _steam_id, HSteamNetConnection _connection )
+        public static cPlayer findOrAddPlayer( CSteamID _steam_id, HSteamNetConnection _connection )
         {
-            cPlayer player = new cPlayer( _steam_id, _connection );
-            s_connected_players[ _steam_id ] = player;
+            cPlayer player;
+            if( tryGetPlayer( _steam_id, out player ) )
+                return player;
 
-            tryGetPlayer( _steam_id, out player );
+            player                           = new cPlayer( _steam_id, _connection );
+            s_connected_players[ _steam_id ] = player;
             return player;
         }
 

@@ -36,7 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
 
             cPlayer player;
             if( !cSession.tryGetPlayer( m_steam_id, out player ) )
-                return;
+                player = cSession.findOrAddPlayer( m_steam_id, HSteamNetConnection.Invalid );
 
             cPlayerCursorComponent cursor;
             if( player.getOrCreateCursor( out cursor ) )

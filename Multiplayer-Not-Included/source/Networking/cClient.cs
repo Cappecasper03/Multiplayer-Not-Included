@@ -91,7 +91,7 @@ namespace MultiplayerNotIncluded.Networking
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
                 {
                     m_state = eClientState.kConnected;
-                    cSession.updateOrCreatePlayer( cSession.m_host_steam_id, m_connection );
+                    cSession.findOrAddPlayer( cSession.m_host_steam_id, m_connection );
 
                     cLogger.logInfo( "Connected to host" );
 

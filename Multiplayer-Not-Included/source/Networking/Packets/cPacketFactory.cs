@@ -25,9 +25,10 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSaveFileRequest ] = () => new cSaveFileRequestPacket();
             s_constructors[ ePacketType.kSaveFileChunk ]   = () => new cSaveFileChunkPacket();
 
-            s_constructors[ ePacketType.kPlayerReady ]  = () => new cPlayerReadyPacket();
-            s_constructors[ ePacketType.kPlayerWait ]   = () => new cPlayerWaitPacket();
-            s_constructors[ ePacketType.kPlayerCursor ] = () => new cPlayerCursorPacket();
+            s_constructors[ ePacketType.kPlayerReady ]      = () => new cPlayerReadyPacket();
+            s_constructors[ ePacketType.kPlayerWait ]       = () => new cPlayerWaitPacket();
+            s_constructors[ ePacketType.kPlayerCursor ]     = () => new cPlayerCursorPacket();
+            s_constructors[ ePacketType.kPlayerDisconnect ] = () => new cPlayerDisconnectPacket();
 
             s_constructors[ ePacketType.kDigTool ]            = () => new cDigToolPacket();
             s_constructors[ ePacketType.kCancelTool ]         = () => new cCancelToolPacket();

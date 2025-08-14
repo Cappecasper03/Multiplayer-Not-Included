@@ -161,7 +161,7 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void OnClientConnected( HSteamNetConnection _connection, CSteamID _client_id )
         {
-            cSession.updateOrCreatePlayer( _client_id, _connection );
+            cSession.findOrAddPlayer( _client_id, _connection );
             cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
         }
 
@@ -169,6 +169,7 @@ namespace MultiplayerNotIncluded.Networking
         {
             SteamNetworkingSockets.CloseConnection( _connection, 0, null, false );
             cSession.removePlayer( _client_id );
+            cPacketSender.sendToAllExcluding( new cPlayerDisconnectPacket(), new List< CSteamID > { _client_id } );
             cLogger.logInfo( $"Disconnected from {_client_id}" );
         }
 

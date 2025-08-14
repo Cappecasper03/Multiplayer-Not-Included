@@ -28,10 +28,15 @@ namespace MultiplayerNotIncluded.source.Networking.Components
         {
             cNetworkIdentity identity;
             if( s_identities.TryGetValue( _id, out identity ) )
-                cLogger.logInfo( $"Overwriting {_id}: {identity.gameObject.name} => {gameObject.name}" );
+            {
+                if( identity.gameObject && gameObject )
+                    cLogger.logInfo( $"Overwriting {_id}: {identity.gameObject.name} => {gameObject.name}" );
+                else
+                    cLogger.logInfo( $"Overwriting {_id}" );
+            }
 
             s_identities[ _id ] = this;
-            cLogger.logInfo( $"{gameObject.name}: {m_network_id}" );
+            cLogger.logInfo( gameObject ? $"{gameObject.name}: {m_network_id}" : $"{m_network_id}" );
         }
 
         private void register()

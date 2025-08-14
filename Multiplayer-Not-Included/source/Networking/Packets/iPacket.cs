@@ -10,6 +10,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kPlayerReady,
         kPlayerWait,
         kPlayerCursor,
+        kPlayerDisconnect,
 
         kDigTool,
         kCancelTool,
