@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
+using Steamworks;
 
 namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
@@ -10,6 +11,8 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
     public static class cCapacityControlSideScreenPatch
     {
         public static bool s_skip_send = false;
+
+        private static readonly cDelay s_delay = new cDelay();
 
         [HarmonyPostfix]
         [UsedImplicitly]
@@ -27,16 +30,16 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             cCapacityMeterPacket.eComponentType type = cCapacityMeterPacket.eComponentType.kNone;
             switch( mono_behaviour )
             {
-                case BaggableCritterCapacityTracker class_object: type = cCapacityMeterPacket.eComponentType.kBaggableCritterCapacityTracker; break;
-                case Bottler class_object:                        type = cCapacityMeterPacket.eComponentType.kBottler; break;
-                case CargoBayCluster class_object:                type = cCapacityMeterPacket.eComponentType.kCargoBayCluster; break;
-                case FuelTank class_object:                       type = cCapacityMeterPacket.eComponentType.kFuelTank; break;
-                case HEPFuelTank class_object:                    type = cCapacityMeterPacket.eComponentType.kHEPFuelTank; break;
-                case ObjectDispenser class_object:                type = cCapacityMeterPacket.eComponentType.kObjectDispenser; break;
-                case OxidizerTank class_object:                   type = cCapacityMeterPacket.eComponentType.kOxidizerTank; break;
-                case RationBox class_object:                      type = cCapacityMeterPacket.eComponentType.kRationBox; break;
-                case Refrigerator class_object:                   type = cCapacityMeterPacket.eComponentType.kRefrigerator; break;
-                case StorageLocker class_object:                  type = cCapacityMeterPacket.eComponentType.kStorageLocker; break;
+                case BaggableCritterCapacityTracker _: type = cCapacityMeterPacket.eComponentType.kBaggableCritterCapacityTracker; break;
+                case Bottler _:                        type = cCapacityMeterPacket.eComponentType.kBottler; break;
+                case CargoBayCluster _:                type = cCapacityMeterPacket.eComponentType.kCargoBayCluster; break;
+                case FuelTank _:                       type = cCapacityMeterPacket.eComponentType.kFuelTank; break;
+                case HEPFuelTank _:                    type = cCapacityMeterPacket.eComponentType.kHEPFuelTank; break;
+                case ObjectDispenser _:                type = cCapacityMeterPacket.eComponentType.kObjectDispenser; break;
+                case OxidizerTank _:                   type = cCapacityMeterPacket.eComponentType.kOxidizerTank; break;
+                case RationBox _:                      type = cCapacityMeterPacket.eComponentType.kRationBox; break;
+                case Refrigerator _:                   type = cCapacityMeterPacket.eComponentType.kRefrigerator; break;
+                case StorageLocker _:                  type = cCapacityMeterPacket.eComponentType.kStorageLocker; break;
             }
 
             int cell = Grid.PosToCell( mono_behaviour.transform.localPosition );
@@ -44,12 +47,15 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             if( !cUtils.tryGetLayer( cell, mono_behaviour.gameObject, out layer ) )
                 return;
 
-            cCapacityMeterPacket packet = new cCapacityMeterPacket( type, newValue, cell, layer );
+            s_delay.stopAndStart( .5f, () =>
+            {
+                cCapacityMeterPacket packet = new cCapacityMeterPacket( type, newValue, cell, layer );
 
-            if( cSession.isHost() )
-                cPacketSender.sendToAll( packet );
-            else
-                cPacketSender.sendToHost( packet );
+                if( cSession.isHost() )
+                    cPacketSender.sendToAll( packet );
+                else
+                    cPacketSender.sendToHost( packet );
+            } );
         }
     }
 }
