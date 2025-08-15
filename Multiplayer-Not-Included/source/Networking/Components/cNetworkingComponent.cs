@@ -7,10 +7,7 @@ namespace MultiplayerNotIncluded.source.Networking.Components
     {
         private void Update()
         {
-            if( !SteamManager.Initialized )
-                return;
-
-            if( !cSteamLobby.inLobby() )
+            if( !SteamManager.Initialized || !cSteamLobby.inLobby() )
                 return;
 
             if( cSession.isHost() )

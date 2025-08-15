@@ -66,8 +66,10 @@ namespace MultiplayerNotIncluded.Networking
             if( !inLobby() )
                 return;
 
+            cClient.disconnect();
             cServer.stop();
             cSession.clear();
+            cCacheManager.clear();
 
             SteamMatchmaking.LeaveLobby( m_lobby_id );
             cLogger.logInfo( $"Left lobby: {m_lobby_id}" );
@@ -95,7 +97,6 @@ namespace MultiplayerNotIncluded.Networking
         private static void onEntered( LobbyEnter_t _data )
         {
             m_lobby_id = new CSteamID( _data.m_ulSteamIDLobby );
-
             cSession.clear();
 
             string host = SteamMatchmaking.GetLobbyData( m_lobby_id, "host" );

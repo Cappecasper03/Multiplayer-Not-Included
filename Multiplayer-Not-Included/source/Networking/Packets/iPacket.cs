@@ -8,7 +8,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSaveFileChunk,
 
         kPlayerReady,
+        kPlayerWait,
         kPlayerCursor,
+        kPlayerDisconnect,
 
         kDigTool,
         kCancelTool,
@@ -24,6 +26,34 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kMoveToLocationTool,
         kPrioritizeTool,
         kBuildTool,
+        kCopySettingsTool,
+
+        kSpeedChange,
+        kRedAlert,
+
+        kDeconstruct,
+        kAutoRepair,
+        kAutoDisinfect,
+        kBuildingEnabled,
+        kCancelBuild,
+        kTreeFilter,
+
+        kAttackCreature,
+        kCaptureCreature,
+
+        kClearItem,
+
+        kUproot,
+        kAutoHarvest,
+
+        kConsumableInfo,
+        kJobPriority,
+        kSchedule,
+        kSkills,
+        kResearch,
+        kAssign,
+
+        kPriority,
     }
 
     public interface iIPacket
@@ -33,6 +63,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         void serialize( BinaryWriter   _writer );
         void deserialize( BinaryReader _reader );
 
-        void onDispatched();
+        void onReceived();
+
+        void log( string _message );
     }
 }

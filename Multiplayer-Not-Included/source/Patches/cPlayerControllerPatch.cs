@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking;
@@ -9,18 +10,20 @@ using Steamworks;
 namespace MultiplayerNotIncluded.Patches.World
 {
     [HarmonyPatch]
-    public static class cSaveLoaderPatch
+    public static class cPlayerControllerPatch
     {
         [HarmonyPostfix]
         [UsedImplicitly]
-        [HarmonyPatch( typeof( SaveLoader ), "OnSpawn" )]
-        private static void OnSpawn()
+        [HarmonyPatch( typeof( PlayerController ), "OnSpawn" )]
+        [HarmonyPatch( new Type[ 0 ] )]
+        private static void onSpawn()
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.isClient() )
                 return;
 
             cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            SpeedControlScreen.Instance.Pause( false );
+            if( !SpeedControlScreen.Instance.IsPaused )
+                SpeedControlScreen.Instance.Pause( false );
 
             cPacketSender.sendToHost( new cPlayerReadyPacket() );
         }

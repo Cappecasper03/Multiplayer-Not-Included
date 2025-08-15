@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using HarmonyLib;
+﻿using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
@@ -19,10 +18,10 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ), typeof( int ) } )]
         private static void onDragTool( int cell, int distFromOrigin )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
-            cCancelToolPacket packet = new cCancelToolPacket( cell );
+            cCancelToolPacket packet = cCancelToolPacket.createCell( cell );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
@@ -36,10 +35,10 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( Vector3 ), typeof( Vector3 ) } )]
         private static void onDragComplete( Vector3 downPos, Vector3 upPos, CancelTool __instance )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
-            cCancelToolPacket packet = new cCancelToolPacket( downPos, upPos );
+            cCancelToolPacket packet = cCancelToolPacket.createArea( downPos, upPos );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

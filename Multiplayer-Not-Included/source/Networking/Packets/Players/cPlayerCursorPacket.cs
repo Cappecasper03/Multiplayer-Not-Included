@@ -29,14 +29,14 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             m_position = _reader.ReadVector3();
         }
 
-        public void onDispatched()
+        public void onReceived()
         {
             if( !cUtils.isInGame() )
                 return;
 
             cPlayer player;
             if( !cSession.tryGetPlayer( m_steam_id, out player ) )
-                return;
+                player = cSession.findOrAddPlayer( m_steam_id, HSteamNetConnection.Invalid );
 
             cPlayerCursorComponent cursor;
             if( player.getOrCreateCursor( out cursor ) )
@@ -48,5 +48,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Players
             if( cSession.isHost() )
                 cPacketSender.sendToAllExcluding( this, new List< CSteamID > { m_steam_id } );
         }
+
+        public void log( string _message ) {}
     }
 }

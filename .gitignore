@@ -2,7 +2,8 @@
 *
 !*/
 
-!./.gitignore
+!/.gitignore
+!/README.md
 
 !*.sln
 !*.csproj

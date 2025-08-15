@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.Tools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using UnityEngine;
 
 namespace MultiplayerNotIncluded.Patches.Tool
@@ -13,21 +14,33 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( MoveToLocationTool ), "SetMoveToLocation" )]
+        [HarmonyPatch( new[] { typeof( int ) } )]
         private static void setMoveToLocation( int target_cell, MoveToLocationTool __instance )
         {
-            if( !cSteamLobby.inLobby() )
+            if( !cSession.inSessionAndReady() )
                 return;
 
-            Navigator navigator = AccessTools.Field( typeof( MoveToLocationTool ), "targetNavigator" ).GetValue( __instance ) as Navigator;
-            Movable   movable   = AccessTools.Field( typeof( MoveToLocationTool ), "targetMovable" ).GetValue( __instance ) as Movable;
+            Navigator navigator = Traverse.Create( __instance ).Field( "targetNavigator" ).GetValue< Navigator >();
+            Movable   movable   = Traverse.Create( __instance ).Field( "targetMovable" ).GetValue< Movable >();
 
             GameObject game_object = navigator?.gameObject ?? movable?.gameObject;
-            KPrefabID  prefab_id   = game_object?.GetComponent< KPrefabID >();
-
-            if( prefab_id == null )
+            if( game_object == null )
                 return;
 
-            cMoveToLocationToolPacket packet = new cMoveToLocationToolPacket( target_cell, prefab_id.InstanceID );
+            cMoveToLocationToolPacket packet;
+            cNetworkIdentity          identity = game_object.GetComponent< cNetworkIdentity >();
+            if( identity == null )
+            {
+                int cell = Grid.PosToCell( game_object.transform.localPosition );
+                int layer;
+                if( !cUtils.tryGetLayer( cell, game_object.gameObject, out layer ) )
+                    return;
+
+                packet = cMoveToLocationToolPacket.createStatic( target_cell, cell, layer );
+            }
+            else
+
+                packet = cMoveToLocationToolPacket.createDynamic( target_cell, identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
@@ -13,14 +13,17 @@ namespace MultiplayerNotIncluded.Patches
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( PauseScreen ), "ConfigureButtonInfos" )]
+        [HarmonyPatch( new Type[ 0 ] )]
         private static void configureButtonInfos( PauseScreen __instance )
         {
             if( cSession.isClient() )
                 return;
 
-            var        buttons_field   = AccessTools.Field( typeof( KModalButtonMenu ), "buttons" );
-            var        button_infos    = ( ( KButtonMenu.ButtonInfo[] )buttons_field.GetValue( __instance ) )?.ToList() ?? new List< KButtonMenu.ButtonInfo >();
-            MethodInfo refresh_buttons = __instance.GetType().GetMethod( "RefreshButtons", BindingFlags.Public | BindingFlags.Instance );
+            List< KButtonMenu.ButtonInfo > button_infos    = Traverse.Create( __instance ).Field( "buttons" ).GetValue< KButtonMenu.ButtonInfo[] >()?.ToList();
+            Traverse                       refresh_buttons = Traverse.Create( __instance ).Method( "RefreshButtons" );
+
+            if( button_infos == null || refresh_buttons == null )
+                return;
 
             if( button_infos.Any( _b => _b.text == "Start Multiplayer" ) || button_infos.Any( _b => _b.text == "Stop Multiplayer" ) )
                 return;
@@ -43,16 +46,17 @@ namespace MultiplayerNotIncluded.Patches
                     button.text = "Start Server";
                 }
 
-                refresh_buttons?.Invoke( __instance, new object[] {} );
+                refresh_buttons?.GetValue();
             } );
 
             button_infos.Insert( index, button );
-            buttons_field.SetValue( __instance, button_infos.ToArray() );
+            Traverse.Create( __instance ).Field( "buttons" ).SetValue( button_infos.ToArray() );
         }
 
         [HarmonyPrefix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
+        [HarmonyPatch( new[] { typeof( bool ) } )]
         private static void onQuitConfirm( bool saveFirst )
         {
             if( !cSteamLobby.inLobby() )

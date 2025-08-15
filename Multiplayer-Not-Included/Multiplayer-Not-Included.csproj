@@ -1,9 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>net480</TargetFramework>
         <ImplicitUsings>false</ImplicitUsings>
         <SteamLibraryPath></SteamLibraryPath>
-        <GameDataPath>$(SteamLibraryPath)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
+        <GameDataPath>$(SteamLibraryPath)\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameDataPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DebugType>none</DebugType>
     </PropertyGroup>
 
     <ItemGroup>

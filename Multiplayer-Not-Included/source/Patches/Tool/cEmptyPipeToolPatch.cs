@@ -17,7 +17,7 @@ namespace MultiplayerNotIncluded.Patches.Tool
         [HarmonyPatch( new[] { typeof( int ), typeof( int ) } )]
         private static void onDragTool( int cell, int distFromOrigin )
         {
-            if( !cSteamLobby.inLobby() || s_skip_sending )
+            if( !cSession.inSessionAndReady() || s_skip_sending )
                 return;
 
             cEmptyPipeToolPacket packet = new cEmptyPipeToolPacket( cell );

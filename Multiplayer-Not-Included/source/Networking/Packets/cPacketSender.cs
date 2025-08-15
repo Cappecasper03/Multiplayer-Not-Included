@@ -25,8 +25,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
             IntPtr data_ptr = Marshal.AllocHGlobal( data.Length );
             Marshal.Copy( data, 0, data_ptr, data.Length );
 
-            EResult result = SteamNetworkingSockets.SendMessageToConnection( _connection, data_ptr, ( uint )data.Length, ( int )_send_type, out long bytes_sent );
+            EResult result = SteamNetworkingSockets.SendMessageToConnection( _connection, data_ptr, ( uint )data.Length, ( int )_send_type, out var bytes_sent );
 
+            _packet.log( $"Send({data.Length})" );
             Marshal.FreeHGlobal( data_ptr );
             return result;
         }

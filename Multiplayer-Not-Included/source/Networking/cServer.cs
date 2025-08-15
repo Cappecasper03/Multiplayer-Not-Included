@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Menus;
 using MultiplayerNotIncluded.Networking.Packets;
+using MultiplayerNotIncluded.Networking.Packets.Players;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
@@ -58,8 +60,8 @@ namespace MultiplayerNotIncluded.Networking
                 return;
             }
 
-            s_connection_status_changed_callback =
-                Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
+            if( s_connection_status_changed_callback == null )
+                s_connection_status_changed_callback = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( OnConnectionStatusChanged );
 
             m_state = eServerState.kStarted;
             cLogger.logInfo( "Server started" );
@@ -74,8 +76,9 @@ namespace MultiplayerNotIncluded.Networking
             {
                 if( player.m_connection != HSteamNetConnection.Invalid )
                     SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
-                player.m_connection = HSteamNetConnection.Invalid;
             }
+
+            cSession.clear();
 
             if( m_poll_group.m_HSteamNetPollGroup != 0 )
                 SteamNetworkingSockets.DestroyPollGroup( m_poll_group );
@@ -112,16 +115,19 @@ namespace MultiplayerNotIncluded.Networking
 
         public static void setWaitingForPlayers()
         {
-            SpeedControlScreen.Instance.Pause( false );
+            if( !SpeedControlScreen.Instance.IsPaused )
+                SpeedControlScreen.Instance.Pause( false );
 
-            int    ready_count = 0;
-            string waiting_for = "";
+            int              ready_count   = 0;
+            string           waiting_for   = "";
+            List< CSteamID > ready_players = new List< CSteamID >();
             foreach( cPlayer player in cSession.s_connected_players.Values )
             {
                 if( player.m_ready )
                 {
                     waiting_for += $"{player.m_steam_name}: Ready\n";
                     ready_count++;
+                    ready_players.Add( player.m_steam_id );
                 }
                 else
                     waiting_for = waiting_for.Insert( 0, $"{player.m_steam_name}: Not Ready\n" );
@@ -129,6 +135,10 @@ namespace MultiplayerNotIncluded.Networking
 
             waiting_for = $"Waiting for players...({ready_count}/{cSession.s_connected_players.Count})\n{waiting_for}";
             cMultiplayerLoadingOverlay.show( waiting_for );
+
+            cPlayerWaitPacket packet = new cPlayerWaitPacket( waiting_for );
+            foreach( CSteamID steam_id in ready_players )
+                cPacketSender.sendToPlayer( steam_id, packet );
         }
 
         private static void tryAcceptConnection( HSteamNetConnection _connection, CSteamID _client_id )
@@ -145,13 +155,13 @@ namespace MultiplayerNotIncluded.Networking
 
         private static void rejectConnection( HSteamNetConnection _connection, CSteamID _client_id, string _reason )
         {
-            cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
             SteamNetworkingSockets.CloseConnection( _connection, 0, _reason, false );
+            cLogger.logError( $"Rejecting connection from {_client_id}: {_reason}" );
         }
 
         private static void OnClientConnected( HSteamNetConnection _connection, CSteamID _client_id )
         {
-            cSession.updateOrCreatePlayer( _client_id, _connection );
+            cSession.findOrAddPlayer( _client_id, _connection );
             cLogger.logInfo( $"Connected to {_client_id} on {_connection}" );
         }
 
@@ -159,6 +169,7 @@ namespace MultiplayerNotIncluded.Networking
         {
             SteamNetworkingSockets.CloseConnection( _connection, 0, null, false );
             cSession.removePlayer( _client_id );
+            cPacketSender.sendToAllExcluding( new cPlayerDisconnectPacket(), new List< CSteamID > { _client_id } );
             cLogger.logInfo( $"Disconnected from {_client_id}" );
         }
 

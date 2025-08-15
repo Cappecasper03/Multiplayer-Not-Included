@@ -33,9 +33,10 @@ namespace MultiplayerNotIncluded.Networking
                 return;
             }
 
-            s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
-            m_state                        = eClientState.kConnecting;
+            if( s_on_connection_status_changed == null )
+                s_on_connection_status_changed = Callback< SteamNetConnectionStatusChangedCallback_t >.Create( onConnectionStatusChanged );
 
+            m_state = eClientState.kConnecting;
             cMultiplayerLoadingOverlay.show( $"Connecting to {SteamFriends.GetFriendPersonaName( _steam_id )}..." );
 
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
@@ -50,10 +51,10 @@ namespace MultiplayerNotIncluded.Networking
             if( m_connection == HSteamNetConnection.Invalid )
                 return;
 
-            bool result = SteamNetworkingSockets.CloseConnection( m_connection, 0, "Client Disconnecting", false );
+            SteamNetworkingSockets.CloseConnection( m_connection, 0, "Client Disconnecting", false );
             m_connection = HSteamNetConnection.Invalid;
             m_state      = eClientState.kDisconnected;
-            cLogger.logInfo( $"Close connection: {result}" );
+            cLogger.logInfo( "Disconnected from host" );
         }
 
         public static void update()
@@ -88,42 +89,58 @@ namespace MultiplayerNotIncluded.Networking
             switch( state )
             {
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
-                    onConnected();
+                {
+                    m_state = eClientState.kConnected;
+                    cSession.findOrAddPlayer( cSession.m_host_steam_id, m_connection );
+
+                    cLogger.logInfo( "Connected to host" );
+
+                    cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
+                    cPacketSender.sendToHost( new cSaveFileRequestPacket() );
                     break;
+                }
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
-                case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
-                    onDisconnected( "Closed by peer or problem detected locally", steam_id );
+                {
+                    m_state = eClientState.kDisconnected;
+                    cLogger.logInfo( $"Disconnected from {steam_id}: Closed by peer or problem detected locally" );
+
+                    cSteamLobby.leave();
+                    if( PauseScreen.Instance != null )
+                    {
+                        LoadingOverlay.Load( () =>
+                        {
+                            PauseScreen.Instance.Deactivate();
+                            PauseScreen.TriggerQuitGame();
+                        } );
+                    }
+
                     break;
+                }
+                case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_None:
+                {
+                    m_state = eClientState.kDisconnected;
+                    cLogger.logInfo( "Connection to the host was lost" );
+
+                    cMultiplayerLoadingOverlay.show( "Connection to the host was lost..." );
+
+                    cSteamLobby.leave();
+                    cUtils.delayAction( 1000, () =>
+                    {
+                        if( PauseScreen.Instance != null )
+                        {
+                            LoadingOverlay.Load( () =>
+                            {
+                                PauseScreen.Instance.Deactivate();
+                                PauseScreen.TriggerQuitGame();
+                            } );
+                        }
+                    } );
+
+                    break;
+                }
                 default:
                     cLogger.logWarning( $"Connection state not managed: {state}" );
                     break;
-            }
-        }
-
-        private static void onConnected()
-        {
-            m_state = eClientState.kConnected;
-            cSession.updateOrCreatePlayer( cSession.m_host_steam_id, m_connection );
-
-            cLogger.logInfo( "Connected to host" );
-
-            cMultiplayerLoadingOverlay.show( $"Waiting for {SteamFriends.GetFriendPersonaName( cSession.m_host_steam_id )}..." );
-            cPacketSender.sendToHost( new cSaveFileRequestPacket() );
-        }
-
-        private static void onDisconnected( string _reason, CSteamID _steam_id )
-        {
-            m_state = eClientState.kDisconnected;
-            cLogger.logInfo( $"Disconnected from {_steam_id}: {_reason}" );
-
-            cSteamLobby.leave();
-            if( PauseScreen.Instance != null )
-            {
-                LoadingOverlay.Load( () =>
-                {
-                    PauseScreen.Instance.Deactivate();
-                    PauseScreen.TriggerQuitGame();
-                } );
             }
         }
     }
