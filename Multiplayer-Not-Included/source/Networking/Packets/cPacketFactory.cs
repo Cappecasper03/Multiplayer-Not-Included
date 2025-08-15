@@ -55,6 +55,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
             s_constructors[ ePacketType.kCancelBuild ]     = () => new cCancelBuildPacket();
             s_constructors[ ePacketType.kTreeFilter ]      = () => new cTreeFilterPacket();
+            s_constructors[ ePacketType.kCapacityMeter ]   = () => new cCapacityMeterPacket();
 
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();

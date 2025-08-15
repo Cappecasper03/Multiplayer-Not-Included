@@ -28,7 +28,7 @@ namespace MultiplayerNotIncluded.DebugTools
 
         private void Update()
         {
-            if( Input.GetKeyDown( KeyCode.Keypad0 ) )
+            if( Input.GetKeyDown( KeyCode.Home ) )
                 m_show_menu = !m_show_menu;
         }
 
