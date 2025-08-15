@@ -2,8 +2,7 @@
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
-using MultiplayerNotIncluded.Networking.Packets.World;
-using MultiplayerNotIncluded.source.Networking.Components;
+using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
 
 namespace MultiplayerNotIncluded.Patches.World.Buildings
 {
@@ -35,19 +34,12 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
                 case false when !_instance.ContainsTag( t ): return;
             }
 
-            cTreeFilterPacket packet;
-            cNetworkIdentity  identity = _instance.GetComponent< cNetworkIdentity >();
-            if( identity == null )
-            {
-                int cell = Grid.PosToCell( _instance.transform.localPosition );
-                int layer;
-                if( !cUtils.tryGetLayer( cell, _instance.gameObject, out layer ) )
-                    return;
+            int cell = Grid.PosToCell( _instance.transform.localPosition );
+            int layer;
+            if( !cUtils.tryGetLayer( cell, _instance.gameObject, out layer ) )
+                return;
 
-                packet = cTreeFilterPacket.createStatic( _add, t, cell, layer );
-            }
-            else
-                packet = cTreeFilterPacket.createDynamic( _add, t, identity.getNetworkId() );
+            cTreeFilterPacket packet = new cTreeFilterPacket( _add, t, cell, layer );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

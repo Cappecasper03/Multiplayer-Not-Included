@@ -54,6 +54,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kAutoDisinfect ]   = () => new cAutoDisinfectPacket();
             s_constructors[ ePacketType.kBuildingEnabled ] = () => new cBuildingEnabledPacket();
             s_constructors[ ePacketType.kCancelBuild ]     = () => new cCancelBuildPacket();
+            s_constructors[ ePacketType.kTreeFilter ]      = () => new cTreeFilterPacket();
 
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
@@ -68,10 +69,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSchedule ]       = () => new cSchedulePacket();
             s_constructors[ ePacketType.kSkills ]         = () => new cSkillsPacket();
             s_constructors[ ePacketType.kResearch ]       = () => new cResearchPacket();
+            s_constructors[ ePacketType.kAssign ]         = () => new cAssignPacket();
 
             s_constructors[ ePacketType.kPriority ] = () => new cPriorityPacket();
-
-            s_constructors[ ePacketType.kTreeFilter ] = () => new cTreeFilterPacket();
         }
     }
 }

@@ -36,6 +36,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kAutoDisinfect,
         kBuildingEnabled,
         kCancelBuild,
+        kTreeFilter,
 
         kAttackCreature,
         kCaptureCreature,
@@ -50,10 +51,9 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSchedule,
         kSkills,
         kResearch,
+        kAssign,
 
         kPriority,
-
-        kTreeFilter,
     }
 
     public interface iIPacket
