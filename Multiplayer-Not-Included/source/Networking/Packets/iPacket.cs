@@ -38,6 +38,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kCancelBuild,
         kTreeFilter,
         kCapacityMeter,
+        kSliderSet,
 
         kAttackCreature,
         kCaptureCreature,
