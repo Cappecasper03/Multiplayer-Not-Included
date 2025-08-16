@@ -58,6 +58,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kCapacityMeter ]    = () => new cCapacityMeterPacket();
             s_constructors[ ePacketType.kSliderSet ]        = () => new cSliderSetPacket();
             s_constructors[ ePacketType.kDirectionControl ] = () => new cDirectionControlPacket();
+            s_constructors[ ePacketType.kFilter ]           = () => new cFilterPacket();
 
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();

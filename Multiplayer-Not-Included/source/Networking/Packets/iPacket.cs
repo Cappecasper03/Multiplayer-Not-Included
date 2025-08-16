@@ -40,6 +40,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kCapacityMeter,
         kSliderSet,
         kDirectionControl,
+        kFilter,
 
         kAttackCreature,
         kCaptureCreature,
