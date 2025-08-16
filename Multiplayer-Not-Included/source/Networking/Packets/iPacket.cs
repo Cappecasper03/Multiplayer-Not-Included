@@ -41,6 +41,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSliderSet,
         kDirectionControl,
         kFilter,
+        kReconstruct,
 
         kAttackCreature,
         kCaptureCreature,

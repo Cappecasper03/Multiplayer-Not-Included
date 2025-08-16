@@ -1,7 +1,6 @@
 ﻿using System;
 using HarmonyLib;
 using JetBrains.Annotations;
-using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
@@ -19,7 +18,6 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onFilterChanged( Filterable __instance )
         {
-            cLogger.logWarning( "Filter" );
             if( !cSession.inSessionAndReady() || s_skip_send )
                 return;
 

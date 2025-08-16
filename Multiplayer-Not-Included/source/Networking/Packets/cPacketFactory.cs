@@ -59,6 +59,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSliderSet ]        = () => new cSliderSetPacket();
             s_constructors[ ePacketType.kDirectionControl ] = () => new cDirectionControlPacket();
             s_constructors[ ePacketType.kFilter ]           = () => new cFilterPacket();
+            s_constructors[ ePacketType.kReconstruct ]      = () => new cReconstructPacket();
 
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
