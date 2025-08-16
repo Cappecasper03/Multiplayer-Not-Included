@@ -57,6 +57,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kSkills,
         kResearch,
         kAssign,
+        kRename,
 
         kPriority,
     }

@@ -75,6 +75,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kSkills ]         = () => new cSkillsPacket();
             s_constructors[ ePacketType.kResearch ]       = () => new cResearchPacket();
             s_constructors[ ePacketType.kAssign ]         = () => new cAssignPacket();
+            s_constructors[ ePacketType.kRename ]         = () => new cRenamePacket();
 
             s_constructors[ ePacketType.kPriority ] = () => new cPriorityPacket();
         }
