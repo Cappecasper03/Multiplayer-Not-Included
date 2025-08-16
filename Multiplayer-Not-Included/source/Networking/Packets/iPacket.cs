@@ -42,6 +42,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kDirectionControl,
         kFilter,
         kReconstruct,
+        kFabricator,
 
         kAttackCreature,
         kCaptureCreature,
