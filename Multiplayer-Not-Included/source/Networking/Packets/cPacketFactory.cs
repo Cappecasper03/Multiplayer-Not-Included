@@ -61,6 +61,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kFilter ]           = () => new cFilterPacket();
             s_constructors[ ePacketType.kReconstruct ]      = () => new cReconstructPacket();
             s_constructors[ ePacketType.kFabricator ]       = () => new cFabricatorPacket();
+            s_constructors[ ePacketType.kAutoBottle ]       = () => new cAutoBottlePacket();
 
             s_constructors[ ePacketType.kToggle ] = () => new cTogglePacket();
 

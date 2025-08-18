@@ -43,6 +43,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kFilter,
         kReconstruct,
         kFabricator,
+        kAutoBottle,
 
         kToggle,
 
