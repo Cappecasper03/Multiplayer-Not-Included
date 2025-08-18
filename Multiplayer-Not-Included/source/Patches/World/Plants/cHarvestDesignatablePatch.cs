@@ -6,7 +6,7 @@ using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Plants;
 using MultiplayerNotIncluded.source.Networking.Components;
 
-namespace MultiplayerNotIncluded.Patches.World.Items
+namespace MultiplayerNotIncluded.Patches.World.Plants
 {
     [HarmonyPatch]
     public static class cHarvestDesignatablePatch

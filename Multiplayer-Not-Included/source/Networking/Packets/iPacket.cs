@@ -44,6 +44,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kReconstruct,
         kFabricator,
         kAutoBottle,
+        kEntityReceptacle,
 
         kToggle,
 

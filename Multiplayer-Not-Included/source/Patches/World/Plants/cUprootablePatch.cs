@@ -6,7 +6,7 @@ using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Plants;
 using MultiplayerNotIncluded.source.Networking.Components;
 
-namespace MultiplayerNotIncluded.Patches.World.Items
+namespace MultiplayerNotIncluded.Patches.World.Plants
 {
     [HarmonyPatch]
     public static class cUprootablePatch
@@ -22,6 +22,11 @@ namespace MultiplayerNotIncluded.Patches.World.Items
         [HarmonyPatch( typeof( Uprootable ), "OnClickCancelUproot" )]
         [HarmonyPatch( new Type[ 0 ] )]
         private static void onClickCancelUproot( Uprootable __instance ) => markForUproot( false, __instance );
+
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( Uprootable ), nameof( Uprootable.ForceCancelUproot ) )]
+        private static void forceCancelUproot( object data, Uprootable __instance ) => markForUproot( false, __instance );
 
         private static void markForUproot( bool _marked, Uprootable _instance )
         {

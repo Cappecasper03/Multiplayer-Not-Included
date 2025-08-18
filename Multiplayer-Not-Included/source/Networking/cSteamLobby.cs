@@ -1,4 +1,5 @@
 ﻿using MultiplayerNotIncluded.DebugTools;
+using MultiplayerNotIncluded.source.Networking.Components;
 using Steamworks;
 
 namespace MultiplayerNotIncluded.Networking
@@ -70,6 +71,7 @@ namespace MultiplayerNotIncluded.Networking
             cServer.stop();
             cSession.clear();
             cCacheManager.clear();
+            cNetworkIdentity.resetFreeIds();
 
             SteamMatchmaking.LeaveLobby( m_lobby_id );
             cLogger.logInfo( $"Left lobby: {m_lobby_id}" );

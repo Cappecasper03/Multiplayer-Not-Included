@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace MultiplayerNotIncluded.Networking.Packets.World.Plants
 {
@@ -15,6 +16,10 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Plants
                 _type_object.MarkForUproot( false );
             else
                 Traverse.Create( _type_object ).Method( "OnCancel", new[] { typeof( object ) } )?.GetValue( ( object )null );
+
+            ReceptacleSideScreen screen = Object.FindObjectOfType< ReceptacleSideScreen >();
+            if( screen != null )
+                Traverse.Create( screen ).Method( "UpdateState", new[] { typeof( object ) } )?.GetValue( ( object )null );
         }
     }
 }
