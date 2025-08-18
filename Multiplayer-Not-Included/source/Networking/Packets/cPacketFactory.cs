@@ -63,6 +63,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kFabricator ]       = () => new cFabricatorPacket();
             s_constructors[ ePacketType.kAutoBottle ]       = () => new cAutoBottlePacket();
             s_constructors[ ePacketType.kEntityReceptacle ] = () => new cEntityReceptaclePacket();
+            s_constructors[ ePacketType.kDropAll ]          = () => new cDropAllPacket();
 
             s_constructors[ ePacketType.kToggle ] = () => new cTogglePacket();
 

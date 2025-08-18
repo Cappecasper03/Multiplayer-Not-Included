@@ -18,7 +18,7 @@ namespace MultiplayerNotIncluded
             cSteamLobby.initialize();
             cPacketFactory.initialize();
 
-            GameObject game_object = new GameObject( "MNI_Components" );
+            GameObject game_object = new GameObject( "MultiplayerNotIncluded" );
             Object.DontDestroyOnLoad( game_object );
             game_object.AddComponent< cNetworkingComponent >();
             game_object.AddComponent< cPlayerCursorComponent >().initialize( cSession.m_local_steam_id );
