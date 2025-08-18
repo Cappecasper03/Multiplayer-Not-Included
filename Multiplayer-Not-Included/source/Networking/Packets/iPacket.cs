@@ -46,6 +46,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kAutoBottle,
         kEntityReceptacle,
         kDropAll,
+        kActivationRange,
 
         kToggle,
 
