@@ -62,6 +62,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kReconstruct ]      = () => new cReconstructPacket();
             s_constructors[ ePacketType.kFabricator ]       = () => new cFabricatorPacket();
 
+            s_constructors[ ePacketType.kToggle ] = () => new cTogglePacket();
+
             s_constructors[ ePacketType.kAttackCreature ]  = () => new cAttackCreaturePacket();
             s_constructors[ ePacketType.kCaptureCreature ] = () => new cCaptureCreaturePacket();
 

@@ -44,6 +44,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kReconstruct,
         kFabricator,
 
+        kToggle,
+
         kAttackCreature,
         kCaptureCreature,
 
