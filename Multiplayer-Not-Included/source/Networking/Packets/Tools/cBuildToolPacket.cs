@@ -16,16 +16,16 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             kUtility,
         }
 
-        private CSteamID           m_steam_id = cSession.m_local_steam_id;
-        private eAction            m_action;
-        private string             m_prefab_id;
-        private string             m_facade_id;
-        private PrioritySetting    m_priority;
-        private List< string >     m_selected_elements = new List< string >();
-        private int                m_cell;
-        private Orientation        m_orientation;
-        private List< int >        m_path        = new List< int >();
-        List< UtilityConnections > m_connections = new List< UtilityConnections >();
+        private CSteamID                   m_steam_id = cSession.m_local_steam_id;
+        private eAction                    m_action;
+        private string                     m_prefab_id;
+        private string                     m_facade_id;
+        private PrioritySetting            m_priority;
+        private List< string >             m_selected_elements = new List< string >();
+        private int                        m_cell;
+        private Orientation                m_orientation;
+        private List< int >                m_path        = new List< int >();
+        private List< UtilityConnections > m_connections = new List< UtilityConnections >();
 
         public ePacketType m_type => ePacketType.kBuildTool;
 

@@ -47,6 +47,7 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kEntityReceptacle,
         kDropAll,
         kActivationRange,
+        kDoorAccess,
 
         kToggle,
 
