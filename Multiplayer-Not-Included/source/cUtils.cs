@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,6 +32,16 @@ namespace MultiplayerNotIncluded
 
             _layer = 0;
             return false;
+        }
+
+        public static T    getField< T >( object _object, string _field_name )           => Traverse.Create( _object ).Field( _field_name ).GetValue< T >();
+        public static void setField< T >( object _object, string _field_name, T _value ) => Traverse.Create( _object ).Field( _field_name ).SetValue( _value );
+
+        public static void invokeMethod( object _object, string _method_name ) => Traverse.Create( _object ).Method( _method_name ).GetValue();
+
+        public static void invokeMethod( object _object, string _method_name, params object[] _parameters )
+        {
+            Traverse.Create( _object ).Method( _method_name, _parameters ).GetValue( _parameters );
         }
     }
 }

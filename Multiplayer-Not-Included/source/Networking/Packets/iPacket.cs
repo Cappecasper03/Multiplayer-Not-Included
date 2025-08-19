@@ -2,7 +2,7 @@
 
 namespace MultiplayerNotIncluded.Networking.Packets
 {
-    public enum ePacketType
+    public enum ePacketType : byte
     {
         kSaveFileRequest,
         kSaveFileChunk,
@@ -68,6 +68,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
         kRename,
 
         kPriority,
+
+        kImmigrantScreen,
     }
 
     public interface iIPacket

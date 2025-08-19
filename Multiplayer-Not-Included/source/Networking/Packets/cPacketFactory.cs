@@ -86,6 +86,8 @@ namespace MultiplayerNotIncluded.Networking.Packets
             s_constructors[ ePacketType.kRename ]         = () => new cRenamePacket();
 
             s_constructors[ ePacketType.kPriority ] = () => new cPriorityPacket();
+
+            s_constructors[ ePacketType.kImmigrantScreen ] = () => new cImmigrantPacket();
         }
     }
 }
