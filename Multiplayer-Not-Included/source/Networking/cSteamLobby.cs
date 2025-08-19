@@ -71,7 +71,7 @@ namespace MultiplayerNotIncluded.Networking
             cServer.stop();
             cSession.clear();
             cCacheManager.clear();
-            cNetworkIdentity.resetFreeIds();
+            cNetworkIdentity.clear();
 
             SteamMatchmaking.LeaveLobby( m_lobby_id );
             cLogger.logInfo( $"Left lobby: {m_lobby_id}" );

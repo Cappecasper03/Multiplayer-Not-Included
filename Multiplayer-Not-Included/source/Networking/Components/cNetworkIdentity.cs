@@ -39,10 +39,11 @@ namespace MultiplayerNotIncluded.source.Networking.Components
             cLogger.logInfo( gameObject ? $"{gameObject.name}: {m_network_id}" : $"{m_network_id}" );
         }
 
-        public static void resetFreeIds()
+        public static void clear()
         {
             s_next_id = 0;
             s_free_ids.Clear();
+            s_identities.Clear();
         }
 
         private void register()
