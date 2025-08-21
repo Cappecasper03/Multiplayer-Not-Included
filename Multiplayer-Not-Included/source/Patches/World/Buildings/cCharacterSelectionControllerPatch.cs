@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HarmonyLib;
 using JetBrains.Annotations;
 using MultiplayerNotIncluded.Networking;
-using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
 using UnityEngine;
 
@@ -15,7 +13,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPrefix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( CharacterSelectionController ), "InitializeContainers" )]
-        private static bool initializeImmigrantScreenPre( CharacterSelectionController __instance )
+        private static bool initializeContainersPre( CharacterSelectionController __instance )
         {
             if( !cSession.inSessionAndReady() || cImmigrantPacket.s_deliverables.Count == 0 )
                 return true;
@@ -67,46 +65,6 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
             cUtils.setField( __instance, "selectedDeliverables", new List< ITelepadDeliverable >() );
 
             return false;
-        }
-
-        [HarmonyPostfix]
-        [UsedImplicitly]
-        [HarmonyPatch( typeof( CharacterSelectionController ), "InitializeContainers" )]
-        private static void initializeImmigrantScreenPost( CharacterSelectionController __instance )
-        {
-            if( !cSession.inSessionAndReady() )
-                return;
-
-            List< ITelepadDeliverableContainer > containers = Traverse.Create( __instance ).Field( "containers" ).GetValue< List< ITelepadDeliverableContainer > >();
-            if( containers == null )
-                return;
-
-            CoroutineRunner.RunOne( waitForGeneration( containers ) );
-        }
-
-        private static IEnumerator waitForGeneration( List< ITelepadDeliverableContainer > _containers )
-        {
-            List< ITelepadDeliverable > deliverables = new List< ITelepadDeliverable >();
-            do
-            {
-                yield return null;
-                deliverables.Clear();
-                foreach( ITelepadDeliverableContainer container in _containers )
-                {
-                    switch( container )
-                    {
-                        case CharacterContainer character:      deliverables.Add( character.Stats ); break;
-                        case CarePackageContainer care_package: deliverables.Add( care_package.Info ); break;
-                    }
-                }
-            } while( deliverables.Exists( _container => _container == null ) );
-
-            cImmigrantPacket packet = new cImmigrantPacket( deliverables );
-
-            if( cSession.isHost() )
-                cPacketSender.sendToAll( packet );
-            else
-                cPacketSender.sendToHost( packet );
         }
     }
 }

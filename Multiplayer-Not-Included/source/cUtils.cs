@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Events;
@@ -41,7 +42,7 @@ namespace MultiplayerNotIncluded
 
         public static void invokeMethod( object _object, string _method_name, params object[] _parameters )
         {
-            Traverse.Create( _object ).Method( _method_name, _parameters ).GetValue( _parameters );
+            Traverse.Create( _object ).Method( _method_name, _parameters.Select( _p => _p?.GetType() ).ToArray() ).GetValue( _parameters );
         }
     }
 }
