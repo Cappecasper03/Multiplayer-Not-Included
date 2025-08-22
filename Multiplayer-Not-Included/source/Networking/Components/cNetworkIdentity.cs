@@ -21,7 +21,7 @@ namespace MultiplayerNotIncluded.source.Networking.Components
         public string getProperName()
         {
             MinionIdentity identity = GetComponent< MinionIdentity >();
-            return identity != null ? identity.GetProperName() : "null";
+            return identity != null ? identity.GetProperName() : "";
         }
 
         public void set( int _id )
@@ -35,6 +35,7 @@ namespace MultiplayerNotIncluded.source.Networking.Components
                     cLogger.logInfo( $"Overwriting {_id}" );
             }
 
+            m_network_id        = _id;
             s_identities[ _id ] = this;
             cLogger.logInfo( gameObject ? $"{gameObject.name}: {m_network_id}" : $"{m_network_id}" );
         }

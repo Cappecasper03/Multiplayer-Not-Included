@@ -21,7 +21,7 @@ namespace MultiplayerNotIncluded.source.Patches.Minions
                 return;
 
             cNetworkIdentity identity = __instance.GetComponent< cNetworkIdentity >();
-            if( identity == null )
+            if( identity == null || identity.getNetworkId() < 0 )
                 return;
 
             cRenamePacket packet = new cRenamePacket( identity.getNetworkId(), name );

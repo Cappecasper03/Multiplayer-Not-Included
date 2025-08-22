@@ -41,8 +41,10 @@ namespace MultiplayerNotIncluded.Patches.World.Creatures
 
                 packet = new cAttackCreaturePacket( state, cell, layer );
             }
-            else
+            else if( identity.getNetworkId() >= 0 )
                 packet = new cAttackCreaturePacket( state, identity.getNetworkId() );
+            else
+                return;
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );
