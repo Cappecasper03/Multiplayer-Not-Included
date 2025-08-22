@@ -57,12 +57,6 @@ namespace MultiplayerNotIncluded.Patches
         [UsedImplicitly]
         [HarmonyPatch( typeof( PauseScreen ), "OnQuitConfirm" )]
         [HarmonyPatch( new[] { typeof( bool ) } )]
-        private static void onQuitConfirm( bool saveFirst )
-        {
-            if( !cSteamLobby.inLobby() )
-                return;
-
-            cSteamLobby.leave();
-        }
+        private static void onQuitConfirm( bool saveFirst ) => cSteamLobby.leave();
     }
 }

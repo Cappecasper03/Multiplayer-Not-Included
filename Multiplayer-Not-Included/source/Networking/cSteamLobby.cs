@@ -69,7 +69,6 @@ namespace MultiplayerNotIncluded.Networking
 
             cClient.disconnect();
             cServer.stop();
-            cSession.clear();
             cCacheManager.clear();
             cNetworkIdentity.clear();
 

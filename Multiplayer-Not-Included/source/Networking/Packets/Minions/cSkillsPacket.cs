@@ -97,17 +97,14 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                         if( assignable_identity == null )
                             return;
 
-                        cLogger.logWarning( "1" );
                         if( assignable_identity.GetProperName() != identity.getProperName() )
                         {
                             SkillMinionWidget[] widgets = Object.FindObjectsOfType< SkillMinionWidget >();
                             foreach( SkillMinionWidget widget in widgets )
                             {
-                                cLogger.logWarning( $"{widget.assignableIdentity.GetProperName()} != {identity.getProperName()}" );
                                 if( widget.assignableIdentity.GetProperName() != identity.getProperName() )
                                     continue;
 
-                                cLogger.logWarning( "2" );
                                 cSkillMinionWidgetPatch.s_skip_sending = true;
                                 Traverse.Create( widget ).Method( "OnHatDropEntryClick", new[] { typeof( IListableOption ), typeof( object ) } ).GetValue( hat, null );
                                 cSkillMinionWidgetPatch.s_skip_sending = false;
@@ -116,7 +113,6 @@ namespace MultiplayerNotIncluded.Networking.Packets.Minions
                         }
                         else
                         {
-                            cLogger.logWarning( "3" );
                             cSkillsScreenPatch.s_skip_sending = true;
                             traverse.Method( "OnHatDropEntryClick", new[] { typeof( IListableOption ), typeof( object ) } ).GetValue( hat, null );
                             cSkillsScreenPatch.s_skip_sending = false;

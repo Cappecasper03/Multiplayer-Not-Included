@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Satsuma;
-using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 namespace MultiplayerNotIncluded
 {
     public static class cCacheManager
     {
-        private static readonly Dictionary< System.Type, object > s_caches = new Dictionary< System.Type, object >();
+        private static readonly Dictionary< Type, object > s_caches = new Dictionary< Type, object >();
 
         public static void clear()
         {

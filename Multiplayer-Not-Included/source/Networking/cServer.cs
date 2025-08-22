@@ -72,13 +72,10 @@ namespace MultiplayerNotIncluded.Networking
             if( m_state <= 0 )
                 return;
 
-            foreach( cPlayer player in cSession.s_connected_players.Values )
-            {
-                if( player.m_connection != HSteamNetConnection.Invalid )
-                    SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
-            }
-
             cSession.clear();
+
+            s_connection_status_changed_callback?.Unregister();
+            s_connection_status_changed_callback = null;
 
             if( m_poll_group.m_HSteamNetPollGroup != 0 )
                 SteamNetworkingSockets.DestroyPollGroup( m_poll_group );

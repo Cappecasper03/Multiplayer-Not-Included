@@ -46,7 +46,11 @@ namespace MultiplayerNotIncluded.Networking
         public static void clear()
         {
             foreach( cPlayer player in s_connected_players.Values )
+            {
                 player.destroyCursor();
+                if( player.m_connection != HSteamNetConnection.Invalid )
+                    SteamNetworkingSockets.CloseConnection( player.m_connection, 0, "Server Stopping", false );
+            }
 
             s_ready = false;
             s_connected_players.Clear();
