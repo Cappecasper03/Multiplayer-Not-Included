@@ -18,6 +18,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
             kDoor,
             kDefault,
             kMinion,
+            kMinionDefault,
         }
 
         private CSteamID                 m_steam_id = cSession.m_local_steam_id;
@@ -27,6 +28,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
         private Door.ControlState        m_state;
         private AccessControl.Permission m_permission;
         private int                      m_network_id;
+        private bool                     m_default;
 
         public ePacketType m_type => ePacketType.kDoorAccess;
 
@@ -45,6 +47,11 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
             return new cDoorAccessPacket { m_action = eAction.kMinion, m_cell = _cell, m_layer = _layer, m_permission = _permission, m_network_id = _network_id };
         }
 
+        public static cDoorAccessPacket createMinionDefault( int _cell, int _layer, bool _default, int _network_id )
+        {
+            return new cDoorAccessPacket { m_action = eAction.kMinionDefault, m_cell = _cell, m_layer = _layer, m_default = _default, m_network_id = _network_id };
+        }
+
         public void serialize( BinaryWriter _writer )
         {
             _writer.Write( m_steam_id.m_SteamID );
@@ -59,6 +66,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                 case eAction.kMinion:
                 {
                     _writer.Write( ( int )m_permission );
+                    _writer.Write( m_network_id );
+                    break;
+                }
+                case eAction.kMinionDefault:
+                {
+                    _writer.Write( m_default );
                     _writer.Write( m_network_id );
                     break;
                 }
@@ -79,6 +92,12 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                 case eAction.kMinion:
                 {
                     m_permission = ( AccessControl.Permission )_reader.ReadInt32();
+                    m_network_id = _reader.ReadInt32();
+                    break;
+                }
+                case eAction.kMinionDefault:
+                {
+                    m_default    = _reader.ReadBoolean();
                     m_network_id = _reader.ReadInt32();
                     break;
                 }
@@ -148,6 +167,37 @@ namespace MultiplayerNotIncluded.Networking.Packets.World.Buildings
                     {
                         Traverse method = Traverse.Create( screen ).Method( "Refresh", new[] { typeof( List< MinionAssignablesProxy > ), typeof( bool ) } );
                         method?.GetValue( new List< MinionAssignablesProxy > { assignable_proxy.Get() }, false );
+                    }
+
+                    break;
+                }
+                case eAction.kMinionDefault:
+                {
+                    AccessControl access_control = game_object.GetComponent< AccessControl >();
+                    if( access_control == null )
+                        return;
+
+                    cNetworkIdentity identity;
+                    if( !cNetworkIdentity.tryGetIdentity( m_network_id, out identity ) )
+                        return;
+
+                    Ref< MinionAssignablesProxy > assignable_proxy = identity.GetComponent< MinionIdentity >()?.assignableProxy;
+                    if( assignable_proxy == null )
+                        return;
+
+                    AccessControlSideScreen screen = Object.FindObjectOfType< AccessControlSideScreen >();
+                    if( screen != null )
+                    {
+                        cAccessControlSideScreenPatch.s_skip_send = true;
+                        cUtils.invokeMethod( screen, "OnPermissionDefault", assignable_proxy.Get(), m_default );
+                        cAccessControlSideScreenPatch.s_skip_send = false;
+                    }
+                    else
+                    {
+                        if( m_default )
+                            access_control.ClearPermission( assignable_proxy.Get() );
+                        else
+                            access_control.SetPermission( assignable_proxy.Get(), access_control.DefaultPermission );
                     }
 
                     break;

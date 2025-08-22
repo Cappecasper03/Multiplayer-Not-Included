@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using JetBrains.Annotations;
-using MultiplayerNotIncluded.DebugTools;
 using MultiplayerNotIncluded.Networking;
 using MultiplayerNotIncluded.Networking.Packets;
 using MultiplayerNotIncluded.Networking.Packets.World.Buildings;
@@ -16,6 +15,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( AccessControlSideScreen ), "OnDefaultPermissionChanged" )]
+        [HarmonyPatch( new[] { typeof( MinionAssignablesProxy ), typeof( AccessControl.Permission ) } )]
         private static void onDefaultPermissionChanged( MinionAssignablesProxy identity, AccessControl.Permission permission, AccessControlSideScreen __instance )
         {
             if( !cSession.inSessionAndReady() || s_skip_send )
@@ -41,6 +41,7 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
         [HarmonyPostfix]
         [UsedImplicitly]
         [HarmonyPatch( typeof( AccessControlSideScreen ), "OnPermissionChanged" )]
+        [HarmonyPatch( new[] { typeof( MinionAssignablesProxy ), typeof( AccessControl.Permission ) } )]
         private static void onPermissionChanged( MinionAssignablesProxy identity, AccessControl.Permission permission, AccessControlSideScreen __instance )
         {
             if( !cSession.inSessionAndReady() || s_skip_send )
@@ -60,6 +61,36 @@ namespace MultiplayerNotIncluded.Patches.World.Buildings
                 return;
 
             cDoorAccessPacket packet = cDoorAccessPacket.createMinion( cell, layer, permission, network_identity.getNetworkId() );
+
+            if( cSession.isHost() )
+                cPacketSender.sendToAll( packet );
+            else
+                cPacketSender.sendToHost( packet );
+        }
+
+        [HarmonyPostfix]
+        [UsedImplicitly]
+        [HarmonyPatch( typeof( AccessControlSideScreen ), "OnPermissionDefault" )]
+        [HarmonyPatch( new[] { typeof( MinionAssignablesProxy ), typeof( bool ) } )]
+        private static void onPermissionDefault( MinionAssignablesProxy identity, bool isDefault, AccessControlSideScreen __instance )
+        {
+            if( !cSession.inSessionAndReady() || s_skip_send )
+                return;
+
+            AccessControl access_control = Traverse.Create( __instance ).Field( "target" ).GetValue< AccessControl >();
+            if( access_control == null )
+                return;
+
+            cNetworkIdentity network_identity = ( identity.target as KMonoBehaviour )?.GetComponent< cNetworkIdentity >();
+            if( network_identity == null )
+                return;
+
+            int cell = Grid.PosToCell( access_control.transform.localPosition );
+            int layer;
+            if( !cUtils.tryGetLayer( cell, access_control.gameObject, out layer ) )
+                return;
+
+            cDoorAccessPacket packet = cDoorAccessPacket.createMinionDefault( cell, layer, isDefault, network_identity.getNetworkId() );
 
             if( cSession.isHost() )
                 cPacketSender.sendToAll( packet );

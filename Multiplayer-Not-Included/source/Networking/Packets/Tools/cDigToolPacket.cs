@@ -47,7 +47,7 @@ namespace MultiplayerNotIncluded.Networking.Packets.Tools
             GameObject game_object = DigTool.PlaceDig( m_cell, m_animation_delay );
             cDigToolPatch.s_skip_sending = false;
 
-            Prioritizable prioritizable = game_object.GetComponent< Prioritizable >();
+            Prioritizable prioritizable = game_object?.GetComponent< Prioritizable >();
             prioritizable?.SetMasterPriority( m_priority );
 
             if( cSession.isHost() )
